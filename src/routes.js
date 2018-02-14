@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import vHome from './components/Home.vue'
+import Home from './components/Home.vue'
+import Customer from './components/Customer.vue'
+import Movie from './components/Movie.vue'
+import Report from './components/Report.vue'
 
 Vue.use(Router)
 
@@ -10,7 +13,28 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: vHome
+      component: Home
     },
+    {
+      path: '/customers',
+      name: 'customer',
+      component: Customer
+    },
+    {
+      path: '/customers/new',
+      name: 'Customer',
+      component: Customer,
+      props: {customerStatus:-1}
+    },
+    {
+      path: '/movies',
+      name: 'movie',
+      component: Movie
+    },
+    {
+      path: '/reports',
+      name: 'report',
+      component: Home
+    }
   ]
 })

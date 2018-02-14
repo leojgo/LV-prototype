@@ -1,9 +1,21 @@
 <template>
   <div class="uk-offcanvas-content" id="app">
     <vHeader :data="data" />
-    <main class="uk-container uk-background-default">
-      <!--<router-view></router-view>-->
-      <vHome :data="data" />
+    <main class="uk-container uk-background-default" @clicked="login, getMovies">
+      <router-view :data="data" v-if="data.isAuthenticated"></router-view>
+      <!--LOGIN-->
+      <form v-else class="uk-section">
+        <div class="uk-margin">
+          <input class="uk-input" type="text" name="user" placeholder="username">
+        </div>
+        <div class="uk-margin">
+          <input class="uk-input" type="text" name="password" placeholder="********">
+        </div>
+        <!--
+        <button type="submit" class="uk-button uk-button-default" v-on:click="login">Login</button>
+        -->
+        <span class="uk-button uk-button-default" v-on:click="login">Login</span>
+      </form>
     </main>
     <footer class="uk-text-center uk-text-small uk-padding">
       <address>
@@ -14,16 +26,42 @@
 </template>
 
 <script>
-//import Accordion from './components/uikit/Accordion.vue'
-//import Alert from './components/uikit/Alert.vue'
 import vHeader from './components/Header.vue'
-import vHome from './components/Home.vue'
 export default {
+  name: 'app',
   components: {
     vHeader,
-    vHome
   },
-  props: ['data']
+  props: ['data'],
+  methods: { 
+    login(user, password) {
+      console.log('emit login event');
+      var auth = {
+        user: "Tom",
+        clerkPass: "1234",
+        managerPass: "4321"
+
+      };
+      var user = {
+        name: null,
+        role: null
+      }
+      user.name = document.querySelector("input[name=user]").value;
+      if (user.name == auth.user) {
+        if (document.querySelector("input[name=password]").value == auth.clerkPass) {
+          user.role = "Clerk";
+          this.$router.app.$emit('login', user );
+        }
+        else if (document.querySelector("input[name=password]").value == auth.managerPass) {
+          user.role = "Manager";
+          this.$router.app.$emit('login', user);
+        }
+        else {
+          //give validation feedback to user
+        }
+      }
+    }
+  }
 }
 </script>
 
