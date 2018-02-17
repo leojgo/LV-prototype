@@ -40,7 +40,6 @@ export default {
         user: "Tom",
         clerkPass: "1234",
         managerPass: "4321"
-
       };
       var user = {
         name: null,
