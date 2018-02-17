@@ -13,26 +13,29 @@ import router from './routes.js';
 
 // components can be called from the imported UIkit reference
 // UIkit.notification('Hello world.');
-var customers = {
-  customer1, 
-  customer2,
-  customer3
-};
 var customer1 = {
+  id: "012390",
   name: "Cindy Johnson",
   address: "123 Fake St, Springfield, IL 60666",
   phone: "773-131-8770"
 };
 var customer2 = {
+  id: "123456",
   name: "Cindy Johnson",
   address: "239 Elm St, Springfield, IL 60666",
   phone: "773-998-2664"
 };
 var customer3 = {
+  id: "023490",
   name: "Ellen Johnson",
   address: "1548 Overlook Ct, Springfield, IL 60666",
   phone: "773-081-2761"
 };
+var customers = [
+  customer1, 
+  customer2,
+  customer3
+];
 var data = {
   company: 'Lackluster Video',
   isAuthenticated: false,
@@ -55,6 +58,7 @@ var app = new Vue({
   mounted() {
     var vm = this;
     console.log(vm);   
+    console.log(customers);
     vm.$on('login', function(user){
       data.user = user;
       data.isAuthenticated = true;
@@ -67,9 +71,22 @@ var app = new Vue({
       data.isManager = false;
       data.user = null;
     });
+    vm.$on('customerSearch', function(query){
+      var results = new Array;
+      var i;
+      var j;
+      for (i = 0; i < customers.length; i++) {
+        if (customers[i].id == query || customers[i].phone == query) {
+          results.push(customers[i]);
+        }
+        else if (customers[i].name.indexOf(query) > -1) {
+          results.push(customers[i]);
+        }
+      }
+      data.customers = results;
+    });
   }
 });
-
 //nav guards
 router.beforeEach((to, from, next) => {
   console.log('to '+to.fullPath);
