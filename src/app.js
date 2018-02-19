@@ -43,7 +43,8 @@ var data = {
   user: null,
   customers: null,
   movies: null,
-  reports: null
+  reports: null,
+  modal: null
 };
 var app = new Vue({
   el: '#app',
@@ -70,6 +71,12 @@ var app = new Vue({
       data.isAuthenticated = false;
       data.isManager = false;
       data.user = null;
+    });
+    vm.$on('loginHelp', function() {
+      var modal = new Object;
+      modal.title = 'Login Help';
+      modal.body = '<strong>Clerks</strong> can contact a manager for help accessing the system. <strong>Managers</strong> unable to access the system, should refer to the login instructions provided in the Lackluster Video Application manual.';
+      data.modal = modal;
     });
     vm.$on('customerSearch', function(query){
       var results = new Array;

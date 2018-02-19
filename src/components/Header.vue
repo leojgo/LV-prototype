@@ -21,6 +21,9 @@
           <span uk-navbar-toggle-icon v-if="data.isAuthenticated"></span>
         </a>
         <ul class="uk-navbar-nav uk-visible@s" v-if="data.isAuthenticated">
+          <li v-if="data.isManager">
+              <a href="/users">Users</a>
+          </li>
           <li>
               <a href="#">Rentals</a>
               <div class="uk-navbar-dropdown">
@@ -65,6 +68,7 @@
       <div class="uk-offcanvas-bar">
         <button class="uk-offcanvas-close" type="button" uk-close></button>
         <ul class="uk-nav uk-nav-default">
+          <li v-if="data.isManager"><a href="/users">Users</a></li>
           <li class="uk-nav-header">Rentals</li>
           <li><a href="#">New Rental</a></li>
           <li><a href="#">Return Rental</a></li>

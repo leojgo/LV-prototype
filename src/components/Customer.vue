@@ -12,11 +12,11 @@
       <!--customer search view-->
       
       <div>
-        <label class="uk-form-label">Find a Customer</label>
-        <input type="text" placeholder="Enter Customer ID, Name or Phone Number" class="uk-input uk-margin" v-model="query" name="customerKeyword">  
+        <label class="uk-form-label uk-text-large uk-text-muted" for="customerKeyword" >Find a Customer</label>
+        <input type="text" placeholder="Enter Customer ID, Name or Phone Number" class="uk-input uk-margin" v-model="query" id="customerKeyword" name="customerKeyword">  
         <span class="uk-button uk-button-default"  v-on:click="search">Search</span>
       </div>
-      
+
       <div v-if="data.customers">
         <div class="uk-margin-top">
           <!--
@@ -27,9 +27,9 @@
           <ul class="uk-list uk-list-divider">
             <!--move style to cutom css-->
             <li v-for="customer in data.customers" style="position: relative">
-              <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-top">{{ customer.id }}</span>
+              <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ customer.id }}</span>
               <strong>{{ customer.name }}</strong><br />
-              <span class="uk-small">{{ customer.address }} <br />{{ customer.phone }}</span>
+              <span class="uk-text-small">{{ customer.address }} <br />{{ customer.phone }}</span>
             </li>
           </ul>
         </div>
