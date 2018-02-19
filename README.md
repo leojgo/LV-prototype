@@ -11,6 +11,8 @@ Some dependencies are used for the app build itself (Vue, Vue Router, etc..) and
 
 `$ webpack --watch && gulp watch`  will build the app when dependencies are saved
 
-`$ npm start` will start the localhost dev server
+`$ npm start` will start the localhost dev server and run the app
+
+`$ npm update` will install any missing dependencies, use if npm throws command or module not found errors
 
 For more on running asset bundlers, task runners, etc... please see the docs for any such utilities.
