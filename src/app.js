@@ -42,6 +42,7 @@ var data = {
   movies: null, //movies array for search
   reports: null, //reports array for search
   isSingle: false, //single item flag
+  isView: false,
   isEdit: false, //edit state flag
   isNew: false, //add state flag
   selected: null, //item to view or edit
@@ -125,12 +126,23 @@ router.beforeEach((to, from, next) => {
   console.log('to '+to.fullPath);
   if (to.fullPath.indexOf('search') > -1) {
     data.isSingle = false;
+    data.isView = false;
     data.isEdit = false;
+    data.isNew = false;
   }
   else if (to.fullPath.indexOf('new') > -1) {
     data.isSingle = true;
+    data.isView = false;
     data.isEdit = true;
-    //data.customers = [customerNew];
+    data.isNew = true;
+    //add conditionals or method later
+    data.selected = {
+      "199854" : {
+        name: "",
+        address: "",
+        phone: ""
+      }
+    }
   }
   else {
     //

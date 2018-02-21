@@ -2,7 +2,7 @@
   <div class="uk-section">
     <div v-if="data.isSingle">
       <!--single customer view-->
-      <h1 v-if="data.isNew">Create Customer Account</h1>
+      <h1 v-if="data.isNew" class="uk-text-large">Create Customer Account</h1>
       <h1 v-else class="uk-text-large" style="position: relative">Customer Account 
         <ul class="uk-iconnav uk-position-top-right">
           <li v-if="data.isEdit"><a href="#" uk-icon="icon: close"></a></li>
@@ -11,10 +11,48 @@
         </ul>
       </h1> 
       <!--maybe can combine-->
-      <div v-if="data.isEdit">
-        EDIT FORM
+      <div v-if="data.isEdit" class="uk-form" uk-grid>
+        <div class="uk-width-1-2@s">
+            <input class="uk-input" type="text" placeholder="First Name" :value="data.selected.name">
+        </div>
+        <div class="uk-width-1-2@s">
+            <input class="uk-input" type="text" placeholder="Last Name" :value="data.selected.name">
+        </div>
+        <div class="uk-width-1-1">
+            <input class="uk-input" type="text" placeholder="Address Line 1">
+        </div>
+        <div class="uk-width-1-1">
+            <input class="uk-input" type="text" placeholder="Address Line 2">
+        </div>
+        <!--City/State: assume all local addresses-->
+        <div class="uk-width-1-2@s">
+          <input class="uk-input" type="text" placeholder="City">
+        </div>
+        <div class="uk-width-1-2@s">
+          <div class="uk-form-controls">
+            <select class="uk-select" id="form-stacked-select">
+                <option>Illinois</option>
+                <option>Wisconsin</option>
+            </select>
+          </div>
+        </div>
+        <!--change to multiple fields for US numbers and an alternate for int'l?-->
+        <div class="uk-width-1-1">
+            <input class="uk-input" type="text" placeholder="Phone Number">
+        </div>
+        <div class="uk-width-1-1">
+            <input class="uk-input" type="text" placeholder="you@example.com">
+        </div>
+        <div class="uk-width-1-1">
+          <label><input class="uk-checkbox" type="checkbox" checked> Add to Mailing List</label>
+        </div>
+        <div class="uk-width-1-1">
+          <button class="uk-button uk-button-primary">Save</button>
+          <button class="uk-button uk-button-default uk-margin-left">Cancel</button>
+        </div>
       </div>
-      <div style="position: relative">
+      <div v-else style="position: relative">
+        <!--view only-->
         <div v-for="(customer, id) in data.selected" style="position: relative">
           <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ $route.params.id }}</span>
           <strong>{{ customer.name }}</strong><br />
@@ -58,18 +96,6 @@
   export default {
     name: 'customer',
     props: ['data'],
-    data() {
-      return {
-        //seed id for new customer
-        customerInfo: {
-          "199854" : {
-            name: "",
-            address: "",
-            phone: ""
-          }
-        }
-      }
-    },
     methods: {
       search() {
         var query = document.querySelector("input[name=customerKeyword]").value;
