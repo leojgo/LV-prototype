@@ -16,15 +16,34 @@ export default new Router({
       component: Home
     },
     {
-      path: '/customers',
-      name: 'customer',
-      component: Customer
+      path: '/customers/search',
+      name: 'customerSearch',
+      component: Customer,
     },
     {
       path: '/customers/new',
-      name: 'Customer',
+      name: 'CustomerNew',
       component: Customer,
-      props: {customerStatus:-1}
+    },
+    {
+      path: '/customers/:id',
+      name: 'customerView',
+      component: Customer
+    },
+    {
+      path: '/customers/:id/edit',
+      name: 'customerEdit',
+      component: Customer
+    },
+    {
+      path: '/customers/:id/history',
+      name: 'customerHistory',
+      component: Customer
+    },
+    {
+      path: '/customers/:id/ledger',
+      name: 'customerLedger',
+      component: Customer
     },
     {
       path: '/movies',

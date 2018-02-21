@@ -37,8 +37,8 @@
               <a href="#">Movies</a>
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
-                      <li><a is="router-link" to="/movies">Search Movies</a></li>
-                      <li><a is="router-link" to="/movies">New Movie</a></li>
+                      <li><a is="router-link" to="/movies/search">Search Movies</a></li>
+                      <li><a is="router-link" to="/movies/new">New Movie</a></li>
                   </ul>
               </div>
           </li>
@@ -46,7 +46,7 @@
               <a href="#">Customers</a>
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
-                      <li><a is="router-link" to="/customers">Search Customers</a></li>
+                      <li><a is="router-link" to="/customers/search" v-on:click.native="clearSearch">Search Customers</a></li>
                       <li><a is="router-link" to="/customers/new">New Customer</a></li>
                   </ul>
               </div>
@@ -73,7 +73,7 @@
           <li><a href="#">New Rental</a></li>
           <li><a href="#">Return Rental</a></li>
           <li class="uk-nav-header">Movies</li>
-          <li><a href="#">Search Movies</a></li>
+          <li><a is="router-link" to="/customers/search" v-on:click.native="clear('customers')">Search Movies</a></li>
           <li><a href="#">Add New Movie</a></li>
           <li class="uk-nav-header">Customers</li>
           <li><a is="router-link" to="/customers">Search Customers</a></li>
@@ -95,6 +95,10 @@
       logout() {
         console.log('emit logout event');
         this.$router.app.$emit('logout');
+      },
+      clearSearch() {
+        console.log('emit clear on search');
+        this.$router.app.$emit('clear', 'customers');
       }
     }
   }
