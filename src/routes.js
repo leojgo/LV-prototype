@@ -46,8 +46,13 @@ export default new Router({
       component: Customer
     },
     {
-      path: '/movies',
+      path: '/movies/search',
       name: 'movie',
+      component: Movie
+    },
+    {
+      path: '/movies/:id',
+      name: 'movieView',
       component: Movie
     },
     {

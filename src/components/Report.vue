@@ -1,10 +1,23 @@
 <template>
   <div class="uk-section">
-    <div v-if="data.report">
-      <!--movie search-->
-    </div>
-    <div v-else >
-      MOVIE SEARCH FORM
+    <nav>
+      <a href="">Overdue Rentals</a>
+      <a href="">Popular Movies</a>
+    </nav>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer</th>
+            <th>Due Date</th>
+            <th>Days Overdue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>

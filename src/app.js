@@ -33,12 +33,64 @@ var customers = {
   "123456" : customer2,
   "023490" : customer3
 };
+var movie1 = {
+  title: "Blade Runner",
+  year: "1982",
+  noStock: false
+}
+var movie2 = {
+  title: "Blade Runner 2049",
+  year: "2017",
+  noStock: false
+}
+var movie3 = {
+  title: "Blade Runner: The Final Cut",
+  year: "1982",
+  noStock: true
+}
+var movies = {
+  "123456789" : movie1,
+  "123456788" : movie2,
+  "123456787" : movie3
+}
+var items = {
+  "9929398448" : {
+    movie : movies[0],
+    inStock : true,
+    //how are these retired? do we need to have active vs inactive?
+  },
+  "9929398449" : {
+    movie : movies[0],
+    inStock : false,
+  },
+  "9929398447" : {
+    movie : movies[0],
+    inStock : true,
+  },
+  "9929398446" : {
+    movie : movies[1],
+    inStock : true,
+  },
+  "9929398445" : {
+    movie : movies[1],
+    inStock : true,
+  },
+  "9929398444" : {
+    movie : movies[2],
+    inStock : false,
+  },
+  "9929398443" : {
+    movie : movies[2],
+    inStock : false,
+  }
+}
 var data = {
   company: 'Lackluster Video', //company name
   isAuthenticated: false, //auth flag
   isManager: false, //manager flag
   user: null, //user obj
   customers: null, //cusomters array for search
+  movieTitles: null,
   movies: null, //movies array for search
   reports: null, //reports array for search
   isSingle: false, //single item flag
@@ -87,16 +139,6 @@ var app = new Vue({
     });
     vm.$on('searchCustomer', function(query){
       var results = {};
-      var i;
-      var j;
-      /*for (i = 0; i < customers.length; i++) {
-        if (customers[i].id == query || customers[i].phone == query) {
-          results.push(customers[i]);
-        }
-        else if (customers[i].name.indexOf(query) > -1) {
-          results.push(customers[i]);
-        }
-      }*/
       for (var key in customers) {
         if (key == query) {
           results[key] = (customers[key]);
@@ -118,6 +160,25 @@ var app = new Vue({
       data.isSingle = true;
       data.selected = { id : customers[id] };
       this.$router.push({ name: 'customerView', params: { id: id }});
+    });
+    vm.$on('searchMovie', function(query){
+      var results = {};
+      for (var key in movies) {
+        if (key == query) {
+          results[key] = (movies[key]);
+        }
+        else if (movies[key].title.indexOf(query) > -1) {
+          results[key] = (movies[key]);
+        }
+      }
+      console.log('results');
+      console.log(results);
+      data.movies = results;
+    });
+    vm.$on('viewMovie', function(id){
+      data.isSingle = true;
+      data.selected = { id : movies[id] };
+      this.$router.push({ name: 'movieView', params: { id: id }});
     });
   }
 });
