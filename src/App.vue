@@ -6,12 +6,14 @@
       <!--LOGIN-->
       <form v-else class="uk-section">
         <div class="uk-margin">
-          <input class="uk-input" type="text" name="user" placeholder="username" v-on:keyup.enter="login" v-on:focus="clearUsernameError" v-bind:class="{ 'uk-form-danger': usernameError }">
-          <span v-if="usernameError" class="uk-text-small uk-text-danger">username incorrect</span>
+          <input class="uk-input" type="text" name="user" placeholder="username" v-on:keyup.enter="login" v-on:focus="clearLoginError">
         </div>
         <div class="uk-margin">
-          <input class="uk-input" type="password" name="password" placeholder="********" v-on:keyup.enter="login" v-on:focus="clearPasswordError" v-bind:class="{ 'uk-form-danger': passwordError }">
-          <span v-if="passwordError" class="uk-text-small uk-text-danger">password incorrect</span>
+          <input class="uk-input" type="password" name="password" placeholder="********" v-on:keyup.enter="login" v-on:focus="clearLoginError">
+        </div>
+        <div v-if="loginError" class="uk-alert-danger uk-text-small" uk-alert>
+            <!--<a class="uk-alert-close" uk-close></a>-->
+            <p>Username/password combination incorrect!</p>
         </div>
         <!--change link to button or submit input on final build-->
         <a class="uk-button uk-button-default" v-on:click="login">Login</a>
@@ -44,8 +46,7 @@ export default {
   props: ['data'],
   data()  {
     return {
-      usernameError : false,
-      passwordError : false
+      loginError : false
     }
   },
   methods: { 
@@ -73,24 +74,20 @@ export default {
         else {
           //give validation feedback to user
           console.log('invalid password')
-          this.passwordError = true;
+          this.loginError = true;
         }
       }
       else {
         console.log('invalid username')
-        this.usernameError = true;
-        this.passwordError = true;
+        this.loginError = true;
       }
     },
     loginHelp() {
       console.log('emit login help modal');
       this.$router.app.$emit('loginHelp' );
     },
-    clearUsernameError() {
-      this.usernameError = false;
-    },
-    clearPasswordError() {
-      this.passwordError = false;
+    clearLoginError() {
+      this.loginError = false;
     }
   }
 }
