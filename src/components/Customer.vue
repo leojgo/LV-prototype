@@ -80,7 +80,7 @@
         <!--loop over results-->
         <ul class="uk-list uk-list-divider">
           <!--move style to cutom css-->
-          <li v-for="(customer, id) in data.customers" style="position: relative" v-on:click="view">
+          <li v-for="(customer, id) in data.customers" style="position: relative" v-on:click="view(id)">
             <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ id }}</span>
             <strong>{{ customer.name }}</strong><br />
             <span class="uk-text-small">{{ customer.address }} <br />{{ customer.phone }}</span>
@@ -100,10 +100,8 @@
         var query = document.querySelector("input[name=customerKeyword]").value;
         this.$router.app.$emit('searchCustomer', query);
       },
-      view(event) {
-        console.log(event);
-        console.log(event.target.children[0].textContent);
-        this.$router.app.$emit('viewCustomer', event.target.children[0].textContent);
+      view(id) {
+        this.$router.app.$emit('viewCustomer',id);
       },
       addForm(event) {
         //load form with blank data
