@@ -36,54 +36,58 @@ var customers = {
 var movie1 = {
   title: "Blade Runner",
   year: "1982",
-  noStock: false
-}
+  copies: null, //get these later
+  noStock: false //just a placeholder to test label
+};
 var movie2 = {
   title: "Blade Runner 2049",
   year: "2017",
+  copies: null,
   noStock: false
-}
+};
 var movie3 = {
   title: "Blade Runner: The Final Cut",
   year: "1982",
+  copies: null,
   noStock: true
-}
+};
 var movies = {
   "123456789" : movie1,
   "123456788" : movie2,
   "123456787" : movie3
-}
+};
 var items = {
   "9929398448" : {
-    movie : movies[0],
+    movie : movies["123456789"], //0
     inStock : true,
     //how are these retired? do we need to have active vs inactive?
   },
   "9929398449" : {
-    movie : movies[0],
+    movie : movies["123456789"], //0
     inStock : false,
+
   },
   "9929398447" : {
-    movie : movies[0],
+    movie : movies["123456789"], //0
     inStock : true,
   },
   "9929398446" : {
-    movie : movies[1],
+    movie : movies["123456788"], //1
     inStock : true,
   },
   "9929398445" : {
-    movie : movies[1],
+    movie : movies["123456788"], //1
     inStock : true,
   },
   "9929398444" : {
-    movie : movies[2],
+    movie : movies["123456787"], //2
     inStock : false,
   },
   "9929398443" : {
-    movie : movies[2],
+    movie : movies["123456787"], //2
     inStock : false,
   }
-}
+};
 var data = {
   company: 'Lackluster Video', //company name
   isAuthenticated: false, //auth flag
@@ -128,7 +132,7 @@ var app = new Vue({
       router.push({name : 'home'});
     });
     vm.$on('loginHelp', function() {
-      var modal = new Object;
+      var modal = {};
       modal.title = 'Login Help';
       modal.body = '<strong>Clerks</strong> can contact a manager for help accessing the system. <strong>Managers</strong> unable to access the system, should refer to the login instructions provided in the Lackluster Video Application manual.';
       data.modal = modal;
@@ -177,7 +181,20 @@ var app = new Vue({
     });
     vm.$on('viewMovie', function(id){
       data.isSingle = true;
+      var copies = [];
+      //loop over all movie copies
+      console.log('view movies: loop over copies');
+      for (var item in items) {
+        if (items[item].movie == movies[id]) {
+          copies.push({
+            id : item,
+            inStock : items[item].inStock
+          });
+        }
+      }
+      movies[id].copies = copies;
       data.selected = { id : movies[id] };
+      console.log(data.selected);
       this.$router.push({ name: 'movieView', params: { id: id }});
     });
   }
@@ -203,7 +220,7 @@ router.beforeEach((to, from, next) => {
         address: "",
         phone: ""
       }
-    }
+    };
   }
   else {
     //
