@@ -1,6 +1,15 @@
 <template>
   <div class="uk-section">
     <div v-if="data.isSingle">
+      <!--single customer view-->
+      <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Create Movie Title</h1>
+      <h1 v-else class="uk-text-large" style="position: relative">View Movie Title 
+        <ul class="uk-iconnav uk-position-top-right">
+          <li v-if="data.isEdit"><a href="#" uk-icon="icon: close"></a></li>
+          <li v-if="data.isEdit == false"><a href="#" uk-icon="icon: pencil"></a></li>
+          <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"></a></li>
+        </ul>
+      </h1> 
       <div v-if="data.isEdit" lass="uk-form" uk-grid>
         <div class="uk-width-1-2@s">
             <input class="uk-input" type="text" placeholder="John" :value="data.selected.name">
