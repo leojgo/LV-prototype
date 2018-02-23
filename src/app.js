@@ -14,18 +14,33 @@ import router from './routes.js';
 // components can be called from the imported UIkit reference
 // UIkit.notification('Hello world.');
 var customer1 = {
-  name: "Cindy Johnson",
-  address: "123 Fake St, Springfield, IL 60666",
-  phone: "773-131-8770"
+  firstName: "Cindy",
+  lastName: "Johnson",
+  address: "123 Fake St",
+  city: "Springfield",
+  state: "IL",
+  zip: "60666",
+  email: "cindy@example.com",
+  phone: "773-131-8770" //for pete's sake don't store like this :P
 };
 var customer2 = {
-  name: "Cindy Johnson",
-  address: "239 Elm St, Springfield, IL 60666",
+  firstName: "Cindy",
+  lastName: "Johnson",
+  address: "239 Elm St",
+  city: "Springfield",
+  state: "IL",
+  zip: "60666",
+  email: "cindyisreallycool@example.com",
   phone: "773-998-2664"
 };
 var customer3 = {
-  name: "Ellen Johnson",
-  address: "1548 Overlook Ct, Springfield, IL 60666",
+  firstName: "Ellen",
+  lastName: "Johnson",
+  address: "1548 Overlook Ct",
+  city: "Springfield",
+  state: "IL",
+  zip: "60666",
+  email: "ellen@example.com",
   phone: "773-081-2761"
 };
 var customers = {
@@ -145,15 +160,16 @@ var app = new Vue({
       var results = {};
       for (var key in customers) {
         if (key == query) {
+          //matched id
           results[key] = (customers[key]);
         }
-        else {
-          if (customers[key].phone == query) {
-            results[key] = (customers[key]);
-          }
-          if (customers[key].name.indexOf(query) > -1) {
-            results[key] = (customers[key]);
-          }
+        else if (customers[key].phone == query) {
+          //matched phone -- needs formatting on keyup
+          results[key] = (customers[key]);
+        } 
+        else if ((customers[key].firstName + " " + customers[key].lastName).indexOf(query) > -1) {
+          //partial name match --TODO make case insensitive
+          results[key] = (customers[key]);
         }
       }
       console.log('results');
@@ -164,6 +180,17 @@ var app = new Vue({
       data.isSingle = true;
       data.selected = { id : customers[id] };
       this.$router.push({ name: 'customerView', params: { id: id }});
+    });
+    vm.$on('addCustomer', function(customer, id){
+      console.log("add customer "+id);
+      console.log(customer);
+      customers[id] = customer;
+      data.isNew = false;
+      data.isEdit = false;
+      modal.title = 'New Customer Added';
+      modal.body = "Customer 123457 has been added to the Lackluster Video rental system.";
+      this.$router.app.$emit('viewCustomer',id);
+      //open modal
     });
     vm.$on('searchMovie', function(query){
       var results = {};
@@ -183,7 +210,7 @@ var app = new Vue({
       data.isSingle = true;
       var copies = [];
       //loop over all movie copies
-      console.log('view movies: loop over copies');
+      //console.log('view movies: loop over copies');
       for (var item in items) {
         if (items[item].movie == movies[id]) {
           copies.push({
@@ -215,7 +242,7 @@ router.beforeEach((to, from, next) => {
     data.isNew = true;
     //add conditionals or method later
     data.selected = {
-      "199854" : {
+      "123457" : {
         name: "",
         address: "",
         phone: ""
