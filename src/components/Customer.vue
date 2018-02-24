@@ -13,17 +13,17 @@
       <!--maybe can combine-->
       <form v-for="(customer, id) in data.selected" v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
         <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : firstNameError }" v-on:focus="clearFirstError" v-model="customer.firstName">
+            <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.customerFirstName }" v-on:focus="clearError('customerFirstName')" v-model="customer.firstName">
         </div>
         <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : lastNameError }" v-on:focus="clearLastError" v-model="customer.lastName">
+            <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.customerLastName }" v-on:focus="clearError('customerLastName')" v-model="customer.lastName">
         </div>
         <div class="uk-width-1-1">
-            <input class="uk-input" type="text" name="customerAddress" v-bind:class="{ 'uk-form-danger' : addressError }" placeholder="Address Line" v-on:focus="clearAddressError" v-model="customer.address">
+            <input class="uk-input" type="text" name="customerAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.customerAddress }" v-on:focus="clearError('customerAddress')"v-model="customer.address">
         </div>
         <!--City/State/ZIP: assume all local addresses-->
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="customerCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : cityError }" v-on:focus="clearCityError" v-model="customer.city">
+          <input class="uk-input" type="text" name="customerCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.customerCity }" v-on:focus="clearError('customerCity')" v-model="customer.city">
         </div>
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
           <select class="uk-select" id="form-stacked-select">
@@ -81,25 +81,25 @@
           </select>
         </div>
         <div class="uk-width-1-2 uk-width-1-4@s">
-          <input class="uk-input" type="text" name="customerZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : zipError }" v-on:focus="clearZipError" v-model="customer.zip"> 
+          <input class="uk-input" type="text" name="customerZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.customerZip }" v-on:focus="clearError('customerZip')" v-model="customer.zip"> 
         </div>
         <!--change to multiple fields for US numbers and an alternate for int'l?-->
         <div class="uk-width-1-1">
             <!--add label-->
-            <input class="uk-input" type="text" name="customerPhone" placeholder="800-588-2300" v-model="customer.phone" v-on:keyup="formatPhone" v-on:focus="clearPhoneError" v-bind:class="{ 'uk-form-danger' : phoneError }">
+            <input class="uk-input" type="text" name="customerPhone" placeholder="800-588-2300" v-model="customer.phone" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.customerPhone }" v-on:focus="clearError('customerPhone')">
             <!--add help text-->
-            <span v-if="phoneError" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
+            <span v-if="errors.customerPhone" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
         </div>
         <div class="uk-width-1-1">
-            <input class="uk-input" type="text" name="customerEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : emailError }" v-on:focus="clearEmailError" v-model="customer.email">
-            <span v-if="emailError" class="uk-text-small uk-text-danger">please enter a valid email address</span>
+            <input class="uk-input" type="text" name="customerEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : errors.customerEmail }" v-on:focus="clearError('customerEmail')" v-model="customer.email">
+            <span v-if="errors.customerEmail" class="uk-text-small uk-text-danger">please enter a valid email address</span>
         </div>
         <div class="uk-width-1-1">
           <label><input class="uk-checkbox" type="checkbox" name="customerNewsletter" checked> Add to Mailing List</label>
         </div>
         <div class="uk-width-1-1">
           <button class="uk-button uk-button-primary">Save</button>
-          <button class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit">Cancel</button>
+          <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit" v-if="data.isNew == false">Cancel</span>
         </div>
       </form>
       <div v-else style="position: relative">
@@ -148,13 +148,15 @@
     data() {
       return {
         customerToEdit: null,
-        firstNameError: false,
-        lastNameError: false,
-        addressError: false,
-        cityError: false,
-        zipError: false,
-        phoneError: false,
-        emailError: false
+        errors: {
+          customerFirstName: false,
+          customerLastName: false,
+          customerAddress: false,
+          customerCity: false,
+          customerZip: false,
+          customerPhone: false,
+          customerEmail: false
+        }
       }
     },
     methods: {
@@ -166,6 +168,7 @@
         this.$router.app.$emit('viewCustomer',id);
       },
       editForm(id) {
+        this.cancelEdit();
         this.customerToEdit = id;
         this.$router.app.$emit('editCustomer',id);
       },
@@ -200,27 +203,8 @@
           } 
         }
       },
-      clearFirstError() {
-        //all of these clear fns should be one with param for elem
-        this.firstNameError = false;
-      },
-      clearLastError() {
-        this.lastNameError = false;
-      },
-      clearAddressError() {
-        this.addressError = false;
-      },
-      clearCityError() {
-        this.cityError = false;
-      },
-      clearZipError() {
-        this.zipError = false;
-      },
-      clearPhoneError() {
-        this.phoneError = false;
-      },
-      clearEmailError() {
-        this.emailError = false;
+      clearError(input) {
+        this.errors[input] = false;
       },
       handleSubmit() {
         //check text inputs for content
@@ -240,21 +224,11 @@
           hasError = true;
         };
         //check for missing inputs
-        if (document.querySelector("input[name=customerFirstName]").value.length < 1) {
-          this.firstNameError = true;
-          hasError = true;
-        }
-        if (document.querySelector("input[name=customerLastName]").value.length < 1) {
-          this.lastNameError = true;
-        }
-        if (document.querySelector("input[name=customerAddress]").value.length < 1) {
-          this.addressError = true;
-        }
-        if (document.querySelector("input[name=customerCity]").value.length < 1) {
-          this.cityError = true;
-        }
-        if (document.querySelector("input[name=customerZip]").value.length < 1) {
-          this.zipError = true;
+        for (var input in this.errors) {
+          if (document.querySelector("input[name="+input+"]").value.length < 1) {
+            this.errors[input] = true;
+            hasError = true;
+          }
         }
         if (hasError) {
           //show error messages
@@ -270,10 +244,19 @@
             email: document.querySelector("input[name=customerEmail]").value,
             phone: document.querySelector("input[name=customerPhone]").value
           }
-          this.$router.app.$emit('addCustomer', newCustomer);
+          if (this.customerToEdit == null) {
+            this.$router.app.$emit('addCustomer', newCustomer);
+          }
+          else {
+            this.$router.app.$emit('editCustomer', this.customerToEdit);
+          }
         }
       },
       cancelEdit() {
+        //get rid of any error highlighting
+        for (var input in this.errors) {
+          this.errors[input] = false;
+        }
         this.$router.app.$emit('cancelEdit');
         this.$router.app.$emit('viewCustomer', this.customerToEdit);
       }
