@@ -19,7 +19,7 @@
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="movieYear" placeholder="2018" v-bind:class="{ 'uk-form-danger' : errors.movieYear }" v-on:focus="clearError('movieYear')" v-model="movie.year">
         </div>
-        <div class="uk-width-1-1@s uk-margin">
+        <div class="uk-width-1-1@s uk-margin" v-if="data.isNew == false">
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <!--show all existing elements with delete icon-->
           <ul class="uk-list uk-list-divider uk-text-small" id="stockList">
@@ -84,7 +84,8 @@
         availableMovies: 0,
         movieToView: null,
         errors: {
-          movieTitle: false
+          movieTitle: false,
+          movieYear: false
         }
       }
     }, 
@@ -125,6 +126,7 @@
         var hasError = false;
         //check for missing inputs
         for (var input in this.errors) {
+          console.log(document.querySelector("input[name="+input+"]"))
           if (document.querySelector("input[name="+input+"]").value.length < 1) {
             this.errors[input] = true;
             hasError = true;
@@ -137,7 +139,8 @@
           var newMovie = {
             title: document.querySelector("input[name=movieTitle]").value,
             year: document.querySelector("input[name=movieYear]").value,
-            copies: null
+            copies: null,
+            noStock: true
           }
           //loop over copies
           if (this.$router.app.data.isNew) {

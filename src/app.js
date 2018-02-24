@@ -249,34 +249,26 @@ var app = new Vue({
       data.selected[id].copies = copies;
       this.$router.push({ name: 'movieView', params: { id: id }});
     });
-    vm.$on('addMovie', function(movie){
+    vm.$on('addMovie', function(movie) {
       movies[data.nextId.movie] = movie;
       data.isNew = false;
       data.isEdit = false;
       this.$router.app.$emit('viewMovie', data.nextId.movie);
-      //update items
-      for (var key in data.selected) {
-        for (var item in data.selected[key].copies) {
-          if (item.inStock === null) {
-            items[item].pop();
-          }
-          else if (!movies[key].copies.includes(item)) {
-            items[item] = {
-              movie: movies[key],
-              inStock: true
-            };
-          }
-        }
-      }
       //open modal?
       data.nextId.movie++;
     });
     vm.$on('addCopy', function(item){
+      console.log(item);
       for (var key in data.selected) {
+        console.log(data.selected[key].copies);
         data.selected[key].copies.push({
           id: item,
           inStock: true,
         });
+        items[item] = {
+          movie: movies[key],
+          inStock: true
+        };
       }
     });
     vm.$on('editMovie', function(id){
@@ -286,13 +278,16 @@ var app = new Vue({
       this.$router.push({ name: 'movieEdit', params: { id: id }});
     });
     vm.$on('updateMovie', function(id){
-      /*data.isEdit = false;
-      data.selected = {};
-      data.selected[id] = customers[id];
-      this.$router.push({ name: 'customerView', params: { id: id }});
-      */
       data.isEdit = false;
       movies[id] = data.selected[id];
+      //update items
+      for (var key in data.selected) {
+        for (var item in data.selected[key].copies) {
+          if (item.inStock === null) {
+            items[item.id].pop();
+          }   
+        }
+      }
       this.$router.push({ name: 'movieView', params: { id: id }});
     });
   }
@@ -317,7 +312,9 @@ router.beforeEach((to, from, next) => {
       data.selected[data.nextId.customer] = {};
     }
     else if (to.fullPath[1] == 'm') {
-      data.selected[data.nextId.movie] = {};
+      data.selected[data.nextId.movie] = {
+        copies: []
+      };
     }
     else {
       //data.selected[data.nextId.rental] = {};
