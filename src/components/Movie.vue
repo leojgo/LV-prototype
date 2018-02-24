@@ -1,56 +1,41 @@
 <template>
   <div class="uk-section">
     <div v-if="data.isSingle">
-      <!--single customer view-->
+      <!--single movie view-->
       <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Create Movie Title</h1>
-      <h1 v-else class="uk-text-large" style="position: relative">View Movie Title 
+      <h1 v-else class="uk-text-large" style="position: relative">Movie Title
         <ul class="uk-iconnav uk-position-top-right">
-          <li v-if="data.isEdit"><a href="#" uk-icon="icon: close"></a></li>
-          <li v-if="data.isEdit == false"><a href="#" uk-icon="icon: pencil"></a></li>
+          <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><a href="#" uk-icon="close" v-on:click="cancelEdit"></a></li>
+          <li v-bind:class="{'uk-hidden' : data.isEdit}"><a href="#" uk-icon="pencil" v-on:click="editForm($route.params.id)"></a></li>
           <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"></a></li>
         </ul>
       </h1> 
-      <div v-if="data.isEdit" lass="uk-form" uk-grid>
-        <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" placeholder="John" :value="data.selected.name">
-        </div>
-        <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" placeholder="Smith" :value="data.selected.name">
-        </div>
+      <!--maybe can combine-->
+      <form v-for="(movie, id) in data.selected" v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
+        <span class="uk-text-small">ISBN: {{ id }}</span><br />
         <div class="uk-width-1-1">
-            <input class="uk-input" type="text" placeholder="Address Line">
-        </div>
-        <!--City/State: assume all local addresses-->
-        <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" placeholder="City">
+          <input class="uk-input" type="text" name="movieTitle" placeholder="Movie Title" v-bind:class="{ 'uk-form-danger' : errors.movieTitle }" v-on:focus="clearError('movieTitle')" v-model="movie.title">
         </div>
         <div class="uk-width-1-2@s">
-          <div class="uk-form-controls">
-            <select class="uk-select" id="form-stacked-select">
-                <option>Alabama</option>
-                <option>Alaska</option>
-                <option>Illinois</option>
-                <option>Wisconsin</option>
-            </select>
-          </div>
+          <input class="uk-input" type="text" name="movieYear" placeholder="2018" v-bind:class="{ 'uk-form-danger' : errors.movieYear }" v-on:focus="clearError('movieYear')" v-model="movie.year">
         </div>
-        <!--change to multiple fields for US numbers and an alternate for int'l?-->
-        <div class="uk-width-1-1">
-            <!--add label-->
-            <input class="uk-input" type="text" placeholder="800-588-2300">
-            <!--add help text-->
-        </div>
-        <div class="uk-width-1-1">
-            <input class="uk-input" type="text" placeholder="you@example.com">
-        </div>
-        <div class="uk-width-1-1">
-          <label><input class="uk-checkbox" type="checkbox" checked> Add to Mailing List</label>
+        <div class="uk-width-1-1@s uk-margin">
+          <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
+          <!--show all existing elements with delete icon-->
+          <ul class="uk-list uk-list-divider uk-text-small" id="stockList">
+            <li v-for="copy in movie.copies" v-if="copy.inStock" class="uk-position-relative">{{ copy.id }} <!--<span class="uk-label uk-label-success uk-text-small uk-position-top-right uk-margin-small-top">Available</span>--></li>
+            <li v-for="copy in movie.copies" v-if="copy.inStock == false" class="uk-text-muted uk-position-relative">{{ copy.id }} <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Rented</span></li>
+            <div class="uk-inline uk-margin uk-width-1-1">
+              <input class="uk-input" type="text" name="addCopy" placeholder="9929398450" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToCopies"></a>
+            </div>
+            <label class="uk-form-label" for="addCopy">Enter ID and click the "+" button to add a copy</label>
+          </ul>
         </div>
         <div class="uk-width-1-1">
           <button class="uk-button uk-button-primary">Save</button>
-          <button class="uk-button uk-button-default uk-margin-left">Cancel</button>
+          <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit" v-if="data.isNew == false">Cancel</span>
         </div>
-      </div>
+      </form>
       <div v-else>
         <div v-for="(movie, id) in data.selected" class="uk-position-relative">
           <span v-if="movie.noStock" class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Out of Stock</span>
@@ -97,7 +82,10 @@
     data() {
       return {
         availableMovies: 0,
-        movieToView: null
+        movieToView: null,
+        errors: {
+          movieTitle: false
+        }
       }
     }, 
     methods: {
@@ -108,22 +96,81 @@
       },
       view(id) {
         this.movieToView = id;
+        console.log('view '+this.movieToView);
         this.$router.app.$emit('viewMovie', id);
       },
+      editForm(id) {
+        //this.cancelEdit();
+        this.movieToEdit = id;
+        this.$router.app.$emit('cancelEdit');
+        this.$router.app.$emit('editMovie',id);
+      },
+      clearError(input) {
+        this.errors[input] = false;
+      },
+      addToCopies() {
+        var copy = document.querySelector("input[name=addCopy]");
+        //validate input data
+        var copyId = copy.value.replace(/\D/g,'');
+        if (copyId.length == 10) {
+          this.$router.app.$emit('addCopy',copyId);
+        }
+        else {
+          this.errors.addCopy = true;
+        }
+      },
+      handleSubmit() {
+        //check text inputs for content
+        //check for valid phone
+        var hasError = false;
+        //check for missing inputs
+        for (var input in this.errors) {
+          if (document.querySelector("input[name="+input+"]").value.length < 1) {
+            this.errors[input] = true;
+            hasError = true;
+          }
+        }
+        if (hasError) {
+          //show error messages
+        }
+        else {
+          var newMovie = {
+            title: document.querySelector("input[name=movieTitle]").value,
+            year: document.querySelector("input[name=movieYear]").value,
+            copies: null
+          }
+          //loop over copies
+          if (this.$router.app.data.isNew) {
+            this.$router.app.$emit('addMovie', newMovie);
+          }
+          else {
+            this.$router.app.$emit('updateMovie', this.movieToEdit);
+          }
+        }
+      },
+      cancelEdit() {
+        //get rid of any error highlighting
+        for (var input in this.errors) {
+          this.errors[input] = false;
+        }
+        //reset to initial values
+        this.$router.app.$emit('cancelEdit');
+        this.$router.app.$emit('viewMovie', this.movieToEdit);
+      }
     },
     computed: {
       stockCount: function() {
         //var availableMovies = 0;
         //$route.params.id
         var id = this.movieToView;
-        console.log(id);
+        var totalAvailable = 0;
         for (var i = 0; i< this.$router.app.data.selected[id].copies.length; i++) {
           console.log(this.$router.app.data.selected[id].copies[i].inStock);
           if (this.$router.app.data.selected[id].copies[i].inStock == true) {
-            this.availableMovies++;
+            totalAvailable++;
           }
         }
-        return this.availableMovies;
+        return totalAvailable;
       }
     }
   }

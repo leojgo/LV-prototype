@@ -72,6 +72,7 @@ var movies = {
   "123456788" : movie2,
   "123456787" : movie3
 };
+var lastMovie = 123456789;
 var items = {
   "9929398448" : {
     movie : movies["123456789"], //0
@@ -104,6 +105,7 @@ var items = {
     inStock : false,
   }
 };
+var lastItem = 9929398449;
 var data = {
   company: 'Lackluster Video', //company name
   isAuthenticated: false, //auth flag
@@ -118,6 +120,11 @@ var data = {
   isEdit: false, //edit state flag
   isNew: false, //add state flag
   selected: null, //item to view or edit
+  nextId: {
+    customer: lastCustomer+1,
+    movie: lastMovie+1,
+    copy: lastItem+1
+  },
   modal: null //modal dialog obj
 };
 var app = new Vue({
@@ -184,6 +191,16 @@ var app = new Vue({
       data.selected[id] = customers[id];
       this.$router.push({ name: 'customerView', params: { id: id }});
     });
+    vm.$on('addCustomer', function(customer){
+      customers[data.nextId.customer] = customer;
+      data.isNew = false;
+      data.isEdit = false;
+      modal.title = 'New Customer Added';
+      modal.body = "Customer" + data.nextId.customer + "has been added to the Lackluster Video rental system.";
+      this.$router.app.$emit('viewCustomer', data.nextId.customer);
+      data.nextId.customer++;
+      //open modal?
+    });
     vm.$on('editCustomer', function(id){
       data.isEdit = true;
       data.selected = {};
@@ -195,15 +212,6 @@ var app = new Vue({
       data.selected = {};
       data.selected[id] = customers[id];
       this.$router.push({ name: 'customerView', params: { id: id }});
-    });
-    vm.$on('addCustomer', function(customer){
-      customers[lastCustomer] = customer;
-      data.isNew = false;
-      data.isEdit = false;
-      modal.title = 'New Customer Added';
-      modal.body = "Customer" + lastCustomer + "has been added to the Lackluster Video rental system.";
-      this.$router.app.$emit('viewCustomer',lastCustomer);
-      //open modal?
     });
     vm.$on('searchMovie', function(query){
       var results = {};
@@ -230,10 +238,61 @@ var app = new Vue({
           });
         }
       }
-      console.log(movies[id]);
-      movies[id].copies = copies;
+      //console.log(movies[id]);
       data.selected = {};
       data.selected[id] = movies[id];
+      for (var key in data.selected[id]) {
+        console.log(key);
+        //data.selected[id][key].copies = copies;
+      }
+      //console.log(data.selected[id].copies);
+      data.selected[id].copies = copies;
+      this.$router.push({ name: 'movieView', params: { id: id }});
+    });
+    vm.$on('addMovie', function(movie){
+      movies[data.nextId.movie] = movie;
+      data.isNew = false;
+      data.isEdit = false;
+      this.$router.app.$emit('viewMovie', data.nextId.movie);
+      //update items
+      for (var key in data.selected) {
+        for (var item in data.selected[key].copies) {
+          if (item.inStock === null) {
+            items[item].pop();
+          }
+          else if (!movies[key].copies.includes(item)) {
+            items[item] = {
+              movie: movies[key],
+              inStock: true
+            };
+          }
+        }
+      }
+      //open modal?
+      data.nextId.movie++;
+    });
+    vm.$on('addCopy', function(item){
+      for (var key in data.selected) {
+        data.selected[key].copies.push({
+          id: item,
+          inStock: true,
+        });
+      }
+    });
+    vm.$on('editMovie', function(id){
+      data.isEdit = true;
+      data.selected = {};
+      data.selected[id] = movies[id];
+      this.$router.push({ name: 'movieEdit', params: { id: id }});
+    });
+    vm.$on('updateMovie', function(id){
+      /*data.isEdit = false;
+      data.selected = {};
+      data.selected[id] = customers[id];
+      this.$router.push({ name: 'customerView', params: { id: id }});
+      */
+      data.isEdit = false;
+      movies[id] = data.selected[id];
       this.$router.push({ name: 'movieView', params: { id: id }});
     });
   }
@@ -253,8 +312,16 @@ router.beforeEach((to, from, next) => {
     data.isEdit = true;
     data.isNew = true;
     data.selected = {};
-    lastCustomer++;
-    data.selected[lastCustomer] = {};
+    //probably better as a switch
+    if (to.fullPath[1] == 'c') {
+      data.selected[data.nextId.customer] = {};
+    }
+    else if (to.fullPath[1] == 'm') {
+      data.selected[data.nextId.movie] = {};
+    }
+    else {
+      //data.selected[data.nextId.rental] = {};
+    }
   }
   else {
     //

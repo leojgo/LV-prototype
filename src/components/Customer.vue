@@ -223,6 +223,11 @@
           this.emailError = true;
           hasError = true;
         };
+        //validate zip
+        var zip = document.querySelector("input[name=customerZip]");
+        if (zip.value.replace(/\D/g,'') != zip.value || zip.value.length > 5) {
+          this.zipError = true;
+        }
         //check for missing inputs
         for (var input in this.errors) {
           if (document.querySelector("input[name="+input+"]").value.length < 1) {
@@ -257,6 +262,7 @@
         for (var input in this.errors) {
           this.errors[input] = false;
         }
+        //TODO reset to inital values
         this.$router.app.$emit('cancelEdit');
         this.$router.app.$emit('viewCustomer', this.customerToEdit);
       }

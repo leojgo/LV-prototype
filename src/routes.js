@@ -56,6 +56,11 @@ export default new Router({
       component: Movie
     },
     {
+      path: '/movies/:id/edit',
+      name: 'movieEdit',
+      component: Movie
+    },
+    {
       path: '/reports',
       name: 'report',
       component: Home
