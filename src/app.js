@@ -190,6 +190,12 @@ var app = new Vue({
       data.selected[id] = customers[id];
       this.$router.push({ name: 'customerEdit', params: { id: id }});
     });
+    vm.$on('updateCustomer', function(id){
+      data.isEdit = false;
+      data.selected = {};
+      data.selected[id] = customers[id];
+      this.$router.push({ name: 'customerView', params: { id: id }});
+    });
     vm.$on('addCustomer', function(customer){
       customers[lastCustomer] = customer;
       data.isNew = false;

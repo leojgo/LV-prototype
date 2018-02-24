@@ -244,11 +244,11 @@
             email: document.querySelector("input[name=customerEmail]").value,
             phone: document.querySelector("input[name=customerPhone]").value
           }
-          if (this.customerToEdit == null) {
+          if (this.$router.app.data.isNew) {
             this.$router.app.$emit('addCustomer', newCustomer);
           }
           else {
-            this.$router.app.$emit('editCustomer', this.customerToEdit);
+            this.$router.app.$emit('updateCustomer', this.customerToEdit);
           }
         }
       },
