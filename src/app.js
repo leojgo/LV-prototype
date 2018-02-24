@@ -48,6 +48,7 @@ var customers = {
   "123456" : customer2,
   "023490" : customer3
 };
+var lastCustomer = 123456;
 var movie1 = {
   title: "Blade Runner",
   year: "1982",
@@ -156,6 +157,9 @@ var app = new Vue({
       console.log('clear ' + property);
       data[property] = null;
     });
+    vm.$on('cancelEdit', function(){
+      data.isEdit = false;
+    });
     vm.$on('searchCustomer', function(query){
       var results = {};
       for (var key in customers) {
@@ -172,25 +176,28 @@ var app = new Vue({
           results[key] = (customers[key]);
         }
       }
-      console.log('results');
-      console.log(results);
       data.customers = results;
     });
     vm.$on('viewCustomer', function(id){
       data.isSingle = true;
-      data.selected = { id : customers[id] };
+      data.selected = {};
+      data.selected[id] = customers[id];
       this.$router.push({ name: 'customerView', params: { id: id }});
     });
-    vm.$on('addCustomer', function(customer, id){
-      console.log("add customer "+id);
-      console.log(customer);
-      customers[id] = customer;
+    vm.$on('editCustomer', function(id){
+      data.isEdit = true;
+      data.selected = {};
+      data.selected[id] = customers[id];
+      this.$router.push({ name: 'customerEdit', params: { id: id }});
+    });
+    vm.$on('addCustomer', function(customer){
+      customers[lastCustomer] = customer;
       data.isNew = false;
       data.isEdit = false;
       modal.title = 'New Customer Added';
-      modal.body = "Customer 123457 has been added to the Lackluster Video rental system.";
-      this.$router.app.$emit('viewCustomer',id);
-      //open modal
+      modal.body = "Customer" + lastCustomer + "has been added to the Lackluster Video rental system.";
+      this.$router.app.$emit('viewCustomer',lastCustomer);
+      //open modal?
     });
     vm.$on('searchMovie', function(query){
       var results = {};
@@ -202,8 +209,6 @@ var app = new Vue({
           results[key] = (movies[key]);
         }
       }
-      console.log('results');
-      console.log(results);
       data.movies = results;
     });
     vm.$on('viewMovie', function(id){
@@ -219,9 +224,10 @@ var app = new Vue({
           });
         }
       }
+      console.log(movies[id]);
       movies[id].copies = copies;
-      data.selected = { id : movies[id] };
-      console.log(data.selected);
+      data.selected = {};
+      data.selected[id] = movies[id];
       this.$router.push({ name: 'movieView', params: { id: id }});
     });
   }
@@ -240,14 +246,9 @@ router.beforeEach((to, from, next) => {
     data.isView = false;
     data.isEdit = true;
     data.isNew = true;
-    //add conditionals or method later
-    data.selected = {
-      "123457" : {
-        name: "",
-        address: "",
-        phone: ""
-      }
-    };
+    data.selected = {};
+    lastCustomer++;
+    data.selected[lastCustomer] = {};
   }
   else {
     //

@@ -94,6 +94,12 @@
   export default {
     name: 'movie',
     props: ['data'],
+    data() {
+      return {
+        availableMovies: 0,
+        movieToView: null
+      }
+    }, 
     methods: {
       search() {
         console.log("emit search");
@@ -101,19 +107,23 @@
         this.$router.app.$emit('searchMovie', query);
       },
       view(id) {
+        this.movieToView = id;
         this.$router.app.$emit('viewMovie', id);
       },
     },
     computed: {
       stockCount: function() {
-        var availableMovies = 0;
-        for (var i = 0; i< this.$router.app.data.selected['id'].copies.length; i++) {
-          console.log(this.$router.app.data.selected['id'].copies[i].inStock);
-          if (this.$router.app.data.selected['id'].copies[i].inStock == true) {
-            availableMovies++;
+        //var availableMovies = 0;
+        //$route.params.id
+        var id = this.movieToView;
+        console.log(id);
+        for (var i = 0; i< this.$router.app.data.selected[id].copies.length; i++) {
+          console.log(this.$router.app.data.selected[id].copies[i].inStock);
+          if (this.$router.app.data.selected[id].copies[i].inStock == true) {
+            this.availableMovies++;
           }
         }
-        return availableMovies;
+        return this.availableMovies;
       }
     }
   }

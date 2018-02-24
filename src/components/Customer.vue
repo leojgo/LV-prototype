@@ -3,27 +3,27 @@
     <div v-if="data.isSingle">
       <!--single customer view-->
       <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Create Customer Account</h1>
-      <h1 v-else class="uk-text-large" style="position: relative">Customer Account 
+      <h1 v-else class="uk-text-large  uk-text-muted uk-position-relative">Customer Account 
         <ul class="uk-iconnav uk-position-top-right">
-          <li v-if="data.isEdit"><a href="#" uk-icon="icon: close"></a></li>
-          <li v-if="data.isEdit == false"><a href="#" uk-icon="icon: pencil"></a></li>
+          <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><a href="#" uk-icon="close" v-on:click="cancelEdit"></a></li>
+          <li v-bind:class="{'uk-hidden' : data.isEdit}"><a href="#" uk-icon="pencil" v-on:click="editForm($route.params.id)"></a></li>
           <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"></a></li>
         </ul>
       </h1> 
       <!--maybe can combine-->
-      <form v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
+      <form v-for="(customer, id) in data.selected" v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
         <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : firstNameError }" v-on:focus="clearFirstError" v-model="data.selected.firstName">
+            <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : firstNameError }" v-on:focus="clearFirstError" v-model="customer.firstName">
         </div>
         <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : lastNameError }" v-on:focus="clearLastError" v-model="data.selected.lastName">
+            <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : lastNameError }" v-on:focus="clearLastError" v-model="customer.lastName">
         </div>
         <div class="uk-width-1-1">
-            <input class="uk-input" type="text" name="customerAddress" v-bind:class="{ 'uk-form-danger' : addressError }" placeholder="Address Line" v-on:focus="clearAddressError" :v-model="data.selected.address">
+            <input class="uk-input" type="text" name="customerAddress" v-bind:class="{ 'uk-form-danger' : addressError }" placeholder="Address Line" v-on:focus="clearAddressError" v-model="customer.address">
         </div>
         <!--City/State/ZIP: assume all local addresses-->
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="customerCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : cityError }" v-on:focus="clearCityError" v-model="data.selected.city">
+          <input class="uk-input" type="text" name="customerCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : cityError }" v-on:focus="clearCityError" v-model="customer.city">
         </div>
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
           <select class="uk-select" id="form-stacked-select">
@@ -81,17 +81,17 @@
           </select>
         </div>
         <div class="uk-width-1-2 uk-width-1-4@s">
-          <input class="uk-input" type="text" name="customerZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : zipError }" v-on:focus="clearZipError" v-model="data.selected.zip"> 
+          <input class="uk-input" type="text" name="customerZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : zipError }" v-on:focus="clearZipError" v-model="customer.zip"> 
         </div>
         <!--change to multiple fields for US numbers and an alternate for int'l?-->
         <div class="uk-width-1-1">
             <!--add label-->
-            <input class="uk-input" type="text" name="customerPhone" placeholder="800-588-2300" v-model="data.selected.phone" v-on:keyup="formatPhone" v-on:focus="clearPhoneError" v-bind:class="{ 'uk-form-danger' : phoneError }">
+            <input class="uk-input" type="text" name="customerPhone" placeholder="800-588-2300" v-model="customer.phone" v-on:keyup="formatPhone" v-on:focus="clearPhoneError" v-bind:class="{ 'uk-form-danger' : phoneError }">
             <!--add help text-->
             <span v-if="phoneError" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
         </div>
         <div class="uk-width-1-1">
-            <input class="uk-input" type="text" name="customerEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : emailError }" v-on:focus="clearEmailError" v-model="data.selected.email">
+            <input class="uk-input" type="text" name="customerEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : emailError }" v-on:focus="clearEmailError" v-model="customer.email">
             <span v-if="emailError" class="uk-text-small uk-text-danger">please enter a valid email address</span>
         </div>
         <div class="uk-width-1-1">
@@ -99,7 +99,7 @@
         </div>
         <div class="uk-width-1-1">
           <button class="uk-button uk-button-primary">Save</button>
-          <button class="uk-button uk-button-default uk-margin-left">Cancel</button>
+          <button class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit">Cancel</button>
         </div>
       </form>
       <div v-else style="position: relative">
@@ -107,7 +107,7 @@
         <div v-for="(customer, id) in data.selected" style="position: relative">
           <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ $route.params.id }}</span>
           <strong>{{ customer.firstName }} {{ customer.lastName }}</strong><br />
-          <span class="uk-text-small">{{ customer.address }}, {{ customer.City }}, {{ customer.state }} {{ customer.zip }} <br />{{ customer.phone }}</span>
+          <span class="uk-text-small">{{ customer.address }}, {{ customer.city }}, {{ customer.state }} {{ customer.zip }} <br />{{ customer.phone }}</span>
         </div>
         <hr />
         <button class="uk-button uk-button-default">View Rental History</button>
@@ -133,7 +133,7 @@
           <li v-for="(customer, id) in data.customers" style="position: relative" v-on:click="view(id)">
             <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ id }}</span>
             <strong>{{ customer.firstName }} {{ customer.lastName }}</strong><br />
-            <span class="uk-text-small">{{ customer.address }}, {{ customer.City }}, {{ customer.state }} {{ customer.zip }}<br />{{ customer.phone }}</span>
+            <span class="uk-text-small">{{ customer.address }}, {{ customer.city }}, {{ customer.state }} {{ customer.zip }}<br />{{ customer.phone }}</span>
           </li>
         </ul>
       </div>
@@ -147,6 +147,7 @@
     props: ['data'],
     data() {
       return {
+        customerToEdit: null,
         firstNameError: false,
         lastNameError: false,
         addressError: false,
@@ -164,8 +165,9 @@
       view(id) {
         this.$router.app.$emit('viewCustomer',id);
       },
-      addForm(event) {
-        //load form with blank data
+      editForm(id) {
+        this.customerToEdit = id;
+        this.$router.app.$emit('editCustomer',id);
       },
       formatPhone(event) {
         //ideally we'd move this to a library function and load library in all components
@@ -268,8 +270,12 @@
             email: document.querySelector("input[name=customerEmail]").value,
             phone: document.querySelector("input[name=customerPhone]").value
           }
-          this.$router.app.$emit('addCustomer', newCustomer, "123457");
+          this.$router.app.$emit('addCustomer', newCustomer);
         }
+      },
+      cancelEdit() {
+        this.$router.app.$emit('cancelEdit');
+        this.$router.app.$emit('viewCustomer', this.customerToEdit);
       }
     }
   }
