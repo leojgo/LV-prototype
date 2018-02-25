@@ -2,9 +2,10 @@
   <div class="uk-section">
     <!--single customer view-->
     <div v-if="$route.params.id == 'new'" v-for="(rental, id) in data.selected">
-      <h1 class="uk-text-large uk-text-muted">New Rental</h1>
+      <h1 class="uk-text-large uk-text-muted" v-if="data.isEdit">New Rental</h1>
+      <h1 class="uk-text-large uk-text-muted" v-else>New Rental Confirmation</h1>
       <!--{{ rental }}-->
-      <div class="uk-form uk-padding" uk-grid @submit.prevent="handleSubmit">
+      <div class="uk-form uk-padding" uk-grid v-if="data.isEdit">
         <ul uk-accordion="multiple: true; collapsible:false" v-if="data.isNew" class="uk-width-1-1" id="newRental">
           <li class="uk-open" id="rentalCustomer">
             <a class="uk-accordion-title" href="#">
@@ -52,31 +53,61 @@
             <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.paymentType}">3</span> Payment</a>
             <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
               <div uk-grid>
-              <div class="uk-width-1-2@s uk-form-controls">
-                <select class="uk-select" id="form-stacked-select" v-on:change="changePayment">
-                  <option disabled selected>Select Payment Type</option>
-                  <option value="0">Cash Payment</option>
-                  <option value="1" >Credit Card</option>
-                  <option value="2" >Debit Card</option>
-                </select>
+                <div class="uk-width-1-2@">
+                  Rental Fee: ${{ rentalFee }}<br />
+                  Outstanding Late Fee: ${{ lateFee }}<br />
+                  Total Fee: ${{ totalFee }}
+                </div>
+                <div class="uk-width-1-2@s uk-form-controls">
+                  <select class="uk-select" id="form-stacked-select" v-on:change="changePayment">
+                    <option disabled selected>Select Payment Type</option>
+                    <option value="0">Cash Payment</option>
+                    <option value="1" >Credit Card</option>
+                    <option value="2" >Debit Card</option>
+                  </select>
+                </div>
+                <div class="uk-width-1-2@s" v-if="isCard">
+                  <input class="uk-input" type="text" id="cardDigits" name="cardDigits" placeholder="Enter card security code" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-on:keyup="validateDigits">
+                </div>
+                <div class="uk-width-1-1" v-if="isComplete">
+                  <button class="uk-button uk-button-primary" v-on:click="submitNew">Submit</button>
+                </div>
               </div>
-              <div class="uk-width-1-2@s" v-if="isCard">
-                <input class="uk-input" type="text" name="cardDigits" placeholder="Last 4 Digits" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-on:keyup="validateDigits">
-              </div>
-              <div class="uk-width-1-1" v-if="isComplete">
-                <button class="uk-button uk-button-primary">Save</button>
-              </div>
-            </div>
             </div>
           </li>
         </ul>
-        <div>
-          
+      </div>
+      <div v-else>
+        <div v-for="rental in data.selected" >
+          <strong>Confirmation Number</strong>: 9874668792983479<br />
+          <strong>Due date</strong>: {{ dueDate }}<br />
+          <strong>Total Paid</strong>: ${{ totalFee }}<br />
+          <strong>Payment Type</strong>: Credit Card ({{ rental.payment.digits }})
+          <hr />
         </div>
+        <h2 class="uk-heading-divider uk-text-small uk-text-bold">Customer</h2>
+        <div v-for="(customer, id) in rental.customer" class="uk-position-relative">
+          <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-large-right">{{ id }}</span> <strong>{{ customer.firstName }} {{ customer.lastName }}</strong><br />
+          <span class="uk-text-small">{{ customer.address }}, {{ customer.city }}, {{ customer.state }} {{ customer.zip }}<br />{{ customer.phone }}</span>
+        </div>
+        <h2 class="uk-heading-divider uk-text-small uk-text-bold">Items Rented</h2>
+        <ul class="uk-list uk-list-divider">
+          <li v-for="movie in rental.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong></li>
+        </ul>
       </div>
     </div>
     <div v-else-if="$route.params.id == 'return'">
       <h1>Return Rental</h1>
+      <ul uk-accordion="multiple: true; collapsible:false" v-if="data.isNew" class="uk-width-1-1" id="newRental">
+          <li class="uk-open" id="rentalCustomer">
+            <a class="uk-accordion-title" href="#">
+              <span class="uk-label">1</span> Movies
+            </a>
+            <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
+              
+            </div>
+          </li>
+      </ul>
     </div>
     <div v-else>
       <h1>Success</h1>
@@ -98,6 +129,8 @@
         showPaymentButton: false,
         isCard: false,
         hasDigits: false,
+        rentalFee: 0,
+        lateFee: 4,
         errors: {
           addCopy: false,
           addCardDigits: false
@@ -133,6 +166,7 @@
           this.$router.app.$emit('rentalAddMovie', copyId);
           copy.value = "";
           copy.placeholder = "Add another movie...";
+          this.rentalFee += 3;
           if (this.hasMovies && !this.paymentVisible) {
             this.showPaymentButton = true;
           }
@@ -164,7 +198,7 @@
       validateDigits(event) {
         var digits = event.target.value.replace(/\D/g);
         event.target.value = digits;
-        if (digits.length == 4) {
+        if (digits.length == 3) {
           this.hasDigits = true;
           this.hasPayment = true;
         }
@@ -172,6 +206,15 @@
           this.hasDigits = false;
           this.hasPayment = false;
         }
+      },
+      submitNew() {
+        var payment = {};
+        payment.rentalFee = this.rentalFee;
+        payment.totalFee = this.rentalFee + this.lateFee;
+        payment.date = this.dueDate; //should be a date object
+        payment.type = document.getElementById('form-stacked-select').value;
+        payment.digits = document.getElementById('cardDigits').value;
+        this.$router.app.$emit('rentalSubmit', payment); 
       },
       clearError() {
 
@@ -192,6 +235,14 @@
           return false;
         }
         return true;
+      },
+      dueDate: function() {
+        var d = new Date();
+        return (d.getMonth()+1)+ "/" + (d.getDate()+1) + "/" + d.getFullYear();
+        //sim for any date other than last day of month
+      },
+      totalFee: function() {
+        return this.rentalFee + this.lateFee;
       }
     }
   }

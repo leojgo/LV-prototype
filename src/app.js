@@ -342,8 +342,10 @@ var app = new Vue({
       var rentalId = data.nextId.rental;
       data.selected[rentalId].movies = movies;
     });
-    vm.$on('rentalConfirm', function(payment){
+    vm.$on('rentalSubmit', function(payment){
       var rentalId = data.nextId.rental;
+      data.selected[rentalId].payment = payment;
+      data.isEdit = false;
     });
   }
 });
