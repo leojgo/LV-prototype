@@ -317,13 +317,33 @@ var app = new Vue({
       var rentalId = data.nextId.rental;
       data.selected[rentalId].customer = {};
       data.selected[rentalId].customer[customerId] = customers[customerId];
-      //console.log(data.selected);
-      //console.log(customers[customerId]);
-      //console.log(data.selected.customer);
+    });
+    vm.$on('rentalAddMovie', function(id){
+      var rentalId = data.nextId.rental;
+      var movies = data.selected[rentalId].movies;
+      var title = null;
+      data.selected[rentalId].movies = {};
+      for (var key1 in items[id]) {
+        if (key1 == 'movie') {
+          for (var key2 in items[id][key1]) {
+            if (key2 == 'title') {
+              title = items[id][key1][key2];
+            }
+          }
+        }
+      }
+      if (movies === null) {
+        movies = {};
+      }
+      movies[id] = {
+        title: title
+      }
+      data.selected[rentalId].movies = movies;
+      console.log(data.selected[rentalId]);
     });
     vm.$on('rentalMovies', function(movies){
       var rentalId = data.nextId.rental;
-      data.selected[rentalId].movies= movies;
+      data.selected[rentalId].movies = movies;
     });
     vm.$on('rentalConfirm', function(payment){
       var rentalId = data.nextId.rental;

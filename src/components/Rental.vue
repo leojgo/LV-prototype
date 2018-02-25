@@ -1,10 +1,9 @@
 <template>
   <div class="uk-section">
-    <div v-if="data.isSingle">
-      <!--single customer view-->
-      <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">New Rental</h1>
-      <h1 v-else class="uk-text-large  uk-text-muted uk-position-relative">Return Rental</h1> 
-      <!--maybe can combine-->
+    <!--single customer view-->
+    <div v-if="data.isNew" v-for="(rental, id) in data.selected">
+      <h1 class="uk-text-large uk-text-muted">New Rental</h1>
+      {{ rental }}
       <div class="uk-form uk-padding" uk-grid @submit.prevent="handleSubmit">
         <ul uk-accordion="multiple: true" v-if="data.isNew" class="uk-width-1-1" id="newRental">
           <li class="uk-open">
@@ -12,7 +11,7 @@
               <span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.customer}">1</span> Customer
             </a>
             <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
-              <div v-if="customer === null">
+              <div v-if="!hasCustomer">
                 <div class="uk-search uk-search-default uk-width-1-1">
                   <input type="search" placeholder="Enter Customer ID, Name or Phone Number" class="uk-input" id="customerKeyword" name="customerKeyword" v-on:keyup.enter="searchCustomer">  
                   <button v-on:click="searchCustomer" class="uk-search-icon-flip uk-search-icon uk-icon" uk-search-icon></button>
@@ -30,9 +29,8 @@
                   </ul>
                 </div>
               </div>
-              <div v-else v-for="(customer, id) in data.selected.customer" class="uk-position-relative">
-                <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ id }}</span>
-                <strong>{{ customer.firstName }} {{ customer.lastName }}</strong><br />
+              <div v-else v-for="(customer, id) in rental.customer" class="uk-position-relative">
+                <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ id }}</span> <strong>{{ customer.firstName }} {{ customer.lastName }}</strong><br />
                 <span class="uk-text-small">{{ customer.address }}, {{ customer.city }}, {{ customer.state }} {{ customer.zip }}<br />{{ customer.phone }}</span>
               </div>
             </div>
@@ -40,12 +38,13 @@
           <li>
             <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.movies }">2</span> Movies</a>
             <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
-              <div v-if="movies != null" v-for="(movie, id) in data.selected.movies">
-                {{ id }} <strong>{{ movie.title }}</strong>
-              </div>
+              <ul v-if="rental.movies" class="uk-list uk-list-divider">
+                <li v-for="(movie, id) in rental.movies">{{ id }} <strong>{{ movie.title }}</strong></li>
+              </ul>
               <div class="uk-inline uk-margin uk-width-1-1">
                 <input class="uk-input" type="text" name="addCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToCopies"></a>
               </div>
+              <button class="uk-button uk-button-default" v-on:click="openPayment" v-if="hasMovies">Continue to Payment</button>
             </div>
           </li>
           <li>
@@ -53,45 +52,21 @@
             <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
               <div uk-grid>
               <div class="uk-width-1-2@s uk-form-controls">
-                <select class="uk-select" id="form-stacked-select">
+                <select class="uk-select" id="form-stacked-select" v-on:change="changePayment">
+                  <option disabled selected>Select Payment Type</option>
                   <option>Cash Payment</option>
                   <option>Credit Card</option>
                   <option>Debit Card</option>
                 </select>
               </div>
-              <div class="uk-width-1-2@s">
+              <div class="uk-width-1-2@s" v-if="isCard">
                 <input class="uk-input" type="text" name="cardDigits" placeholder="Last 4 Digits" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-model="data.selected.cardDigits">
               </div>
-              <div class="uk-width-1-1">
+              <div class="uk-width-1-1" v-if="isComplete">
                 <button class="uk-button uk-button-primary">Save</button>
-                <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit">Cancel</span>
               </div>
             </div>
             </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div v-else>
-      <!--customer search view-->
-      <label class="uk-form-label uk-text-large uk-text-muted uk-margin uk-display-block" for="customerKeyword">Find a Customer</label>
-      <div class="uk-search uk-search-default uk-width-1-1">
-        <input type="search" placeholder="Enter Customer ID, Name or Phone Number" class="uk-input" id="customerKeyword" name="customerKeyword" v-on:keyup.enter="searchCustomer">  
-        <button v-on:click="searchCustomer" class="uk-search-icon-flip uk-search-icon uk-icon" uk-search-icon></button>
-        <!--<span class="uk-button uk-button-default"  v-on:click="search">Search</span>-->
-      </div>
-      <div v-if="data.customers" class="uk-margin-top">
-        <!--
-        <h1 class="uk-text-large uk-heading-divider">Customer Search Results <strong>{{ data.query }}</strong></h1>
-        -->
-        <hr>
-        <!--loop over results-->
-        <ul class="uk-list uk-list-divider">
-          <!--move style to cutom css-->
-          <li v-for="(customer, id) in data.customers" style="position: relative" v-on:click="view(id)">
-            <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ id }}</span>
-            <strong>{{ customer.firstName }} {{ customer.lastName }}</strong><br />
-            <span class="uk-text-small">{{ customer.address }}, {{ customer.city }}, {{ customer.state }} {{ customer.zip }}<br />{{ customer.phone }}</span>
           </li>
         </ul>
       </div>
@@ -105,12 +80,14 @@
     props: ['data'],
     data() {
       return {
-        customer: null,
-        movies: null,
-        paymentType: null,
-
+        hasCustomer: false,
+        hasMovies: false,
+        hasPayment: false,
+        isCard: false,
+        isComplete: false,
         errors: {
-          addCopy: false
+          addCopy: false,
+          addCardDigits: false
         }
       }
     },
@@ -120,7 +97,7 @@
         this.$router.app.$emit('searchCustomer', query);
       },
       selectCustomer(id) {
-        this.customer = id;
+        this.customer = true;
         this.$router.app.$emit('searchCustomer',id);
         this.$router.app.$emit('rentalCustomer', id);
         UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
@@ -130,17 +107,18 @@
         //validate input data
         var copyId = copy.value.replace(/\D/g,'');
         if (copy.value == copyId && copyId.length == 10) {
-          if (this.movies === null) {
-            this.movies = [copy.value];
-          }
-          else {
-            this.movies.push(copy.value);
-          }
-          //add to rental copies
+          this.hasMovies = true;
+          this.$router.app.$emit('rentalAddMovie', copyId);
         }
         else {
           this.errors.addCopy = true
         }
+      },
+      openPayment() {
+
+      },
+      changePayment() {
+        
       },
       clearError() {
 
