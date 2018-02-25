@@ -23,7 +23,7 @@
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <!--show all existing elements with delete icon-->
           <ul class="uk-list uk-list-divider uk-text-small" id="stockList">
-            <li v-for="copy in movie.copies" v-if="copy.inStock" class="uk-position-relative">{{ copy.id }} <!--<span class="uk-label uk-label-success uk-text-small uk-position-top-right uk-margin-small-top">Available</span>--></li>
+            <li v-for="copy in movie.copies" v-if="copy.inStock" class="uk-position-relative">{{ copy.id }} <span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span></li>
             <li v-for="copy in movie.copies" v-if="copy.inStock == false" class="uk-text-muted uk-position-relative">{{ copy.id }} <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Rented</span></li>
             <div class="uk-inline uk-margin uk-width-1-1">
               <input class="uk-input" type="text" name="addCopy" placeholder="9929398450" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToCopies"></a>
@@ -119,6 +119,9 @@
         else {
           this.errors.addCopy = true;
         }
+      },
+      clearItem() {
+        //TODO
       },
       handleSubmit() {
         //check text inputs for content
