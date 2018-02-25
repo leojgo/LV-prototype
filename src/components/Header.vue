@@ -28,7 +28,7 @@
               <a href="#">Rentals</a>
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
-                      <li><a is="router-link" to="/rentals/new">New Rental</a></li>
+                      <li><a is="router-link" to="/rentals/new" v-on:click.native="clearCustomerSearch">New Rental</a></li>
                       <li><a is="router-link" to="/rentals/return">Return Rental</a></li>
                   </ul>
               </div>
@@ -46,7 +46,7 @@
               <a href="#">Customers</a>
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
-                      <li><a is="router-link" to="/customers/search" v-on:click.native="clearSearch">Search Customers</a></li>
+                      <li><a is="router-link" to="/customers/search" v-on:click.native="clearCustomerSearch">Search Customers</a></li>
                       <li><a is="router-link" to="/customers/new">New Customer</a></li>
                   </ul>
               </div>
@@ -96,7 +96,7 @@
         console.log('emit logout event');
         this.$router.app.$emit('logout');
       },
-      clearSearch() {
+      clearCustomerSearch() {
         console.log('emit clear on search');
         this.$router.app.$emit('clear', 'customers');
       }

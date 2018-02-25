@@ -1,7 +1,7 @@
 <template>
   <div class="uk-section">
     <!--single customer view-->
-    <div v-if="data.isNew" v-for="(rental, id) in data.selected">
+    <div v-if="$route.params.id == 'new'" v-for="(rental, id) in data.selected">
       <h1 class="uk-text-large uk-text-muted">New Rental</h1>
       <!--{{ rental }}-->
       <div class="uk-form uk-padding" uk-grid @submit.prevent="handleSubmit">
@@ -70,7 +70,16 @@
             </div>
           </li>
         </ul>
+        <div>
+          
+        </div>
       </div>
+    </div>
+    <div v-else-if="$route.params.id == 'return'">
+      <h1>Return Rental</h1>
+    </div>
+    <div v-else>
+      <h1>Success</h1>
     </div>
   </div>
 </template>

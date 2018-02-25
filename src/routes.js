@@ -17,8 +17,8 @@ export default new Router({
       component: Home
     },
     {
-      path: '/rentals/new',
-      name: 'newRental',
+      path: '/rentals/:id',
+      name: 'rental',
       component: Rental
     },
     {
