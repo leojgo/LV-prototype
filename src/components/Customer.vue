@@ -13,13 +13,13 @@
       <!--maybe can combine-->
       <form v-for="(customer, id) in data.selected" v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
         <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.customerFirstName }" v-on:focus="clearError('customerFirstName')" v-model="customer.firstName">
+          <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.customerFirstName }" v-on:focus="clearError('customerFirstName')" v-model="customer.firstName">
         </div>
         <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.customerLastName }" v-on:focus="clearError('customerLastName')" v-model="customer.lastName">
+          <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.customerLastName }" v-on:focus="clearError('customerLastName')" v-model="customer.lastName">
         </div>
         <div class="uk-width-1-1">
-            <input class="uk-input" type="text" name="customerAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.customerAddress }" v-on:focus="clearError('customerAddress')"v-model="customer.address">
+          <input class="uk-input" type="text" name="customerAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.customerAddress }" v-on:focus="clearError('customerAddress')"v-model="customer.address">
         </div>
         <!--City/State/ZIP: assume all local addresses-->
         <div class="uk-width-1-2@s">
@@ -165,7 +165,8 @@
         this.$router.app.$emit('searchCustomer', query);
       },
       view(id) {
-        this.$router.app.$emit('viewCustomer',id);
+        this.$router.app.$emit('getCustomer',id);
+        this.$router.push({ name: 'customerView', params: { id: id }});
       },
       editForm(id) {
         this.cancelEdit();

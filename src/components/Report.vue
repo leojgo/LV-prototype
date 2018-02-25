@@ -1,23 +1,134 @@
 <template>
   <div class="uk-section">
-    <nav>
-      <a href="">Overdue Rentals</a>
-      <a href="">Popular Movies</a>
-    </nav>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Customer</th>
-            <th>Due Date</th>
-            <th>Days Overdue</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-          </tr>
-        </tbody>
-      </table>
+    <div v-if="$route.params.type == 'overdue'">
+    <h1 class="uk-text-muted uk-text-large">Overdue Rentals Report</h1>
+    <table class="uk-table uk-table-divider">
+      <caption></caption>
+      <thead>
+        <tr>
+          <th>Due Date<!--<span uk-icon="icon: triangle-down"></span>--></th>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Movie</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2/23/18</td>
+          <td><a href="#">Cindy Johnson</a></td>
+          <td><a href="#">773-202-0987</a></td>
+          <td><a href="#">Blade Runner</a></td>
+        </tr>
+        <tr>
+          <td>2/23/18</td>
+          <td><a href="#">Cindy Johnson</a></td>
+          <td><a href="#">773-202-0987</a></td>
+          <td><a href="#">Blade Runner 2049</a></td>
+        </tr>
+        <tr>
+          <td>2/19/18</td>
+          <td><a href="#">Ellen Johnson</a></td>
+          <td><a href="#">773-661-0987</a></td>
+          <td><a href="#">Total Recall</a></td>
+        </tr>
+        <tr>
+          <td>2/21/18</td>
+          <td><a href="#">Mark Thompson</a></td>
+          <td><a href="#">773-221-8887</a></td>
+          <td><a href="#">The Fountain</a></td>
+        </tr>
+        <tr>
+          <td>2/23/18</td>
+          <td><a href="#">Harvey Dent</a></td>
+          <td><a href="#">773-311-8796</a></td>
+          <td><a href="#">Idiocracy</a></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div v-if="$route.params.type == 'movies'">
+    <div uk-grid>
+      <h1 class="uk-text-muted uk-text-large uk-width-3-4@s">Popular Movies Report</h1>
+      <div class="uk-width-1-4@s">
+          <select class="uk-select">
+              <option>This Week</option>
+              <option>This Month</option>
+              <option>This Year</option>
+              <option>All Time</option>
+          </select>
+      </div>
+    </div>
+    <table class="uk-table uk-table-divider">
+      <caption></caption>
+      <thead>
+        <tr>
+          <th>Rentals</th>
+          <th>Movie</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>10</td>
+          <td><a href="#">Blade Runner</a></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><a href="#">Blade Runner 2049</a></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><a href="#">Total Recall</a></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><a href="#">The Fountain</a></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><a href="#">Idiocracy</a></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div v-if="$route.params.type == 'customers'">
+    <div uk-grid>
+      <h1 class="uk-text-muted uk-text-large uk-width-3-4@s">Best Customers Report</h1>
+      <div class="uk-width-1-4@s">
+          <select class="uk-select">
+              <option>This Week</option>
+              <option>This Month</option>
+              <option>This Year</option>
+              <option>All Time</option>
+          </select>
+      </div>
+    </div>
+    <table class="uk-table uk-table-divider">
+      <caption></caption>
+      <thead>
+        <tr>
+          <th>Rentals</th>
+          <th>Customer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>10</td>
+          <td><a href="#">Cindy Johnson</a></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><a href="#">Ellen Johnson</a></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><a href="#">Mark Thompson</a></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><a href="#">Harvey Dent</a></td>
+        </tr>
+      </tbody>
+    </table>
     </div>
   </div>
 </template>

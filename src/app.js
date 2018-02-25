@@ -106,6 +106,27 @@ var items = {
   }
 };
 var lastItem = 9929398449;
+var rental1 = {
+  customer : customers[0],
+  movies : ["9929398448","9929398443"],
+  paymentType : 0,
+  cardDigits : null,
+  dueDate: 20180224,
+  endDate: null
+};
+var rental2 = {
+  customer : customers[1],
+  movies : ["9929398448","9929398443"],
+  paymentType : 0,
+  cardDigits : null,
+  dueDate: 20180224,
+  endDate: null
+};
+var rentals = {
+  "112233445566" : rental1,
+  "112233445567" : rental2,
+};
+var lastRental = 112233445567;
 var data = {
   company: 'Lackluster Video', //company name
   isAuthenticated: false, //auth flag
@@ -114,6 +135,7 @@ var data = {
   customers: null, //cusomters array for search
   movieTitles: null,
   movies: null, //movies array for search
+  rentals: null, //list of rentals
   reports: null, //reports array for search
   isSingle: false, //single item flag
   isView: false,
@@ -123,7 +145,8 @@ var data = {
   nextId: {
     customer: lastCustomer+1,
     movie: lastMovie+1,
-    copy: lastItem+1
+    copy: lastItem+1,
+    rental: lastRental+1
   },
   modal: null //modal dialog obj
 };
@@ -185,11 +208,11 @@ var app = new Vue({
       }
       data.customers = results;
     });
-    vm.$on('viewCustomer', function(id){
+    vm.$on('getCustomer', function(id){
       data.isSingle = true;
       data.selected = {};
       data.selected[id] = customers[id];
-      this.$router.push({ name: 'customerView', params: { id: id }});
+      console.log(data.selected[id]);
     });
     vm.$on('addCustomer', function(customer){
       customers[data.nextId.customer] = customer;
@@ -290,6 +313,21 @@ var app = new Vue({
       }
       this.$router.push({ name: 'movieView', params: { id: id }});
     });
+    vm.$on('rentalCustomer', function(customerId){
+      var rentalId = data.nextId.rental;
+      data.selected[rentalId].customer = {};
+      data.selected[rentalId].customer[customerId] = customers[customerId];
+      //console.log(data.selected);
+      //console.log(customers[customerId]);
+      //console.log(data.selected.customer);
+    });
+    vm.$on('rentalMovies', function(movies){
+      var rentalId = data.nextId.rental;
+      data.selected[rentalId].movies= movies;
+    });
+    vm.$on('rentalConfirm', function(payment){
+      var rentalId = data.nextId.rental;
+    });
   }
 });
 //nav guards
@@ -317,7 +355,12 @@ router.beforeEach((to, from, next) => {
       };
     }
     else {
-      //data.selected[data.nextId.rental] = {};
+      data.selected[data.nextId.rental] = {
+        customer: null,
+        movies: null,
+        paymentType: null,
+        cardDigits: null
+      };
     }
   }
   else {
