@@ -226,7 +226,7 @@
         };
         //validate zip
         var zip = document.querySelector("input[name=customerZip]");
-        if (zip.value.replace(/\D/g,'') != zip.value || zip.value.length > 5) {
+        if (zip.value.replace(/\D/g,'') != zip.value || zip.value.length != 5) {
           this.zipError = true;
         }
         //check for missing inputs
