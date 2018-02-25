@@ -319,10 +319,8 @@ var app = new Vue({
       data.selected[rentalId].customer[customerId] = customers[customerId];
     });
     vm.$on('rentalAddMovie', function(id){
-      var rentalId = data.nextId.rental;
-      var movies = data.selected[rentalId].movies;
       var title = null;
-      data.selected[rentalId].movies = {};
+      //get title
       for (var key1 in items[id]) {
         if (key1 == 'movie') {
           for (var key2 in items[id][key1]) {
@@ -332,14 +330,13 @@ var app = new Vue({
           }
         }
       }
-      if (movies === null) {
-        movies = {};
+      //set
+      for (var key in data.selected) {
+        data.selected[key].movies.push({
+          id: id,
+          title: title
+        });
       }
-      movies[id] = {
-        title: title
-      }
-      data.selected[rentalId].movies = movies;
-      console.log(data.selected[rentalId]);
     });
     vm.$on('rentalMovies', function(movies){
       var rentalId = data.nextId.rental;
@@ -377,7 +374,7 @@ router.beforeEach((to, from, next) => {
     else {
       data.selected[data.nextId.rental] = {
         customer: null,
-        movies: null,
+        movies: [],
         paymentType: null,
         cardDigits: null
       };

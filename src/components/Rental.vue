@@ -3,7 +3,7 @@
     <!--single customer view-->
     <div v-if="data.isNew" v-for="(rental, id) in data.selected">
       <h1 class="uk-text-large uk-text-muted">New Rental</h1>
-      {{ rental }}
+      <!--{{ rental }}-->
       <div class="uk-form uk-padding" uk-grid @submit.prevent="handleSubmit">
         <ul uk-accordion="multiple: true" v-if="data.isNew" class="uk-width-1-1" id="newRental">
           <li class="uk-open">
@@ -38,13 +38,13 @@
           <li>
             <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.movies }">2</span> Movies</a>
             <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
-              <ul v-if="rental.movies" class="uk-list uk-list-divider">
-                <li v-for="(movie, id) in rental.movies">{{ id }} <strong>{{ movie.title }}</strong></li>
+              <ul v-if="rental.movies.length > 0" class="uk-list uk-list-divider">
+                <li v-for="movie in rental.movies">{{ movie.id }} <strong>{{ movie.title }}</strong></li>
               </ul>
               <div class="uk-inline uk-margin uk-width-1-1">
                 <input class="uk-input" type="text" name="addCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToCopies"></a>
               </div>
-              <button class="uk-button uk-button-default" v-on:click="openPayment" v-if="hasMovies">Continue to Payment</button>
+              <button class="uk-button uk-button-primary" v-on:click="openPayment" v-if="showPaymentButton">Continue to Payment</button>
             </div>
           </li>
           <li>
@@ -54,9 +54,9 @@
               <div class="uk-width-1-2@s uk-form-controls">
                 <select class="uk-select" id="form-stacked-select" v-on:change="changePayment">
                   <option disabled selected>Select Payment Type</option>
-                  <option>Cash Payment</option>
-                  <option>Credit Card</option>
-                  <option>Debit Card</option>
+                  <option value="0">Cash Payment</option>
+                  <option value="1" >Credit Card</option>
+                  <option value="2" >Debit Card</option>
                 </select>
               </div>
               <div class="uk-width-1-2@s" v-if="isCard">
@@ -83,7 +83,10 @@
         hasCustomer: false,
         hasMovies: false,
         hasPayment: false,
+        paymentVisible: false,
+        showPaymentButton: false,
         isCard: false,
+        hasDigits: false,
         isComplete: false,
         errors: {
           addCopy: false,
@@ -97,7 +100,7 @@
         this.$router.app.$emit('searchCustomer', query);
       },
       selectCustomer(id) {
-        this.customer = true;
+        this.hasCustomer = true;
         this.$router.app.$emit('searchCustomer',id);
         this.$router.app.$emit('rentalCustomer', id);
         UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
@@ -109,16 +112,34 @@
         if (copy.value == copyId && copyId.length == 10) {
           this.hasMovies = true;
           this.$router.app.$emit('rentalAddMovie', copyId);
+          copy.value = "";
+          copy.placeholder = "Add another movie...";
+          if (this.hasMovies && !this.paymentVisible) {
+            this.showPaymentButton = true;
+          }
         }
         else {
           this.errors.addCopy = true
         }
       },
       openPayment() {
-
+        UIkit.accordion(document.getElementById('newRental')).toggle(2, true);
+        this.paymentVisible = true;
       },
-      changePayment() {
-        
+      changePayment(event) {
+        if (event.target.value != "0") {
+          this.isCard = true;
+          if (this.hasDigits) {
+            this.isComplete = true;
+          }
+          else {
+            this.isComplete = false;
+          }
+        }
+        else {
+          this.isCard = false;
+          this.isComplete = true;
+        }
       },
       clearError() {
 
