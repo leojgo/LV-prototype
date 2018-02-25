@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div class="uk-background-secondary uk-light uk-padding-small uk-text-meta uk-text-right"  v-if="data.isAuthenticated">
+    <div class="uk-background-primary uk-light uk-padding-small uk-text-meta uk-text-right"  v-if="data.isAuthenticated" v-bind:class="{ 'uk-background-secondary' : !data.isManager }">
       <div class="uk-container">
         <span uk-icon="icon: user"></span>{{ data.user.name }} | <span v-on:click="logout" >log out</span>
       </div>
