@@ -50,7 +50,7 @@
             </div>
           </li>
           <li id="rentalPayment">
-            <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.paymentType}">3</span> Payment</a>
+            <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.paymentType}">3</span> Payment &amp; Confirmation</a>
             <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
               <div uk-grid>
                 <div class="uk-width-1-2@">
@@ -97,20 +97,61 @@
       </div>
     </div>
     <div v-else-if="$route.params.id == 'return'">
-      <h1>Return Rental</h1>
+      <h1 v-if="data.isNew">Return Rental</h1>
+      <h1 v-else>Return Rental Confirmation</h1>
       <ul uk-accordion="multiple: true; collapsible:false" v-if="data.isNew" class="uk-width-1-1" id="newRental">
-          <li class="uk-open" id="rentalCustomer">
-            <a class="uk-accordion-title" href="#">
-              <span class="uk-label">1</span> Movies
-            </a>
-            <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
-              
+        <li id="rentalMovies">
+          <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.movies }">1</span> Movies</a>
+          <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
+            <ul v-if="rental.movies.length > 0" class="uk-list uk-list-divider">
+              <li v-for="movie in rental.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong>
+                <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-large-right">2 Days Overdue</span>
+                <span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span></li>
+            </ul>
+            <div class="uk-inline uk-margin uk-width-1-1">
+              <input class="uk-input" type="text" name="addCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')" v-on:keyup.enter="addToCopies"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToCopies"></a>
             </div>
-          </li>
+            <button class="uk-button uk-button-primary" v-on:click="openReturnPayment" v-if="showPaymentButton">Continue to Payment &amp; Confirmation</button>
+          </div>
+        </li>
+        <li id="rentalPayment">
+          <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.paymentType}">2</span> Payment &amp; Confirmation</a>
+          <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
+            <div uk-grid>
+              <div class="uk-width-1-2@">
+                Late Fee: ${{ lateFee }}
+              </div>
+              <div class="uk-width-1-2@s uk-form-controls">
+                <select class="uk-select" id="form-stacked-select" v-on:change="changePayment">
+                  <option disabled selected>Select Payment Type</option>
+                  <option value="0">Cash Payment</option>
+                  <option value="1" >Credit Card</option>
+                  <option value="2" >Debit Card</option>
+                </select>
+              </div>
+              <div class="uk-width-1-2@s" v-if="isCard">
+                <input class="uk-input" type="text" id="cardDigits" name="cardDigits" placeholder="Enter card security code" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-on:keyup="validateDigits">
+              </div>
+              <div class="uk-width-1-1" v-if="isReturnComplete">
+                <button class="uk-button uk-button-primary" v-on:click="submitReturn">Submit</button>
+              </div>
+            </div>
+          </div>
+        </li>
       </ul>
-    </div>
-    <div v-else>
-      <h1>Success</h1>
+      <div v-else>
+        <div v-for="rental in data.selected" >
+          <strong>Confirmation Number</strong>: 9874668792983479<br />
+          <strong>Date</strong>: {{ rental.payment.date }}<br />
+          <strong>Total Paid</strong>: ${{ lateFee }}<br />
+          <strong>Payment Type</strong>: Credit Card ({{ rental.payment.digits }})
+          <hr />
+        </div>
+        <h2 class="uk-heading-divider uk-text-small uk-text-bold">Items Rented</h2>
+        <ul class="uk-list uk-list-divider">
+          <li v-for="movie in rental.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong></li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -130,7 +171,7 @@
         isCard: false,
         hasDigits: false,
         rentalFee: 0,
-        lateFee: 4,
+        lateFee: 6,
         errors: {
           addCopy: false,
           addCardDigits: false
@@ -180,6 +221,11 @@
         this.paymentVisible = true;
         this.showPaymentButton = false;
       },
+      openReturnPayment() {
+        UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
+        this.paymentVisible = true;
+        this.showPaymentButton = false;
+      },
       changePayment(event) {
         if (event.target.value != "0") {
           this.isCard = true;
@@ -216,6 +262,17 @@
         payment.digits = document.getElementById('cardDigits').value;
         this.$router.app.$emit('rentalSubmit', payment); 
       },
+      submitReturn() {
+        var payment = {};
+        var d = new Date();
+        payment.rentalFee = 0;
+        payment.totalFee = this.lateFee;
+        payment.date = (d.getMonth()+1)+ "/" + d.getDate() + "/" + d.getFullYear(); //should be a date object
+        payment.type = document.getElementById('form-stacked-select').value;
+        payment.digits = document.getElementById('cardDigits').value;
+        console.log('emit rental return');
+        this.$router.app.$emit('rentalReturn', payment); 
+      },
       clearError() {
 
       },
@@ -235,6 +292,9 @@
           return false;
         }
         return true;
+      },
+      isReturnComplete: function() {
+        return this.hasPayment;
       },
       dueDate: function() {
         var d = new Date();

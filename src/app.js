@@ -345,7 +345,18 @@ var app = new Vue({
     vm.$on('rentalSubmit', function(payment){
       var rentalId = data.nextId.rental;
       data.selected[rentalId].payment = payment;
+      //add to rentals table
       data.isEdit = false;
+      data.nextId.rental++;
+    });
+    vm.$on('rentalReturn', function(payment){
+      var rentalId = data.nextId.rental;
+      //movies??
+      data.selected[rentalId].payment = payment;
+      //add to returns table
+      data.isEdit = false;
+      data.isNew = false;
+      data.nextId.rental++;
     });
   }
 });
@@ -381,6 +392,19 @@ router.beforeEach((to, from, next) => {
         cardDigits: null
       };
     }
+  }
+  else if (to.fullPath.indexOf('return') > -1) {
+    data.isSingle = true;
+    data.isView = false;
+    data.isEdit = true;
+    data.isNew = true;
+    data.selected = {};
+    data.selected[data.nextId.rental] = {
+      customer: null,
+      movies: [],
+      paymentType: null,
+      cardDigits: null
+    };
   }
   else {
     //
