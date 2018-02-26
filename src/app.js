@@ -384,13 +384,16 @@ router.beforeEach((to, from, next) => {
         copies: []
       };
     }
-    else {
+    else if (to.fullPath[1] == 'r') {
       data.selected[data.nextId.rental] = {
         customer: null,
         movies: [],
         paymentType: null,
         cardDigits: null
       };
+    }
+    else {
+      //user
     }
   }
   else if (to.fullPath.indexOf('return') > -1) {

@@ -5,6 +5,7 @@ import Rental from './components/Rental.vue'
 import Movie from './components/Movie.vue'
 import Customer from './components/Customer.vue'
 import Report from './components/Report.vue'
+import User from './components/User.vue'
 
 Vue.use(Router)
 
@@ -70,6 +71,16 @@ export default new Router({
       path: '/reports/:type',
       name: 'report',
       component: Report
+    },
+    {
+      path: '/users',
+      name: 'userList',
+      component: User
+    },
+    {
+      path: '/user/:id',
+      name: 'user',
+      component: User
     }
   ]
 })

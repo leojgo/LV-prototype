@@ -22,7 +22,7 @@
         </a>
         <ul class="uk-navbar-nav uk-visible@s" v-if="data.isAuthenticated">
           <li v-if="data.isManager">
-              <a href="/users">Users</a>
+              <a is="router-link" to="/users">Users</a>
           </li>
           <li>
               <a href="#">Rentals</a>
