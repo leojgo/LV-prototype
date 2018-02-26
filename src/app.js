@@ -127,6 +127,11 @@ var rentals = {
   "112233445567" : rental2,
 };
 var lastRental = 112233445567;
+var users = {
+  "443" : customer1,
+  "442" : customer2,
+  "441" : customer3 
+}
 var data = {
   company: 'Lackluster Video', //company name
   isAuthenticated: false, //auth flag
@@ -362,6 +367,13 @@ var app = new Vue({
       data.isEdit = true;
       data.isSingle = true;
     });
+    vm.$on('editUser', function(id){
+      //set
+      data.isEdit = true;
+      data.selected = {};
+      data.selected[id] = users[id];
+      this.$router.push({ name: 'userEdit', params: { id: id }});
+    })
   }
 });
 //nav guards
@@ -424,6 +436,8 @@ router.beforeEach((to, from, next) => {
   else {
     //view or edit obj
     data.isSingle = true;
+    data.isEdit = false;
+    data.isNew = false;
   }
   next();
 });
