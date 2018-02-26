@@ -67,7 +67,7 @@
                   </select>
                 </div>
                 <div class="uk-width-1-2@s" v-if="isCard">
-                  <input class="uk-input" type="text" id="cardDigits" name="cardDigits" placeholder="Enter card security code" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-on:keyup="validateDigits">
+                  <input class="uk-input" type="text" id="cardDigits" name="cardDigits" placeholder="Enter card number last 4 digits" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-on:keyup="validateDigits">
                 </div>
                 <div class="uk-width-1-1" v-if="isComplete">
                   <button class="uk-button uk-button-primary" v-on:click="submitNew">Submit</button>
@@ -130,7 +130,7 @@
                 </select>
               </div>
               <div class="uk-width-1-2@s" v-if="isCard">
-                <input class="uk-input" type="text" id="cardDigits" name="cardDigits" placeholder="Enter card security code" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-on:keyup="validateDigits">
+                <input class="uk-input" type="text" id="cardDigits" name="cardDigits" placeholder="Enter card number last 4 digits" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-on:keyup="validateDigits">
               </div>
               <div class="uk-width-1-1" v-if="isReturnComplete">
                 <button class="uk-button uk-button-primary" v-on:click="submitReturn">Submit</button>
@@ -244,7 +244,7 @@
       validateDigits(event) {
         var digits = event.target.value.replace(/\D/g);
         event.target.value = digits;
-        if (digits.length == 3) {
+        if (digits.length == 4) {
           this.hasDigits = true;
           this.hasPayment = true;
         }
