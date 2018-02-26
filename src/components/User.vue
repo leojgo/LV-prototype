@@ -100,11 +100,20 @@
             <input class="uk-input" type="text" name="userEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : errors.userEmail }" v-on:focus="clearError('userEmail')" v-model="user.email">
             <span v-if="errors.userEmail" class="uk-text-small uk-text-danger">please enter a valid email address</span>
         </div>
+        <div class="uk-width-1-2@s" v-if="data.isNew">
+            <input class="uk-input" type="password" name="userPass" placeholder="*****" >
+            <span class="uk-text-small">please enter a password</span>
+        </div>
+        <div class="uk-width-1-2@s" v-if="data.isNew">
+            <input class="uk-input" type="password" name="userPass" placeholder="*****" >
+            <span class="uk-text-small">please confirm password</span>
+        </div>
         <div class="uk-width-1-1">
           <label><input class="uk-radio" type="radio" name="radio2" checked> Clerk</label>
             <label><input class="uk-radio" type="radio" name="radio2"> Manager</label>
         </div>
         <div class="uk-width-1-1">
+          <hr />
           <button class="uk-button uk-button-primary">Save</button>
           <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit" v-if="data.isNew == false">Cancel</span>
         </div>
