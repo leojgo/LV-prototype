@@ -73,13 +73,23 @@ export default new Router({
       component: Report
     },
     {
-      path: '/users',
+      path: '/users/search',
       name: 'userList',
       component: User
     },
     {
-      path: '/user/:id',
-      name: 'user',
+      path: '/users/new',
+      name: 'userNew',
+      component: User
+    },
+    {
+      path: '/users/:id',
+      name: 'userView',
+      component: User
+    },
+    {
+      path: '/users/:id/edit',
+      name: 'userEdit',
       component: User
     }
   ]

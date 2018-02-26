@@ -358,6 +358,10 @@ var app = new Vue({
       data.isNew = false;
       data.nextId.rental++;
     });
+    vm.$on('viewUser', function(){
+      data.isEdit = true;
+      data.isSingle = true;
+    });
   }
 });
 //nav guards
@@ -394,7 +398,15 @@ router.beforeEach((to, from, next) => {
     }
     else {
       //user
+      data.selected["444"] = {
+
+      };
     }
+  }
+  else if (to.fullPath.indexOf('edit') > -1) {
+    data.isSingle = true;
+    data.isEdit = true;
+    data.isNew = false;
   }
   else if (to.fullPath.indexOf('return') > -1) {
     data.isSingle = true;
@@ -410,7 +422,8 @@ router.beforeEach((to, from, next) => {
     };
   }
   else {
-    //
+    //view or edit obj
+    data.isSingle = true;
   }
   next();
 });
