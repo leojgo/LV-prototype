@@ -97,8 +97,8 @@
       </div>
     </div>
     <div v-else-if="$route.params.id == 'return'">
-      <h1 v-if="data.isNew">Return Rental</h1>
-      <h1 v-else>Return Rental Confirmation</h1>
+      <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Return Rental</h1>
+      <h1 v-else class="uk-text-large uk-text-muted">Return Rental Confirmation</h1>
       <ul uk-accordion="multiple: true; collapsible:false" v-if="data.isNew" class="uk-width-1-1" id="newRental">
         <li id="rentalMovies">
           <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.movies }">1</span> Movies</a>
@@ -132,8 +132,9 @@
               <div class="uk-width-1-2@s" v-if="isCard">
                 <input class="uk-input" type="text" id="cardDigits" name="cardDigits" placeholder="Enter card number last 4 digits" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-on:keyup="validateDigits">
               </div>
-              <div class="uk-width-1-1" v-if="isReturnComplete">
-                <button class="uk-button uk-button-primary" v-on:click="submitReturn">Submit</button>
+              <div class="uk-width-1-1">
+                <button class="uk-button uk-button-primary" v-on:click="submitReturn" v-if="isReturnComplete">Submit</button>
+                <button class="uk-button uk-button-default" v-on:click="submitReturn">Skip Payment</button>
               </div>
             </div>
           </div>
@@ -262,7 +263,15 @@
         payment.digits = document.getElementById('cardDigits').value;
         this.$router.app.$emit('rentalSubmit', payment); 
       },
-      submitReturn() {
+      submitReturn(payment) {
+        //TODO change return logic to allow skipped payments
+        if (payment) {
+
+        }
+        else {
+
+        }
+        //prototype fn for payment submit
         var payment = {};
         var d = new Date();
         payment.rentalFee = 0;
