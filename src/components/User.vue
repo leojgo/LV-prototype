@@ -11,11 +11,12 @@
       </h1>
       <div v-if="!data.isEdit" style="position: relative">
         <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">Clerk</span>
-        Employee ID: 443<br />
-        <strong>Cindy Johnson</strong><br />
+        Employee ID: {{ data.user.employeeId }}<br />
+        <strong>{{ data.user.firstName }} {{ data.user.lastName }}</strong><br />
+        <!--TODO make address reactive-->
         <span class="uk-text-small">239 Elm St, Springfield, IL 60666 <br>773-998-2664</span>
         <hr />
-        <button class="uk-button uk-button-default">Reset Login</button>
+        <button class="uk-button uk-button-default" v-on:click="resetLogin" uk-toggle="target: #modal">Reset Login</button>
       </div>
       <div v-else v-for="(user, id) in data.selected" uk-grid>
         <div class="uk-width-1-2@s">
@@ -24,13 +25,16 @@
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="userLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.userLastName }" v-on:focus="clearError('userLastName')" v-model="user.lastName">
         </div>
+        <!--TODO make address reactive-->
         <div class="uk-width-1-1">
           <input class="uk-input" type="text" name="userAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.userAddress }" v-on:focus="clearError('userAddress')"v-model="user.address">
         </div>
         <!--City/State/ZIP: assume all local addresses-->
+        <!--TODO make address reactive-->
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="userCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.userCity }" v-on:focus="clearError('userCity')" v-model="user.city">
         </div>
+        <!--TODO make address reactive-->
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
           <select class="uk-select" id="form-stacked-select">
               <option value="AL">AL</option>
@@ -132,7 +136,15 @@
         </tr>
       </thead>
       <tbody>
+        <tr v-for="user in data.employees">
+          <!--TODO make date reactive-->
+          <td>2/23/18</td>
+          <td><span class="uk-text-primary" v-on:click="viewEmployee(user.employeeId)">{{ user.firstName }} {{ user.lastName }}</span></td>
+          <td>{{ user.employeeTitle }}</td>
+          <td>{{ user.employeeId }}</td>
+        </tr>
         <tr>
+          <!--TODO make reactive -->
           <td>2/23/18</td>
           <td><a is="router-link" to="/users/443">Cindy Johnson</a></td>
           <td>Clerk</td>
@@ -229,6 +241,12 @@
         //TODO reset to inital values
         this.$router.app.$emit('cancelEdit');
         //this.$router.app.$emit('viewCustomer', this.customerToEdit);
+      },
+      resetLogin() {
+        this.$router.app.$emit('resetLogin');
+      },
+      viewEmployee(employee) {
+        this.$router.app.$emit('viewUser',employee);
       }
     }
   }

@@ -136,6 +136,7 @@ var data = {
   isAuthenticated: false, //auth flag
   isManager: false, //manager flag
   user: null, //user obj
+  employees: null, //list of employees
   customers: null, //cusomters array for search
   movieTitles: null,
   movies: null, //movies array for search
@@ -426,9 +427,27 @@ var app = new Vue({
       data.isNew = false;
       data.nextId.rental++;
     });
-    vm.$on('viewUser', function(){
+    vm.$on('viewUser', function(id) {
       data.isEdit = true;
       data.isSingle = true;
+      //send login request -- TODO use a function?
+      var url = "/api/Employee/"+id;
+      var request = new XMLHttpRequest();
+      var vm = this;
+      request.onreadystatechange = function() {
+          if (request.readyState == 4) {
+            //TODO use request.readyState == 4 && request.status == 200, add error handling
+            data.users = JSON.parse(request.responseText);
+            console.log(data.users);
+            vm.$router.push({ name: 'userView', params: { id: id }});
+          }
+          else {
+            //TODO error handling?
+          }
+      }; 
+      request.open('GET', url);
+      request.send();
+
     });
     vm.$on('editUser', function(id){
       //set
@@ -447,6 +466,24 @@ router.beforeEach((to, from, next) => {
     data.isView = false;
     data.isEdit = false;
     data.isNew = false;
+    if (to.fullPath[1] == 'u') {
+      //get users
+      console.log(data.users == null);
+      if (data.users == null) {
+        //send login request -- TODO use a function?
+        var url = "/api/employees";
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+            if (request.readyState == 4) {
+              //TODO use request.readyState == 4 && request.status == 200, add error handling
+              data.employees = JSON.parse(request.responseText);
+              console.log(data.employees);
+            }
+        }; 
+        request.open('GET', url);
+        request.send();
+      }
+    }
   }
   else if (to.fullPath.indexOf('new') > -1) {
     data.isSingle = true;
