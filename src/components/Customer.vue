@@ -13,18 +13,19 @@
       <!--maybe can combine-->
       <form v-for="(customer, id) in data.selected" v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.customerFirstName }" v-on:focus="clearError('customerFirstName')" v-model="customer.firstName">
+          <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.customerFirstName }" v-on:focus="clearError('customerFirstName')" v-model="customer.nameFirst">
         </div>
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.customerLastName }" v-on:focus="clearError('customerLastName')" v-model="customer.lastName">
+          <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.customerLastName }" v-on:focus="clearError('customerLastName')" v-model="customer.nameLast">
         </div>
         <div class="uk-width-1-1">
-          <input class="uk-input" type="text" name="customerAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.customerAddress }" v-on:focus="clearError('customerAddress')"v-model="customer.address">
+          <input class="uk-input" type="text" name="customerAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.customerAddress }" v-on:focus="clearError('customerAddress')"v-model="customer.addLine1">
         </div>
         <!--City/State/ZIP: assume all local addresses-->
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="customerCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.customerCity }" v-on:focus="clearError('customerCity')" v-model="customer.city">
+          <input class="uk-input" type="text" name="customerCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.customerCity }" v-on:focus="clearError('customerCity')" v-model="customer.addCity">
         </div>
+        <!--TODO add binding-->
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
           <select class="uk-select" id="form-stacked-select">
               <option value="AL">AL</option>
@@ -81,12 +82,12 @@
           </select>
         </div>
         <div class="uk-width-1-2 uk-width-1-4@s">
-          <input class="uk-input" type="text" name="customerZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.customerZip }" v-on:focus="clearError('customerZip')" v-model="customer.zip"> 
+          <input class="uk-input" type="text" name="customerZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.customerZip }" v-on:focus="clearError('customerZip')" v-model="customer.addZip"> 
         </div>
         <!--change to multiple fields for US numbers and an alternate for int'l?-->
         <div class="uk-width-1-1">
             <!--add label-->
-            <input class="uk-input" type="text" name="customerPhone" placeholder="800-588-2300" v-model="customer.phone" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.customerPhone }" v-on:focus="clearError('customerPhone')">
+            <input class="uk-input" type="text" name="customerPhone" placeholder="800-588-2300" v-model="customer.phoneNumber" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.customerPhone }" v-on:focus="clearError('customerPhone')">
             <!--add help text-->
             <span v-if="errors.customerPhone" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
         </div>
@@ -95,6 +96,7 @@
             <span v-if="errors.customerEmail" class="uk-text-small uk-text-danger">please enter a valid email address</span>
         </div>
         <div class="uk-width-1-1">
+          <!--TODO add binding-->
           <label><input class="uk-checkbox" type="checkbox" name="customerNewsletter" checked> Add to Mailing List</label>
         </div>
         <div class="uk-width-1-1">
@@ -106,8 +108,8 @@
         <!--view only-->
         <div v-for="(customer, id) in data.selected" style="position: relative">
           <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ $route.params.id }}</span>
-          <strong>{{ customer.firstName }} {{ customer.lastName }}</strong><br />
-          <span class="uk-text-small">{{ customer.address }}, {{ customer.city }}, {{ customer.state }} {{ customer.zip }} <br />{{ customer.phone }}</span>
+          <strong>{{ customer.nameFirst }} {{ customer.nameLast }}</strong><br />
+          <span class="uk-text-small">{{ customer.addLine1 }}, {{ customer.addCity }}, {{ customer.addState }} {{ customer.addZip }} <br />{{ customer.phoneNumber }}</span>
         </div>
         <hr />
         <button class="uk-button uk-button-default">View Rental History</button>
