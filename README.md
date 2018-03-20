@@ -13,6 +13,6 @@ Some dependencies are used for the app build itself (Vue, Vue Router, etc..) and
 
 `$ npm start` will start the localhost dev server and run the app
 
-`$ npm update` will install any missing dependencies, use if npm throws command or module not found errors
+`$ npm install` will install any missing dependencies, use if npm throws command or module not found errors
 
 For more on running asset bundlers, task runners, etc... please see the docs for any such utilities.
