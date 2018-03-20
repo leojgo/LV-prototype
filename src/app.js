@@ -4,7 +4,6 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './routes.js';
 
-
 //import UIkit from './js/uikit'; 
 //import Icons from './dist/js/uikit-icons';
 
@@ -44,7 +43,7 @@ var customer3 = {
   phone: "773-081-2761"
 };
 var customers = {
-  "012390" : customer1, 
+  "10" : customer1, 
   "123456" : customer2,
   "023490" : customer3
 };
@@ -171,13 +170,13 @@ var app = new Vue({
     vm.$on('login', function(user){
       data.user = JSON.parse(user);
       data.isAuthenticated = true;
-      console.log(user);
-      console.log(user.firstName);
-      if (user.employeeTitle == "Manager") {
+      console.log(data.user);
+      if (data.user.employeeTitle == "Manager") {
         data.isManager = true;
       }
     }); 
     vm.$on('logout', function() {
+      //TODO use a fn for get/post?
       //send logout request
       var http = new XMLHttpRequest();
       var url = "/api/logout";
@@ -238,19 +237,59 @@ var app = new Vue({
       data.customers = results;
     });
     vm.$on('getCustomer', function(id){
-      data.isSingle = true;
-      data.selected = {};
-      data.selected[id] = customers[id];
-      console.log(data.selected[id]);
+      //send login request -- TODO use a function?
+      var url = "/api/Customers/"+id;
+      var request = new XMLHttpRequest();
+      request.onreadystatechange = function() {
+          if (request.readyState == 4) {
+            //TODO use request.readyState == 4 && request.status == 200, add error handling
+            data.isSingle = true;
+            data.selected = {};
+            data.selected[id] = JSON.parse(request.responseText);
+            console.log(data.selected[id]);
+          }
+      }; 
+      request.open('GET', url);
+      request.send();
     });
     vm.$on('addCustomer', function(customer){
-      customers[data.nextId.customer] = customer;
-      data.isNew = false;
-      data.isEdit = false;
-      modal.title = 'New Customer Added';
-      modal.body = "Customer" + data.nextId.customer + "has been added to the Lackluster Video rental system.";
-      this.$router.app.$emit('viewCustomer', data.nextId.customer);
-      data.nextId.customer++;
+      //send to server
+      var http = new XMLHttpRequest();
+      var url = "/api/Customers";
+      //TODO this is ugly/errorprone, replace with a loop?
+      var Name_First = customer.Name_First;
+      var Name_Last = customer.Name_Last;
+      var Add_Line1 = customer.Add_Line1;
+      var Add_City = customer.Add_City;
+      var Add_State = customer.Add_State;
+      var Add_Zip = customer.Add_Zip;
+      var PhoneNumber = customer.PhoneNumber;
+      var Email = customer.Email;
+      var Newsletter = customer.Newsletter;
+      var params = "Name_First="+Name_First+"&Name_Last="+Name_Last+"&Add_Line1="+Add_Line1+"&Add_City="+Add_City+"&Add_State="+Add_State+"&Add_Zip="+Add_Zip+"&PhoneNumber="+PhoneNumber+"&Email="+Email+"&Newsletter="+Newsletter;
+      
+      var vm = this;
+      http.open("POST", url, true);
+
+      //Send the proper header information along with the request
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      http.onreadystatechange = function() {
+        //Call a function when the state changes.
+        if(http.readyState == 4) {
+          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
+
+          data.isNew = false; //TODO cleanup/move?
+          data.isEdit = false; //TODO cleanup/move?
+          modal.title = 'New Customer Added';
+          modal.body = "Customer" + this.responseText + "has been added to the Lackluster Video rental system.";
+          var customer = JSON.parse(this.responseText);
+          customer.customerId = 10 ;// TODO remove when API is updated
+          vm.$router.push({ name: 'customers', params: { id: customer.customerId }});
+          //display customer?
+
+        }
+      }
+      http.send(params);
       //open modal?
     });
     vm.$on('editCustomer', function(id){
