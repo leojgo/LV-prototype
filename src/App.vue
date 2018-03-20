@@ -51,6 +51,7 @@ export default {
   },
   methods: { 
     login(user, password) {
+      /*
       console.log('emit login event');
       var auth = {
         user: "Tom",
@@ -80,7 +81,31 @@ export default {
       else {
         console.log('invalid username')
         this.loginError = true;
+      }*/
+      //TODO check for empty inputs
+
+      //send login request
+      var http = new XMLHttpRequest();
+      var url = "/api/login";
+      var user = document.querySelector("input[name=user]").value;
+      var pass = document.querySelector("input[name=password]").value;
+      var params = "username="+user+"&password="+pass;
+      var vm = this;
+      http.open("POST", url, true);
+
+      //Send the proper header information along with the request
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      http.onreadystatechange = function() {
+        //Call a function when the state changes.
+        if(http.readyState == 4) {
+          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
+          //http.readyState == 4 && http.status == 200
+
+          //send the response to Vue
+          vm.$router.app.$emit('login', this.responseText);
+        }
       }
+      http.send(params);
     },
     loginHelp() {
       console.log('emit login help modal');

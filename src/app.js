@@ -169,23 +169,47 @@ var app = new Vue({
     var vm = this;
     console.log(vm);   
     vm.$on('login', function(user){
-      data.user = user;
+      data.user = JSON.parse(user);
       data.isAuthenticated = true;
-      if (user.role == "Manager") {
+      console.log(user);
+      console.log(user.firstName);
+      if (user.employeeTitle == "Manager") {
         data.isManager = true;
       }
     }); 
     vm.$on('logout', function() {
-      data.isAuthenticated = false;
-      data.isManager = false;
-      data.user = null;
-      //go to home url
-      router.push({name : 'home'});
+      //send logout request
+      var http = new XMLHttpRequest();
+      var url = "/api/logout";
+      var user = data.user.employeeId;
+      var params = "username="+user;
+      var vm = this;
+      http.open("POST", url, true);
+
+      //Send the proper header information along with the request
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      http.onreadystatechange = function() {
+        //Call a function when the state changes.
+        if(http.readyState == 4) {
+          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
+          data.isAuthenticated = false;
+          data.isManager = false;
+          data.user = null;
+          //go to home url
+          router.push({name : 'home'});
+        }
+      }
+      http.send(params);
     });
     vm.$on('loginHelp', function() {
       var modal = {};
       modal.title = 'Login Help';
       modal.body = '<strong>Clerks</strong> can contact a manager for help accessing the system. <strong>Managers</strong> unable to access the system, should refer to the login instructions provided in the Lackluster Video Application manual.';
+      data.modal = modal;
+    });
+    vm.$on('resetLogin', function(){
+      modal.title = 'Reset Login';
+      modal.body = '<div class="uk-width-1-1 uk-first-column"><strong>Username</strong>: Cindy</div><div uk-grid><strong>username</strong>: Cindy<br/><div class="uk-width-1-2@s" ><input class="uk-input" type="password" name="userPass" placeholder="*****" ><span class="uk-text-small">please enter a password</span></div><div class="uk-width-1-2@s"><input class="uk-input" type="password" name="userPass" placeholder="*****" ><span class="uk-text-small">please confirm password</span></div></div>';
       data.modal = modal;
     });
     vm.$on('clear', function(property){
