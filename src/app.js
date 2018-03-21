@@ -135,11 +135,14 @@ var data = {
   company: 'Lackluster Video', //company name
   isAuthenticated: false, //auth flag
   isManager: false, //manager flag
-  user: null, //user obj
+  user: null, //user obj -- current user
   employees: null, //list of employees
+  employee: null, //selected employee (view/edit)
   customers: null, //cusomters array for search
-  movieTitles: null,
+  customer: null, //selected customer (view/edit)
+  movieTitles: null, // TODO what is this for??
   movies: null, //movies array for search
+  movie: null, //selected movie (view/edit)
   rentals: null, //list of rentals
   reports: null, //reports array for search
   isSingle: false, //single item flag
@@ -164,6 +167,32 @@ var app = new Vue({
     return { 
       data
     };
+  },
+  methods: {
+    getCustomer(id, callbackRoute) {
+      console.log('API call customer '+ id);
+      //send login request -- TODO use a function?
+      var url = "/api/Customers/"+id;
+      var request = new XMLHttpRequest();
+      //TODO should this timeout?
+      request.onreadystatechange = function() {
+          if (request.readyState == 4) {
+            //TODO use request.readyState == 4 && request.status == 200, add error handling
+            data.isSingle = true;
+            data.customer = JSON.parse(request.responseText);
+            //TODO pretty phone number
+            console.log(data.customer);
+            //vm.$router.push({ name: 'customerView', params: { id: id }});
+            console.log('API response');
+            app.$router.push(callbackRoute);
+          }
+      }; 
+      request.open('GET', url);
+      request.send();
+    },
+    getEmployee(id) {
+      //TODO
+    },
   },
   mounted() {
     var vm = this;
@@ -237,22 +266,6 @@ var app = new Vue({
       }
       data.customers = results;
     });
-    vm.$on('getCustomer', function(id){
-      //send login request -- TODO use a function?
-      var url = "/api/Customers/"+id;
-      var request = new XMLHttpRequest();
-      request.onreadystatechange = function() {
-          if (request.readyState == 4) {
-            //TODO use request.readyState == 4 && request.status == 200, add error handling
-            data.isSingle = true;
-            data.selected = {};
-            data.selected[id] = JSON.parse(request.responseText);
-            console.log(data.selected[id]);
-          }
-      }; 
-      request.open('GET', url);
-      request.send();
-    });
     vm.$on('addCustomer', function(customer){
       //send to server
       var http = new XMLHttpRequest();
@@ -285,25 +298,57 @@ var app = new Vue({
           modal.body = "Customer" + this.responseText + "has been added to the Lackluster Video rental system.";
           var customer = JSON.parse(this.responseText);
           customer.customerId = 10 ;// TODO remove when API is updated
-          vm.$router.push({ name: 'customers', params: { id: customer.customerId }});
-          //display customer?
-
+          vm.$router.push({ name: 'customerView', params: { id: id }}); //display customer profile
         }
       }
       http.send(params);
       //open modal?
     });
-    vm.$on('editCustomer', function(id){
+    //view customer
+    vm.$on('viewCustomer', function(id){
+      data.isEdit = false;
+      data.customer = {};
+      app.getCustomer(id, { name: 'customerView', params: { id: id }});
+    });
+    //load edit customer form
+    vm.$on('editCustomer', function(id) {
       data.isEdit = true;
-      data.selected = {};
-      data.selected[id] = customers[id];
+      //no get request since we're already viewing customer
       this.$router.push({ name: 'customerEdit', params: { id: id }});
     });
-    vm.$on('updateCustomer', function(id){
-      data.isEdit = false;
-      data.selected = {};
-      data.selected[id] = customers[id];
-      this.$router.push({ name: 'customerView', params: { id: id }});
+    //submit edit customer form
+    vm.$on('updateCustomer', function(id) {
+      //POST
+      //send to server
+      var http = new XMLHttpRequest();
+      var url = "/api/Customers/"+id;
+      //TODO this is ugly/errorprone, replace with a loop?
+      var Name_First = customer.Name_First;
+      var Name_Last = customer.Name_Last;
+      var Add_Line1 = customer.Add_Line1;
+      var Add_City = customer.Add_City;
+      var Add_State = customer.Add_State;
+      var Add_Zip = customer.Add_Zip;
+      var PhoneNumber = customer.PhoneNumber;
+      var Email = customer.Email;
+      var Newsletter = customer.Newsletter;
+      //params are lowercase!!
+      var params = "customerId="+id+"&name_First="+Name_First+"&name_Last="+Name_Last+"&add_Line1="+Add_Line1+"&add_City="+Add_City+"&add_State="+Add_State+"&add_Zip="+Add_Zip+"&phoneNumber="+PhoneNumber+"&email="+Email+"&newsletter="+Newsletter;
+      
+      var vm = this;
+      http.open("POST", url, true);
+
+      //Send the proper header information along with the request
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      http.onreadystatechange = function() {
+        //Call a function when the state changes.
+        if(http.readyState == 4) {
+          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
+          data.isEdit = false; //TODO cleanup/move?
+          vm.$router.push({ name: 'customerView', params: { id: id }}); //display customer
+        }
+      }
+      http.send(params);
     });
     vm.$on('searchMovie', function(query){
       var results = {};
@@ -493,7 +538,7 @@ router.beforeEach((to, from, next) => {
     data.selected = {};
     //probably better as a switch
     if (to.fullPath[1] == 'c') {
-      data.selected[data.nextId.customer] = {};
+      data.customer = {};
     }
     else if (to.fullPath[1] == 'm') {
       data.selected[data.nextId.movie] = {
@@ -510,9 +555,7 @@ router.beforeEach((to, from, next) => {
     }
     else {
       //user
-      data.selected["444"] = {
-
-      };
+      data.user = {};
     }
   }
   else if (to.fullPath.indexOf('edit') > -1) {

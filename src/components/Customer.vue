@@ -3,27 +3,27 @@
     <div v-if="data.isSingle">
       <!--single customer view-->
       <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Create Customer Account</h1>
-      <h1 v-else class="uk-text-large  uk-text-muted uk-position-relative">Customer Account 
+      <h1 v-else class="uk-text-large  uk-text-muted uk-position-relative">Customer Account
         <ul class="uk-iconnav uk-position-top-right">
-          <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><a href="#" uk-icon="close" v-on:click="cancelEdit"></a></li>
-          <li v-bind:class="{'uk-hidden' : data.isEdit}"><a href="#" uk-icon="pencil" v-on:click="editForm($route.params.id)"></a></li>
+          <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><span uk-icon="close" v-on:click="cancelEdit"></span></li>
+          <li v-bind:class="{'uk-hidden' : data.isEdit}"><span uk-icon="pencil" v-on:click="editForm(data.customer.customerId)"></span></li>
           <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"></a></li>
         </ul>
       </h1> 
       <!--maybe can combine-->
-      <form v-for="(customer, id) in data.selected" v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
+      <form v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.customerFirstName }" v-on:focus="clearError('customerFirstName')" v-model="customer.nameFirst">
+          <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.customerFirstName }" v-on:focus="clearError('customerFirstName')" v-model="data.customer.nameFirst">
         </div>
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.customerLastName }" v-on:focus="clearError('customerLastName')" v-model="customer.nameLast">
+          <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.customerLastName }" v-on:focus="clearError('customerLastName')" v-model="data.customer.nameLast">
         </div>
         <div class="uk-width-1-1">
-          <input class="uk-input" type="text" name="customerAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.customerAddress }" v-on:focus="clearError('customerAddress')"v-model="customer.addLine1">
+          <input class="uk-input" type="text" name="customerAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.customerAddress }" v-on:focus="clearError('customerAddress')"v-model="data.customer.addLine1">
         </div>
         <!--City/State/ZIP: assume all local addresses-->
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="customerCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.customerCity }" v-on:focus="clearError('customerCity')" v-model="customer.addCity">
+          <input class="uk-input" type="text" name="customerCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.customerCity }" v-on:focus="clearError('customerCity')" v-model="data.customer.addCity">
         </div>
         <!--TODO add binding-->
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
@@ -82,17 +82,17 @@
           </select>
         </div>
         <div class="uk-width-1-2 uk-width-1-4@s">
-          <input class="uk-input" type="text" name="customerZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.customerZip }" v-on:focus="clearError('customerZip')" v-model="customer.addZip"> 
+          <input class="uk-input" type="text" name="customerZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.customerZip }" v-on:focus="clearError('customerZip')" v-model="data.customer.addZip"> 
         </div>
         <!--change to multiple fields for US numbers and an alternate for int'l?-->
         <div class="uk-width-1-1">
             <!--add label-->
-            <input class="uk-input" type="text" name="customerPhone" placeholder="800-588-2300" v-model="customer.phoneNumber" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.customerPhone }" v-on:focus="clearError('customerPhone')">
+            <input class="uk-input" type="text" name="customerPhone" placeholder="800-588-2300" v-model="data.customer.phoneNumber" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.customerPhone }" v-on:focus="clearError('customerPhone')">
             <!--add help text-->
             <span v-if="errors.customerPhone" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
         </div>
         <div class="uk-width-1-1">
-            <input class="uk-input" type="text" name="customerEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : errors.customerEmail }" v-on:focus="clearError('customerEmail')" v-model="customer.email">
+            <input class="uk-input" type="text" name="customerEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : errors.customerEmail }" v-on:focus="clearError('customerEmail')" v-model="data.customer.email">
             <span v-if="errors.customerEmail" class="uk-text-small uk-text-danger">please enter a valid email address</span>
         </div>
         <div class="uk-width-1-1">
@@ -106,10 +106,10 @@
       </form>
       <div v-else style="position: relative">
         <!--view only-->
-        <div v-for="(customer, id) in data.selected" style="position: relative">
+        <div style="position: relative">
           <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ $route.params.id }}</span>
-          <strong>{{ customer.nameFirst }} {{ customer.nameLast }}</strong><br />
-          <span class="uk-text-small">{{ customer.addLine1 }}, {{ customer.addCity }}, {{ customer.addState }} {{ customer.addZip }} <br />{{ customer.phoneNumber }}</span>
+          <strong>{{ data.customer.nameFirst }} {{ data.customer.nameLast }}</strong><br />
+          <span class="uk-text-small">{{ data.customer.addLine1 }}, {{ data.customer.addCity }}, {{ data.customer.addState }} {{ data.customer.addZip }} <br />{{ data.customer.phoneNumber }}</span>
         </div>
         <hr />
         <button class="uk-button uk-button-default">View Rental History</button>
@@ -167,13 +167,17 @@
         this.$router.app.$emit('searchCustomer', query);
       },
       view(id) {
-        this.$router.app.$emit('getCustomer',id);
-        this.$router.push({ name: 'customerView', params: { id: id }});
+        //console.log('emit viewCustomer');
+        this.$router.app.$emit('viewCustomer',id);
+        //this.$router.push({ name: 'customerView', params: { id: id }});
       },
       editForm(id) {
-        this.cancelEdit();
-        this.customerToEdit = id;
-        this.$router.app.$emit('editCustomer',id);
+        for (var input in this.errors) {
+          this.errors[input] = false;
+        }
+        this.customerToEdit = id; //TODO remove?
+        console.log('call editForm with param '+id);
+        this.$router.app.$emit('editCustomer', id);
       },
       formatPhone(event) {
         //ideally we'd move this to a library function and load library in all components
@@ -210,6 +214,7 @@
         this.errors[input] = false;
       },
       handleSubmit() {
+        console.log('handle submit')
         //check text inputs for content
         //check for valid phone
         var hasError = false;
@@ -250,12 +255,14 @@
             state: "IL",
             zip: document.querySelector("input[name=customerZip]").value,
             email: document.querySelector("input[name=customerEmail]").value,
-            phone: document.querySelector("input[name=customerPhone]").value
+            phone: document.querySelector("input[name=customerPhone]").value.replace("-","")
           }
           if (this.$router.app.data.isNew) {
+            console.log('emit addCustomer');
             this.$router.app.$emit('addCustomer', newCustomer);
           }
           else {
+            console.log('emit updateCustomer');
             this.$router.app.$emit('updateCustomer', this.customerToEdit);
           }
         }
@@ -265,9 +272,7 @@
         for (var input in this.errors) {
           this.errors[input] = false;
         }
-        //TODO reset to inital values
-        this.$router.app.$emit('cancelEdit');
-        this.$router.app.$emit('viewCustomer', this.customerToEdit);
+        this.$router.app.$emit('viewCustomer', this.customerToEdit); //get the data again in case fields
       }
     }
   }

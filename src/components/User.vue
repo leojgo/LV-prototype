@@ -9,7 +9,7 @@
           <li><a href="#" uk-icon="icon: trash"></a></li>
         </ul>
       </h1>
-      <div v-if="!data.isEdit" style="position: relative">
+      <div v-if="!data.isEdit" class="uk-position-relative">
         <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">Clerk</span>
         Employee ID: {{ data.user.employeeId }}<br />
         <strong>{{ data.user.firstName }} {{ data.user.lastName }}</strong><br />
@@ -18,21 +18,21 @@
         <hr />
         <button class="uk-button uk-button-default" v-on:click="resetLogin" uk-toggle="target: #modal">Reset Login</button>
       </div>
-      <div v-else v-for="(user, id) in data.selected" uk-grid>
+      <div v-else uk-grid>
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="userFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.userFirstName }" v-on:focus="clearError('userFirstName')" v-model="user.firstName">
+          <input class="uk-input" type="text" name="userFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.userFirstName }" v-on:focus="clearError('userFirstName')" v-model="data.user.firstName">
         </div>
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="userLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.userLastName }" v-on:focus="clearError('userLastName')" v-model="user.lastName">
+          <input class="uk-input" type="text" name="userLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.userLastName }" v-on:focus="clearError('userLastName')" v-model="data.user.lastName">
         </div>
         <!--TODO make address reactive-->
         <div class="uk-width-1-1">
-          <input class="uk-input" type="text" name="userAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.userAddress }" v-on:focus="clearError('userAddress')"v-model="user.address">
+          <input class="uk-input" type="text" name="userAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.userAddress }" v-on:focus="clearError('userAddress')"v-model="data.user.address">
         </div>
         <!--City/State/ZIP: assume all local addresses-->
         <!--TODO make address reactive-->
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="userCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.userCity }" v-on:focus="clearError('userCity')" v-model="user.city">
+          <input class="uk-input" type="text" name="userCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.userCity }" v-on:focus="clearError('userCity')" v-model="data.user.city">
         </div>
         <!--TODO make address reactive-->
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
@@ -91,17 +91,17 @@
           </select>
         </div>
         <div class="uk-width-1-2 uk-width-1-4@s">
-          <input class="uk-input" type="text" name="userZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.userZip }" v-on:focus="clearError('userZip')" v-model="user.zip"> 
+          <input class="uk-input" type="text" name="userZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.userZip }" v-on:focus="clearError('userZip')" v-model="data.user.zip"> 
         </div>
         <!--change to multiple fields for US numbers and an alternate for int'l?-->
         <div class="uk-width-1-2@s">
             <!--add label-->
-            <input class="uk-input" type="text" name="userPhone" placeholder="800-588-2300" v-model="user.phone" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.userPhone }" v-on:focus="clearError('userPhone')">
+            <input class="uk-input" type="text" name="userPhone" placeholder="800-588-2300" v-model="data.user.phone" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.userPhone }" v-on:focus="clearError('userPhone')">
             <!--add help text-->
             <span v-if="errors.userPhone" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
         </div>
         <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" name="userEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : errors.userEmail }" v-on:focus="clearError('userEmail')" v-model="user.email">
+            <input class="uk-input" type="text" name="userEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : errors.userEmail }" v-on:focus="clearError('userEmail')" v-model="data.user.email">
             <span v-if="errors.userEmail" class="uk-text-small uk-text-danger">please enter a valid email address</span>
         </div>
         <div class="uk-width-1-2@s" v-if="data.isNew">
