@@ -10,31 +10,29 @@
         </ul>
       </h1>
       <div v-if="!data.isEdit" class="uk-position-relative">
-        <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">Clerk</span>
-        Employee ID: {{ data.user.employeeId }}<br />
-        <strong>{{ data.user.firstName }} {{ data.user.lastName }}</strong><br />
-        <!--TODO make address reactive-->
+        <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ data.employee.employeeTitle }}</span>
+        Employee ID: {{ data.employee.employeeId }}<br />
+        <strong>{{ data.employee.firstName }} {{ data.employee.lastName }}</strong><br />
+        <!--TODO make address reactive when added to backend/API
         <span class="uk-text-small">239 Elm St, Springfield, IL 60666 <br>773-998-2664</span>
+        -->
         <hr />
         <button class="uk-button uk-button-default" v-on:click="resetLogin" uk-toggle="target: #modal">Reset Login</button>
       </div>
       <div v-else uk-grid>
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="userFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.userFirstName }" v-on:focus="clearError('userFirstName')" v-model="data.user.firstName">
+          <input class="uk-input" type="text" name="userFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.userFirstName }" v-on:focus="clearError('userFirstName')" v-model="data.employee.firstName">
         </div>
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="userLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.userLastName }" v-on:focus="clearError('userLastName')" v-model="data.user.lastName">
+          <input class="uk-input" type="text" name="userLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.userLastName }" v-on:focus="clearError('userLastName')" v-model="data.employee.lastName">
         </div>
-        <!--TODO make address reactive-->
+        <!--TODO make reactive when added to backend/API
         <div class="uk-width-1-1">
           <input class="uk-input" type="text" name="userAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.userAddress }" v-on:focus="clearError('userAddress')"v-model="data.user.address">
         </div>
-        <!--City/State/ZIP: assume all local addresses-->
-        <!--TODO make address reactive-->
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="userCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.userCity }" v-on:focus="clearError('userCity')" v-model="data.user.city">
         </div>
-        <!--TODO make address reactive-->
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
           <select class="uk-select" id="form-stacked-select">
               <option value="AL">AL</option>
@@ -93,32 +91,32 @@
         <div class="uk-width-1-2 uk-width-1-4@s">
           <input class="uk-input" type="text" name="userZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.userZip }" v-on:focus="clearError('userZip')" v-model="data.user.zip"> 
         </div>
-        <!--change to multiple fields for US numbers and an alternate for int'l?-->
         <div class="uk-width-1-2@s">
-            <!--add label-->
+            <\!--add label--\>
             <input class="uk-input" type="text" name="userPhone" placeholder="800-588-2300" v-model="data.user.phone" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.userPhone }" v-on:focus="clearError('userPhone')">
-            <!--add help text-->
+            <\!--add help text--\>
             <span v-if="errors.userPhone" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
         </div>
         <div class="uk-width-1-2@s">
             <input class="uk-input" type="text" name="userEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : errors.userEmail }" v-on:focus="clearError('userEmail')" v-model="data.user.email">
             <span v-if="errors.userEmail" class="uk-text-small uk-text-danger">please enter a valid email address</span>
         </div>
+        -->
         <div class="uk-width-1-2@s" v-if="data.isNew">
             <input class="uk-input" type="password" name="userPass" placeholder="*****" >
             <span class="uk-text-small">please enter a password</span>
         </div>
         <div class="uk-width-1-2@s" v-if="data.isNew">
-            <input class="uk-input" type="password" name="userPass" placeholder="*****" >
+            <input class="uk-input" type="password" name="userPassConfirm" placeholder="*****" >
             <span class="uk-text-small">please confirm password</span>
         </div>
-        <div class="uk-width-1-1">
-          <label><input class="uk-radio" type="radio" name="radio2" checked> Clerk</label>
-            <label><input class="uk-radio" type="radio" name="radio2"> Manager</label>
+        <div class="uk-width-1-1" v-model="data.employee.isManager">
+          <label class="uk-margin-right"><input class="uk-radio" type="radio" name="isManager" value="0" :checked="!data.employee.isManager"> Clerk</label>
+          <label><input class="uk-radio" type="radio" name="isManager" value="1" :checked="data.employee.isManager"> Manager</label>
         </div>
         <div class="uk-width-1-1">
           <hr />
-          <button class="uk-button uk-button-primary">Save</button>
+          <button class="uk-button uk-button-primary" v-on:click="handleSubmit(data)">Save</button> <!--TODO replace with form handler-->
           <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit" v-if="data.isNew == false">Cancel</span>
         </div>
       </div>
@@ -136,38 +134,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="user in data.employees">
+        <tr v-for="employee in data.employees">
           <!--TODO make date reactive-->
           <td>2/23/18</td>
-          <td><span class="uk-text-primary" v-on:click="viewEmployee(user.employeeId)">{{ user.firstName }} {{ user.lastName }}</span></td>
-          <td>{{ user.employeeTitle }}</td>
-          <td>{{ user.employeeId }}</td>
+          <td><span class="uk-text-primary" v-on:click="viewEmployee(employee.employeeId)">{{ employee.firstName }} {{ employee.lastName }}</span></td>
+          <td>{{ employee.employeeTitle }}</td>
+          <td>{{ employee.employeeId }}</td>
         </tr>
+        <!--
         <tr>
-          <!--TODO make reactive -->
           <td>2/23/18</td>
           <td><a is="router-link" to="/users/443">Cindy Johnson</a></td>
           <td>Clerk</td>
           <td>443</td>
-        </tr>
-        <tr>
-          <td>2/23/18</td>
-          <td><a is="router-link" to="/users/443">Ellen Johnson</a></td>
-          <td>Clerk</td>
-          <td>442</td>
-        </tr>
-        <tr>
-          <td>2/21/18</td>
-          <td><a is="router-link" to="/users/443">Mark Thompson</a></td>
-          <td>Clerk</td>
-          <td>441</td>
-        </tr>
-        <tr>
-          <td>2/23/18</td>
-          <td><a is="router-link" to="/users/443">Harvey Dent</a></td>
-          <td>Manager</td>
-          <td>440</td>
-        </tr>
+        </tr>-->
       </tbody>
     </table>
     </div>
@@ -180,6 +160,7 @@
     props: ['data'],
     data() {
       return {
+        //TODO Revise form fields
         userToEdit: null,
         errors: {
           userFirstName: false,
@@ -195,9 +176,9 @@
     methods: {
       editForm(id) {
         //TODO should be done with routes instead
-        this.cancelEdit();
+        //this.cancelEdit();
         this.userToEdit = id;
-        this.$router.app.$emit('editUser',id);
+        this.$router.app.$emit('editEmployee',id);
       },
       formatPhone(event) {
         //ideally we'd move this to a library function and load library in all components
@@ -239,14 +220,39 @@
           this.errors[input] = false;
         }
         //TODO reset to inital values
-        this.$router.app.$emit('cancelEdit');
-        //this.$router.app.$emit('viewCustomer', this.customerToEdit);
+        //this.$router.app.$emit('cancelEdit');
+        this.$router.app.$emit('viewEmployee', this.userToEdit);
+      },
+      handleSubmit(data) {
+        console.log('handle submit')
+        //TODO validation
+        var employee = data.employee;
+        if (data.isNew) {
+          //assign role -- TODO refactor based on API vals
+          var radios = document.getElementsByName("isManager");
+          employee.EmployeeType = radios.value;
+          for (var i = 0; i < radios.length; i++) {
+              if (radios[i].checked) {
+                employee.EmployeeType = radios[i].value;
+                break;
+             }
+          }
+          //TODO validate password
+          employee.RawPw = document.querySelector("input[name=userPass]").value;
+          //some validation
+          if (employee.RawPw != document.querySelector("input[name=userPassConfirm]").value) {
+            //check to make sure it was entered in properly
+          }
+        }
+        console.log(employee);
+        this.$router.app.$emit('submitEmployeeForm', employee);
       },
       resetLogin() {
         this.$router.app.$emit('resetLogin');
       },
       viewEmployee(employee) {
-        this.$router.app.$emit('viewUser',employee);
+        console.log('emit viewEmployee '+employee);
+        this.$router.app.$emit('viewEmployee',employee);
       }
     }
   }

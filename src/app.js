@@ -190,7 +190,7 @@ var app = new Vue({
       request.open('GET', url);
       request.send();
     },
-    getEmployee(id) {
+    getEmployee(id, callbackRoute) {
       console.log('API call employee '+ id);
       //send login request -- TODO use a function?
       var url = "/api/Employee/"+id;
@@ -201,6 +201,7 @@ var app = new Vue({
             //TODO use request.readyState == 4 && request.status == 200, add error handling
             data.isSingle = true;
             data.employee = JSON.parse(request.responseText);
+            data.employee.isManager = data.employee.employeeTitle == "Manager"; //TODO this may not be sophisticaed enough
             //TODO updates following backend revisions?
             console.log(data.employee);
             console.log('API response');
@@ -218,6 +219,7 @@ var app = new Vue({
       data.user = JSON.parse(user);
       data.isAuthenticated = true;
       console.log(data.user);
+      //TODO clarify roles -- this may be too simple of an implementation
       if (data.user.employeeTitle == "Manager") {
         data.isManager = true;
       }
@@ -266,15 +268,32 @@ var app = new Vue({
       data.isEdit = false;
     });
     //USERS
-    //add new employee
-    vm.$on('addUser', function(customer){
+    //submit employee form to add or edit employee
+    vm.$on('submitEmployeeForm', function(employee) {
+      console.log('emit submitEmployeeForm ');
+      console.log(employee);
       //TODO POST request to API
       //send to server
       var http = new XMLHttpRequest();
-      var url = "/api/employees";
-      //TODO add params
-      //var param1 ... paramN
-      var params;
+      var url = "/api/employees"; //for new
+
+      var FirstName = employee.firstName;
+      var LastName = employee.lastName;
+      var EmployeeType = employee.employeeType;
+      var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType;
+      if (data.isNew) {
+        var RawPw = employee.RawPw;
+        params = params+"&RawPw="+RawPw;
+      }
+      else {
+        //update employee info
+        var url = "/api/Employee/"+employee.employeeId;
+        var EmployeeId = employee.employeeId;
+        var PWHash = "TEST_HASH"; //TODO remove when API is revised
+        var Active = true; //TODO make this dynamic later
+        var EmployeeTitle = employee.employeeTitle; //TODO remove?
+        var params = params+"&EmployeeId="+EmployeeId+"&PWHash="+PWHash+"&Active="+Active+"&EmployeeTitle="+EmployeeTitle;
+      }
       var vm = this;
       http.open("POST", url, true);
 
@@ -284,46 +303,32 @@ var app = new Vue({
         //Call a function when the state changes.
         if(http.readyState == 4) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-          data.isNew = false; //TODO cleanup/move?
-          data.isEdit = false; //TODO cleanup/move?
           var employee = JSON.parse(this.responseText);
-          modal.title = 'New Employee Added';
-          modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video rental system.";
-          customer.customerId = 10 ;// TODO remove when API is updated
-          vm.$router.push({ name: 'userView', params: { id: id }}); //display customer profile
+          if (data.isNew) {
+            modal.title = 'New Employee Added';
+            modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
+            data.isNew = false; //TODO cleanup/move?
+          }
+          //TODO show modal confirming edit?
+          data.isEdit = false; //TODO cleanup/move?
+          vm.$router.push({ name: 'userView', params: { id: employee.employeeId }}); //display customer profile
         }
       }
       http.send(params);
     });
-    vm.$on('viewUser', function(id) {
-      data.isEdit = true;
-      data.isSingle = true;
-      //send login request -- TODO use a function?
-      var url = "/api/Employee/"+id;
-      var request = new XMLHttpRequest();
-      var vm = this;
-      request.onreadystatechange = function() {
-          if (request.readyState == 4) {
-            //TODO use request.readyState == 4 && request.status == 200, add error handling
-            data.users = JSON.parse(request.responseText);
-            console.log(data.users);
-            vm.$router.push({ name: 'userView', params: { id: id }});
-          }
-          else {
-            //TODO error handling?
-          }
-      }; 
-      request.open('GET', url);
-      request.send();
-
+    //view employee
+    vm.$on('viewEmployee', function(id) {
+      data.isEdit = false;
+      data.employee = {};
+      //GET request
+      app.getEmployee(id, { name: 'userView', params: { id: id }});
     });
-    vm.$on('editUser', function(id){
+    //employee show edit form
+    vm.$on('editEmployee', function(id){
       //set
       data.isEdit = true;
-      data.selected = {};
-      data.selected[id] = users[id];
       this.$router.push({ name: 'userEdit', params: { id: id }});
-    })
+    });
     //CUSTOMERS
     //search customer database
     vm.$on('searchCustomer', function(query){
@@ -655,8 +660,8 @@ router.beforeEach((to, from, next) => {
     if (to.fullPath[1] == 'u') {
       //TODO refactor/rename -- it's not really a search
       //get users
-      console.log(data.users == null);
-      if (data.users == null) {
+      console.log(data.employees == null);
+      if (data.employees == null) {
         //send login request -- TODO use a function?
         var url = "/api/employees";
         var request = new XMLHttpRequest();
@@ -697,7 +702,7 @@ router.beforeEach((to, from, next) => {
     }
     else {
       //user
-      data.user = {};
+      data.employee = {};
     }
   }
   else if (to.fullPath.indexOf('edit') > -1) {
