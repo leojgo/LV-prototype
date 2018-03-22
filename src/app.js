@@ -222,7 +222,7 @@ var app = new Vue({
       var FirstName = employee.firstName;
       var LastName = employee.lastName;
       var EmployeeType = employee.employeeType;
-      var PhoneNumber = employee.PhoneNumber;
+      var PhoneNumber = employee.phoneNumber;
       var params;
       if (data.isNew) {
         var RawPw = employee.RawPw;
@@ -234,7 +234,7 @@ var app = new Vue({
         var EmployeeId = employee.employeeId;
         var Active = employee.active;
         var EmployeeTitle = employee.employeeTitle; //TODO remove?
-        var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType+"&PhoneNumber="+PhoneNumber+"&Active="+Active;
+        var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType+"&PhoneNumber="+PhoneNumber+"&active="+Active;
       }
       var vm = this;
       http.open("POST", url, true);

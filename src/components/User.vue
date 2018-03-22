@@ -161,14 +161,14 @@
           this.errorMessage = this.errorMessage + "Please enter a valid 10 digit phone number! ";
         }
         //assign role -- TODO refactor based on API vals
-          var radios = document.getElementsByName("isManager");
-          employee.EmployeeType = radios.value;
-          for (var i = 0; i < radios.length; i++) {
-              if (radios[i].checked) {
-                employee.EmployeeType = radios[i].value, 10;
-                break;
-             }
+        var radios = document.getElementsByName("isManager");
+        employee.employeeType = radios.value;
+        for (var i = 0; i < radios.length; i++) {
+          if (radios[i].checked) {
+            employee.employeeType = radios[i].value;
+            break;
           }
+        }
         //new checks
         if (data.isNew) {
           employee.RawPw = document.querySelector("input[name=userPass]").value;
