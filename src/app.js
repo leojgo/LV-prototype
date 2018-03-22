@@ -211,6 +211,54 @@ var app = new Vue({
       request.open('GET', url);
       request.send();
     },
+    postEmployee(employee, callbackRoute) {
+      console.log('emit submitEmployeeForm ');
+      console.log(employee);
+      //TODO POST request to API
+      //send to server
+      var http = new XMLHttpRequest();
+      var url = "/api/employees"; //for new
+
+      var FirstName = employee.firstName;
+      var LastName = employee.lastName;
+      var EmployeeType = employee.employeeType;
+      var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType;
+      if (data.isNew) {
+        var RawPw = employee.RawPw;
+        params = params+"&RawPw="+RawPw;
+      }
+      else {
+        //update employee info
+        var url = "/api/Employee/"+employee.employeeId;
+        var EmployeeId = employee.employeeId;
+        var PWHash = "TEST_HASH"; //TODO remove when API is revised
+        var Active = employee.active;
+        var EmployeeTitle = employee.employeeTitle; //TODO remove?
+        var params = params+"&EmployeeId="+EmployeeId+"&PWHash="+PWHash+"&Active="+Active+"&EmployeeTitle="+EmployeeTitle;
+      }
+      var vm = this;
+      http.open("POST", url, true);
+
+      //Send the proper header information along with the request
+      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      http.onreadystatechange = function() {
+        //Call a function when the state changes.
+        if(http.readyState == 4) {
+          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
+          var employee = JSON.parse(this.responseText);
+          if (data.isNew) {
+            modal.title = 'New Employee Added';
+            modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
+            data.isNew = false; //TODO cleanup/move?
+          }
+          //TODO show modal confirming edit?
+          data.isEdit = false; //TODO cleanup/move?
+          //vm.$router.push({ name: 'userView', params: { id: employee.employeeId }}); //display customer profile
+          vm.$router.push(callbackRoute);
+        }
+      }
+      http.send(params);
+    }
   },
   mounted() {
     var vm = this;
@@ -267,9 +315,10 @@ var app = new Vue({
     vm.$on('cancelEdit', function(){
       data.isEdit = false;
     });
-    //USERS
+    //USERS (employees)
+    /*
     //submit employee form to add or edit employee
-    vm.$on('submitEmployeeForm', function(employee) {
+    vm.$on('submitEmployeeForm', function(employee, callbackRoute) {
       console.log('emit submitEmployeeForm ');
       console.log(employee);
       //TODO POST request to API
@@ -290,7 +339,7 @@ var app = new Vue({
         var url = "/api/Employee/"+employee.employeeId;
         var EmployeeId = employee.employeeId;
         var PWHash = "TEST_HASH"; //TODO remove when API is revised
-        var Active = true; //TODO make this dynamic later
+        var Active = employee.active;
         var EmployeeTitle = employee.employeeTitle; //TODO remove?
         var params = params+"&EmployeeId="+EmployeeId+"&PWHash="+PWHash+"&Active="+Active+"&EmployeeTitle="+EmployeeTitle;
       }
@@ -316,8 +365,10 @@ var app = new Vue({
       }
       http.send(params);
     });
+    */
     //view employee
     vm.$on('viewEmployee', function(id) {
+      console.log('call viewEmployee');
       data.isEdit = false;
       data.employee = {};
       //GET request?
@@ -327,25 +378,24 @@ var app = new Vue({
     vm.$on('editEmployee', function(id){
       //set
       data.isEdit = true;
-      data.employees = {};
-      this.$router.push({ name: 'userList' });
+      //this.$router.push({ name: 'userList' }); //change route to edit
+    });
+    vm.$on('createEmployee', function(employee) {
+      console.log('call createEmployee');
+      var callbackRoute = { name: 'userView', params: { id: employee.employeeId }}; //go to view employee after creation
+      app.postEmployee(employee, callbackRoute);
+    });
+    //update employee
+    vm.$on('updateEmployee', function(employee) {
+      console.log('call updateEmployee');
+      var callbackRoute = { name: 'userView', params: { id: employee.employeeId }}; //go to view employee after update
+      app.postEmployee(employee, callbackRoute);
     });
     //delete employee
-    vm.$on('deleteEmployee', function(id){
-      console.log('API call delete '+id);
-      var url = "/api/Employee/"+id;
-      var request = new XMLHttpRequest();
-      //TODO should this timeout?
-      request.onreadystatechange = function() {
-          if (request.readyState == 4) {
-            //TODO use request.readyState == 4 && request.status == 200, add error handling
-            data.isSingle = false;
-
-            app.$router.push(callbackRoute);
-          }
-      }; 
-      request.open('DELETE', url);
-      request.send();
+    vm.$on('deleteEmployee', function(employee) {
+      console.log('call deleteEmployee');
+      var callbackRoute = { name: 'userList' }; //go to list of employees after deletion
+      app.postEmployee(employee, callbackRoute);
     });
     //CUSTOMERS
     //search customer database

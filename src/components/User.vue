@@ -6,7 +6,7 @@
         <ul class="uk-iconnav uk-position-top-right">
           <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><a href="#" uk-icon="close" v-on:click="cancelEdit"></a></li>
           <li v-bind:class="{'uk-hidden' : data.isEdit}"><a uk-icon="pencil" v-on:click="editForm($route.params.id)"></a></li>
-          <li><a href="#" uk-icon="icon: trash" v-on:click="deleteEmployee($route.params.id)"></a></li>
+          <li><a href="#" uk-icon="icon: trash" v-on:click="deleteEmployee(data.employee)"></a></li>
         </ul>
       </h1>
       <div v-if="!data.isEdit" class="uk-position-relative">
@@ -22,97 +22,36 @@
       <div v-else uk-grid>
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="userFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.userFirstName }" v-on:focus="clearError('userFirstName')" v-model="data.employee.firstName">
+          <span class="uk-text-small uk-text-danger" v-if="errors.userFirstName">First name isn't long enough!</span>
         </div>
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="userLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.userLastName }" v-on:focus="clearError('userLastName')" v-model="data.employee.lastName">
+          <span class="uk-text-small uk-text-danger" v-if="errors.userLastName">Last name isn't long enough!</span>
         </div>
-        <!--TODO make reactive when added to backend/API
-        <div class="uk-width-1-1">
-          <input class="uk-input" type="text" name="userAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.userAddress }" v-on:focus="clearError('userAddress')"v-model="data.user.address">
-        </div>
-        <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="userCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.userCity }" v-on:focus="clearError('userCity')" v-model="data.user.city">
-        </div>
-        <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
-          <select class="uk-select" id="form-stacked-select">
-              <option value="AL">AL</option>
-              <option value="AK">AK</option>
-              <option value="AR">AR</option>  
-              <option value="AZ">AZ</option>
-              <option value="CA">CA</option>
-              <option value="CO">CO</option>
-              <option value="CT">CT</option>
-              <option value="DC">DC</option>
-              <option value="DE">DE</option>
-              <option value="FL">FL</option>
-              <option value="GA">GA</option>
-              <option value="HI">HI</option>
-              <option value="IA">IA</option>  
-              <option value="ID">ID</option>
-              <option value="IL" selected>IL</option>
-              <option value="IN">IN</option>
-              <option value="KS">KS</option>
-              <option value="KY">KY</option>
-              <option value="LA">LA</option>
-              <option value="MA">MA</option>
-              <option value="MD">MD</option>
-              <option value="ME">ME</option>
-              <option value="MI">MI</option>
-              <option value="MN">MN</option>
-              <option value="MO">MO</option>  
-              <option value="MS">MS</option>
-              <option value="MT">MT</option>
-              <option value="NC">NC</option>  
-              <option value="NE">NE</option>
-              <option value="NH">NH</option>
-              <option value="NJ">NJ</option>
-              <option value="NM">NM</option>      
-              <option value="NV">NV</option>
-              <option value="NY">NY</option>
-              <option value="ND">ND</option>
-              <option value="OH">OH</option>
-              <option value="OK">OK</option>
-              <option value="OR">OR</option>
-              <option value="PA">PA</option>
-              <option value="RI">RI</option>
-              <option value="SC">SC</option>
-              <option value="SD">SD</option>
-              <option value="TN">TN</option>
-              <option value="TX">TX</option>
-              <option value="UT">UT</option>
-              <option value="VT">VT</option>
-              <option value="VA">VA</option>
-              <option value="WA">WA</option>
-              <option value="WI">WI</option>  
-              <option value="WV">WV</option>
-              <option value="WY">WY</option>
-          </select>
-        </div>
-        <div class="uk-width-1-2 uk-width-1-4@s">
-          <input class="uk-input" type="text" name="userZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.userZip }" v-on:focus="clearError('userZip')" v-model="data.user.zip"> 
-        </div>
+        <!--TODO make reactive
         <div class="uk-width-1-2@s">
             <\!--add label--\>
             <input class="uk-input" type="text" name="userPhone" placeholder="800-588-2300" v-model="data.user.phone" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.userPhone }" v-on:focus="clearError('userPhone')">
             <\!--add help text--\>
             <span v-if="errors.userPhone" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
         </div>
-        <div class="uk-width-1-2@s">
-            <input class="uk-input" type="text" name="userEmail" placeholder="you@example.com" v-bind:class="{ 'uk-form-danger' : errors.userEmail }" v-on:focus="clearError('userEmail')" v-model="data.user.email">
-            <span v-if="errors.userEmail" class="uk-text-small uk-text-danger">please enter a valid email address</span>
-        </div>
         -->
         <div class="uk-width-1-2@s" v-if="data.isNew">
-            <input class="uk-input" type="password" name="userPass" placeholder="*****" >
+            <input class="uk-input" type="password" name="userPass" placeholder="*****" v-bind:class="{ 'uk-form-danger' : errors.userPass }" v-on:focus="clearError('userPass')">
             <span class="uk-text-small">please enter a password</span>
         </div>
         <div class="uk-width-1-2@s" v-if="data.isNew">
-            <input class="uk-input" type="password" name="userPassConfirm" placeholder="*****" >
+            <input class="uk-input" type="password" name="userPassConfirm" placeholder="*****" v-bind:class="{ 'uk-form-danger' : errors.userPass }" v-on:focus="clearError('userPass')">
             <span class="uk-text-small">please confirm password</span>
         </div>
         <div class="uk-width-1-1" v-model="data.employee.isManager">
           <label class="uk-margin-right"><input class="uk-radio" type="radio" name="isManager" value="0" :checked="!data.employee.isManager"> Clerk</label>
           <label><input class="uk-radio" type="radio" name="isManager" value="1" :checked="data.employee.isManager"> Manager</label>
+        </div>
+        <div v-if="hasErrors" class="uk-width-1-1">
+          <div class="uk-alert-danger" uk-alert>
+          {{ errorMessage }}
+          </div>
         </div>
         <div class="uk-width-1-1">
           <hr />
@@ -162,14 +101,13 @@
       return {
         //TODO Revise form fields
         userToEdit: null,
+        hasErrors: false,
+        errorMessage: "An error has occurred!",
         errors: {
           userFirstName: false,
           userLastName: false,
-          userAddress: false,
-          userCity: false,
-          userZip: false,
           userPhone: false,
-          userEmail: false
+          userPass: false
         }
       }
     },
@@ -223,18 +161,33 @@
         for (var input in this.errors) {
           this.errors[input] = false;
         }
-        //TODO reset to inital values
-        //this.$router.app.$emit('cancelEdit');
         this.$router.app.$emit('viewEmployee', this.userToEdit);
       },
-      deleteEmployee(id) {
-        this.userToEdit = id;
-        this.$router.app.$emit('deleteEmployee',id);
+      deleteEmployee(employee) {
+        employee.active = false;
+        this.$router.app.$emit('deleteEmployee', employee);
       },
       handleSubmit(data) {
         console.log('handle submit')
-        //TODO validation
         var employee = data.employee;
+        this.hasErrors = false;
+        this.errorMessage = "";
+        if (data.isNew) {
+          employee.firstName = document.getElementsByName("userFirstName")[0].value;
+          employee.lastName = document.getElementsByName("userLastName")[0].value;
+        }
+        //check for first name and last name input
+        if (employee.firstName.length < 2) {
+          this.errors.userFirstName = true;
+          this.hasErrors = true;
+          this.errorMessage = "Please make sure your to include your full name! ";
+        }
+        if (employee.lastName.length < 2) {
+          this.errors.userLastName = true;
+          this.hasErrors = true;
+          this.errorMessage = "Please make sure your to include your full name! ";
+        }
+        //new checks
         if (data.isNew) {
           //assign role -- TODO refactor based on API vals
           var radios = document.getElementsByName("isManager");
@@ -245,15 +198,61 @@
                 break;
              }
           }
-          //TODO validate password
           employee.RawPw = document.querySelector("input[name=userPass]").value;
           //some validation
           if (employee.RawPw != document.querySelector("input[name=userPassConfirm]").value) {
-            //check to make sure it was entered in properly
+            if (!this.hasErrors) {
+              this.errorMessage = "";
+              this.hasErrors = true;
+            }
+            this.errorMessage = this.errorMessage + "Your password and confirmation don't match!";
+            this.errors.userPass = true;
+          }
+          else {
+            //valide password
+            /*
+            * Requirements for Passwords:
+            * At Least 1 Digit
+            * At Least 1 Uppercase Letter
+            * At Least 1 Lowercase Letter
+            * Length is Greater than MinPwLength (6)
+            * Length is Less than MaxPwLength (25)
+            //^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])$
+            */
+            //no password
+            if (employee.RawPw.length < 6 || employee.RawPw.length > 20) {
+              //password too long!
+              if (!this.hasErrors) {
+                this.errorMessage = "";
+                this.hasErrors = true;
+              }
+              this.errorMessage = this.errorMessage + "Your password needs to be between 6 and 20 characters long! ";
+              this.errors.userPass = true;
+            }
+            else {
+              var validPW = employee.RawPw.match(/[^a-z0-9]/);
+              if (validPW != null) {
+                console.log(employee);
+                this.hasErrors = false;
+                this.$router.app.$emit('createEmployee', employee);
+              }
+              else {
+                if (!this.hasErrors) {
+                  this.errorMessage = "";
+                  this.hasErrors = true;
+                }
+                this.errorMessage = this.errorMessage + "Your password needs to have a number, an uppercase letter, and a lowercase letter!";
+                this.errors.userPass = true;
+              }
+            }
           }
         }
-        console.log(employee);
-        this.$router.app.$emit('submitEmployeeForm', employee);
+        else {
+          if (!this.hasErrors) {
+            console.log(employee);
+            this.$router.app.$emit('updateEmployee', employee);
+          }
+        }
       },
       resetLogin() {
         this.$router.app.$emit('resetLogin');
