@@ -320,14 +320,32 @@ var app = new Vue({
     vm.$on('viewEmployee', function(id) {
       data.isEdit = false;
       data.employee = {};
-      //GET request
+      //GET request?
       app.getEmployee(id, { name: 'userView', params: { id: id }});
     });
     //employee show edit form
     vm.$on('editEmployee', function(id){
       //set
       data.isEdit = true;
-      this.$router.push({ name: 'userEdit', params: { id: id }});
+      data.employees = {};
+      this.$router.push({ name: 'userList' });
+    });
+    //delete employee
+    vm.$on('deleteEmployee', function(id){
+      console.log('API call delete '+id);
+      var url = "/api/Employee/"+id;
+      var request = new XMLHttpRequest();
+      //TODO should this timeout?
+      request.onreadystatechange = function() {
+          if (request.readyState == 4) {
+            //TODO use request.readyState == 4 && request.status == 200, add error handling
+            data.isSingle = false;
+
+            app.$router.push(callbackRoute);
+          }
+      }; 
+      request.open('DELETE', url);
+      request.send();
     });
     //CUSTOMERS
     //search customer database

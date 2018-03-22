@@ -6,7 +6,7 @@
         <ul class="uk-iconnav uk-position-top-right">
           <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><a href="#" uk-icon="close" v-on:click="cancelEdit"></a></li>
           <li v-bind:class="{'uk-hidden' : data.isEdit}"><a uk-icon="pencil" v-on:click="editForm($route.params.id)"></a></li>
-          <li><a href="#" uk-icon="icon: trash"></a></li>
+          <li><a href="#" uk-icon="icon: trash" v-on:click="deleteEmployee($route.params.id)"></a></li>
         </ul>
       </h1>
       <div v-if="!data.isEdit" class="uk-position-relative">
@@ -174,8 +174,12 @@
       }
     },
     methods: {
+      viewEmployee(employee) {
+        console.log('emit viewEmployee '+employee);
+        this.$router.app.$emit('viewEmployee',employee);
+      },
       editForm(id) {
-        //TODO should be done with routes instead
+        //TODO should be done with routes instead ??
         //this.cancelEdit();
         this.userToEdit = id;
         this.$router.app.$emit('editEmployee',id);
@@ -223,6 +227,10 @@
         //this.$router.app.$emit('cancelEdit');
         this.$router.app.$emit('viewEmployee', this.userToEdit);
       },
+      deleteEmployee(id) {
+        this.userToEdit = id;
+        this.$router.app.$emit('deleteEmployee',id);
+      },
       handleSubmit(data) {
         console.log('handle submit')
         //TODO validation
@@ -249,10 +257,6 @@
       },
       resetLogin() {
         this.$router.app.$emit('resetLogin');
-      },
-      viewEmployee(employee) {
-        console.log('emit viewEmployee '+employee);
-        this.$router.app.$emit('viewEmployee',employee);
       }
     }
   }
