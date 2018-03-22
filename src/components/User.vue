@@ -11,11 +11,9 @@
       </h1>
       <div v-if="!data.isEdit" class="uk-position-relative">
         <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ data.employee.employeeTitle }}</span>
-        Employee ID: {{ data.employee.employeeId }}<br />
         <strong>{{ data.employee.firstName }} {{ data.employee.lastName }}</strong><br />
-        <!--TODO make address reactive when added to backend/API
-        <span class="uk-text-small">239 Elm St, Springfield, IL 60666 <br>773-998-2664</span>
-        -->
+        Employee ID: {{ data.employee.employeeId }}<br />
+        <span class="uk-text-small">Phone Number: {{ data.employee.phoneNumber }}</span>
         <hr />
         <button class="uk-button uk-button-default" v-on:click="resetLogin" uk-toggle="target: #modal">Reset Login</button>
       </div>
@@ -28,14 +26,10 @@
           <input class="uk-input" type="text" name="userLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.userLastName }" v-on:focus="clearError('userLastName')" v-model="data.employee.lastName">
           <span class="uk-text-small uk-text-danger" v-if="errors.userLastName">Last name isn't long enough!</span>
         </div>
-        <!--TODO make reactive
-        <div class="uk-width-1-2@s">
-            <\!--add label--\>
-            <input class="uk-input" type="text" name="userPhone" placeholder="800-588-2300" v-model="data.user.phone" v-on:keyup="formatPhone" v-bind:class="{ 'uk-form-danger' : errors.userPhone }" v-on:focus="clearError('userPhone')">
-            <\!--add help text--\>
+        <div class="uk-width-1-1">
+            <input class="uk-input" type="text" name="userPhone" placeholder="800-588-2300" v-model="data.employee.phoneNumber" v-bind:class="{ 'uk-form-danger' : errors.userPhone }" v-on:focus="clearError('userPhone')">
             <span v-if="errors.userPhone" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
         </div>
-        -->
         <div class="uk-width-1-2@s" v-if="data.isNew">
             <input class="uk-input" type="password" name="userPass" placeholder="*****" v-bind:class="{ 'uk-form-danger' : errors.userPass }" v-on:focus="clearError('userPass')">
             <span class="uk-text-small">please enter a password</span>
@@ -122,37 +116,6 @@
         this.userToEdit = id;
         this.$router.app.$emit('editEmployee',id);
       },
-      formatPhone(event) {
-        //ideally we'd move this to a library function and load library in all components
-        //console.log('call validate phone');
-        var key = event.keyCode || event.charCode;
-        //don't do anything on delete
-        if( key == 8 || key == 46 ) {
-          return false;
-        }
-        else {
-          var phoneNumber = document.querySelector("input[name=userPhone]");
-          var str = phoneNumber.value;
-          var sep = "-";
-          var position;
-          var last = phoneNumber.value.slice(-1);
-          var safeLast = last.replace(/\D/g,'');
-          if (last != safeLast || phoneNumber.value.length > 12) {
-             //remove non-numeric or extra chars
-            phoneNumber.value = phoneNumber.value.substr(0, phoneNumber.value.length-1);
-          }
-          else if (phoneNumber.value.length == 4 && phoneNumber.value.slice(-1) != sep) {
-            //add separator for readability
-            position = 3;
-            phoneNumber.value = [str.slice(0, position), sep, str.slice(position)].join('');
-          }
-          else if (phoneNumber.value.length == 8 && phoneNumber.value.slice(-1) != sep) {
-            //add separator for readability
-            position = 7;
-            phoneNumber.value = [str.slice(0, position), sep, str.slice(position)].join('');
-          } 
-        }
-      },
       clearError(input) {
         this.errors[input] = false;
       },
@@ -175,6 +138,7 @@
         if (data.isNew) {
           employee.firstName = document.getElementsByName("userFirstName")[0].value;
           employee.lastName = document.getElementsByName("userLastName")[0].value;
+          employee.phoneNumber = document.getElementsByName("userPhone")[0].value;
         }
         //check for first name and last name input
         if (employee.firstName.length < 2) {
@@ -187,17 +151,29 @@
           this.hasErrors = true;
           this.errorMessage = "Please make sure your to include your full name! ";
         }
+        employee.phoneNumber = document.getElementsByName("userPhone")[0].value.replace(/\D/g,'');
+        if (employee.phoneNumber.length != 10) {
+          this.errors.userPhone = true;
+          if (!this.hasErrors) {
+            this.errorMessage = "";
+            this.hasErrors = true;
+          }
+          this.errorMessage = this.errorMessage + "Please enter a valid 10 digit phone number! ";
+        }
+        else {
+          employee.phoneNumber = parseInt(employee.phoneNumber, 10); //convert to integer
+        }
+        //assign role -- TODO refactor based on API vals
+        var radios = document.getElementsByName("isManager");
+        employee.EmployeeType = radios.value;
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+              employee.EmployeeType = parseInt(radios[i].value, 10);
+              break;
+           }
+        }
         //new checks
         if (data.isNew) {
-          //assign role -- TODO refactor based on API vals
-          var radios = document.getElementsByName("isManager");
-          employee.EmployeeType = radios.value;
-          for (var i = 0; i < radios.length; i++) {
-              if (radios[i].checked) {
-                employee.EmployeeType = radios[i].value;
-                break;
-             }
-          }
           employee.RawPw = document.querySelector("input[name=userPass]").value;
           //some validation
           if (employee.RawPw != document.querySelector("input[name=userPassConfirm]").value) {
@@ -205,7 +181,7 @@
               this.errorMessage = "";
               this.hasErrors = true;
             }
-            this.errorMessage = this.errorMessage + "Your password and confirmation don't match!";
+            this.errorMessage = this.errorMessage + "Your password and confirmation don't match! ";
             this.errors.userPass = true;
           }
           else {
@@ -241,7 +217,7 @@
                   this.errorMessage = "";
                   this.hasErrors = true;
                 }
-                this.errorMessage = this.errorMessage + "Your password needs to have a number, an uppercase letter, and a lowercase letter!";
+                this.errorMessage = this.errorMessage + "Your password needs to have a number, an uppercase letter, and a lowercase letter! ";
                 this.errors.userPass = true;
               }
             }

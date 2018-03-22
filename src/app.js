@@ -222,19 +222,19 @@ var app = new Vue({
       var FirstName = employee.firstName;
       var LastName = employee.lastName;
       var EmployeeType = employee.employeeType;
-      var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType;
+      var PhoneNumber = employee.PhoneNumber;
+      var params;
       if (data.isNew) {
         var RawPw = employee.RawPw;
-        params = params+"&RawPw="+RawPw;
+        params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType+"&PhoneNumber="+PhoneNumber+"&RawPw="+RawPw;
       }
       else {
         //update employee info
         var url = "/api/Employee/"+employee.employeeId;
         var EmployeeId = employee.employeeId;
-        var PWHash = "TEST_HASH"; //TODO remove when API is revised
         var Active = employee.active;
         var EmployeeTitle = employee.employeeTitle; //TODO remove?
-        var params = params+"&EmployeeId="+EmployeeId+"&PWHash="+PWHash+"&Active="+Active+"&EmployeeTitle="+EmployeeTitle;
+        var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType+"&PhoneNumber="+PhoneNumber+"&Active="+Active+;
       }
       var vm = this;
       http.open("POST", url, true);
@@ -315,57 +315,8 @@ var app = new Vue({
     vm.$on('cancelEdit', function(){
       data.isEdit = false;
     });
+
     //USERS (employees)
-    /*
-    //submit employee form to add or edit employee
-    vm.$on('submitEmployeeForm', function(employee, callbackRoute) {
-      console.log('emit submitEmployeeForm ');
-      console.log(employee);
-      //TODO POST request to API
-      //send to server
-      var http = new XMLHttpRequest();
-      var url = "/api/employees"; //for new
-
-      var FirstName = employee.firstName;
-      var LastName = employee.lastName;
-      var EmployeeType = employee.employeeType;
-      var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType;
-      if (data.isNew) {
-        var RawPw = employee.RawPw;
-        params = params+"&RawPw="+RawPw;
-      }
-      else {
-        //update employee info
-        var url = "/api/Employee/"+employee.employeeId;
-        var EmployeeId = employee.employeeId;
-        var PWHash = "TEST_HASH"; //TODO remove when API is revised
-        var Active = employee.active;
-        var EmployeeTitle = employee.employeeTitle; //TODO remove?
-        var params = params+"&EmployeeId="+EmployeeId+"&PWHash="+PWHash+"&Active="+Active+"&EmployeeTitle="+EmployeeTitle;
-      }
-      var vm = this;
-      http.open("POST", url, true);
-
-      //Send the proper header information along with the request
-      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      http.onreadystatechange = function() {
-        //Call a function when the state changes.
-        if(http.readyState == 4) {
-          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-          var employee = JSON.parse(this.responseText);
-          if (data.isNew) {
-            modal.title = 'New Employee Added';
-            modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
-            data.isNew = false; //TODO cleanup/move?
-          }
-          //TODO show modal confirming edit?
-          data.isEdit = false; //TODO cleanup/move?
-          vm.$router.push({ name: 'userView', params: { id: employee.employeeId }}); //display customer profile
-        }
-      }
-      http.send(params);
-    });
-    */
     //view employee
     vm.$on('viewEmployee', function(id) {
       console.log('call viewEmployee');
