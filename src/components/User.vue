@@ -160,18 +160,15 @@
           }
           this.errorMessage = this.errorMessage + "Please enter a valid 10 digit phone number! ";
         }
-        else {
-          employee.phoneNumber = parseInt(employee.phoneNumber, 10); //convert to integer
-        }
         //assign role -- TODO refactor based on API vals
-        var radios = document.getElementsByName("isManager");
-        employee.EmployeeType = radios.value;
-        for (var i = 0; i < radios.length; i++) {
-            if (radios[i].checked) {
-              employee.EmployeeType = parseInt(radios[i].value, 10);
-              break;
-           }
-        }
+          var radios = document.getElementsByName("isManager");
+          employee.EmployeeType = radios.value;
+          for (var i = 0; i < radios.length; i++) {
+              if (radios[i].checked) {
+                employee.EmployeeType = radios[i].value, 10;
+                break;
+             }
+          }
         //new checks
         if (data.isNew) {
           employee.RawPw = document.querySelector("input[name=userPass]").value;

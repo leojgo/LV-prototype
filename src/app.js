@@ -234,7 +234,7 @@ var app = new Vue({
         var EmployeeId = employee.employeeId;
         var Active = employee.active;
         var EmployeeTitle = employee.employeeTitle; //TODO remove?
-        var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType+"&PhoneNumber="+PhoneNumber+"&Active="+Active+;
+        var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType+"&PhoneNumber="+PhoneNumber+"&Active="+Active;
       }
       var vm = this;
       http.open("POST", url, true);
