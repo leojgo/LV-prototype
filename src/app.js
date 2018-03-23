@@ -133,6 +133,7 @@ var users = {
 }
 var data = {
   company: 'Lackluster Video', //company name
+  loginError: false, //flag for whether login error occurred
   isAuthenticated: false, //auth flag
   isManager: false, //manager flag
   user: null, //user obj -- current user
@@ -272,6 +273,12 @@ var app = new Vue({
         data.isManager = true;
       }
     }); 
+    vm.$on('loginError', function(){
+      data.loginError = true;
+    });
+    vm.$on('clearLoginError', function(){
+      data.loginError = false;
+    });
     vm.$on('logout', function() {
       //TODO use a fn for get/post?
       //send logout request
