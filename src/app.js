@@ -244,7 +244,7 @@ var app = new Vue({
       http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       http.onreadystatechange = function() {
         //Call a function when the state changes.
-        if(http.readyState == 4) {
+        if(http.readyState == 4 && http.status == 200) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           var employee = JSON.parse(this.responseText);
           if (data.isNew) {
@@ -256,6 +256,9 @@ var app = new Vue({
           data.isEdit = false; //TODO cleanup/move?
           //vm.$router.push({ name: 'userView', params: { id: employee.employeeId }}); //display customer profile
           vm.$router.push(callbackRoute);
+        }
+        else {
+          data.loginError;
         }
       }
       http.send(params);
@@ -293,7 +296,7 @@ var app = new Vue({
       http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       http.onreadystatechange = function() {
         //Call a function when the state changes.
-        if(http.readyState == 4) {
+        if(http.readyState == 4 && http.status == 200) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           data.isAuthenticated = false;
           data.isManager = false;
@@ -406,7 +409,7 @@ var app = new Vue({
       http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       http.onreadystatechange = function() {
         //Call a function when the state changes.
-        if(http.readyState == 4) {
+        if(http.readyState == 4 && http.status == 200) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           if (data.isNew) {
             modal.title = 'New Customer Added';
@@ -447,7 +450,7 @@ var app = new Vue({
       http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       http.onreadystatechange = function() {
         //Call a function when the state changes.
-        if(http.readyState == 4) {
+        if(http.readyState == 4 && http.status == 200) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
 
           data.isNew = false; //TODO cleanup/move?
@@ -500,7 +503,7 @@ var app = new Vue({
       http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       http.onreadystatechange = function() {
         //Call a function when the state changes.
-        if(http.readyState == 4) {
+        if(http.readyState == 4 && http.status == 200) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           data.isEdit = false; //TODO cleanup/move?
           vm.$router.push({ name: 'customerView', params: { id: id }}); //display customer
@@ -692,7 +695,7 @@ router.beforeEach((to, from, next) => {
         var url = "/api/employees";
         var request = new XMLHttpRequest();
         request.onreadystatechange = function() {
-            if (request.readyState == 4) {
+            if (request.readyState == 4 && request.status == 200) {
               //TODO use request.readyState == 4 && request.status == 200, add error handling
               data.employees = JSON.parse(request.responseText);
               console.log(data.employees);

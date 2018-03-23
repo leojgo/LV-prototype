@@ -64,12 +64,12 @@ export default {
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function() {
           //Call a function when the state changes.
-          if(http.readyState == 4) {
-            //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-            //http.readyState == 4 && http.status == 200
-
+          if(http.readyState == 4 && http.status == 200) {
             //send the response to Vue
             vm.$router.app.$emit('login', this.responseText);
+          }
+          else {
+            vm.$router.app.$emit('loginError'); // 404?
           }
         }
         http.send(params);
