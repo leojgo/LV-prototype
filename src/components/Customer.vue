@@ -1,5 +1,9 @@
 <template>
   <div class="uk-section">
+    <div class="uk-alert-danger uk-text-small" uk-alert>
+      <!--<a class="uk-alert-close" uk-close></a>-->
+      <p>Prototyope for placement only -- not for functional review!</p>
+    </div>
     <div v-if="data.isSingle">
       <!--single customer view-->
       <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Create Customer Account</h1>

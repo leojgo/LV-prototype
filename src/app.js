@@ -301,6 +301,7 @@ var app = new Vue({
           data.isAuthenticated = false;
           data.isManager = false;
           data.user = null;
+          data.loginError = false;
           //go to home url
           router.push({name : 'home'});
         }

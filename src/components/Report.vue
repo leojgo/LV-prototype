@@ -1,5 +1,9 @@
 <template>
   <div class="uk-section">
+    <div class="uk-alert-danger uk-text-small" uk-alert>
+      <!--<a class="uk-alert-close" uk-close></a>-->
+      <p>Prototyope for placement only -- not for functional review!</p>
+    </div>
     <div v-if="$route.params.type == 'overdue'">
     <h1 class="uk-text-muted uk-text-large">Overdue Rentals Report</h1>
     <table class="uk-table uk-table-divider">

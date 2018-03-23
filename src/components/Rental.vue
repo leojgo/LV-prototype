@@ -1,6 +1,10 @@
 <template>
   <div class="uk-section">
     <!--single customer view-->
+    <div class="uk-alert-danger uk-text-small" uk-alert>
+      <!--<a class="uk-alert-close" uk-close></a>-->
+      <p>Prototyope for placement only -- not for functional review!</p>
+    </div>
     <div v-if="$route.params.id == 'new'" v-for="(rental, id) in data.selected">
       <h1 class="uk-text-large uk-text-muted" v-if="data.isEdit">New Rental</h1>
       <h1 class="uk-text-large uk-text-muted" v-else>New Rental Confirmation</h1>
