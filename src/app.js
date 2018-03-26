@@ -316,7 +316,7 @@ var app = new Vue({
     });
     vm.$on('resetLogin', function(){
       modal.title = 'Reset Login';
-      modal.body = '<div class="uk-width-1-1 uk-first-column"><strong>Username</strong>: Cindy</div><div uk-grid><strong>username</strong>: Cindy<br/><div class="uk-width-1-2@s" ><input class="uk-input" type="password" name="userPass" placeholder="*****" ><span class="uk-text-small">please enter a password</span></div><div class="uk-width-1-2@s"><input class="uk-input" type="password" name="userPass" placeholder="*****" ><span class="uk-text-small">please confirm password</span></div></div>';
+      modal.body = '<div class="uk-width-1-1">Reset password for employee '+employee.employeeId+', '+employee.firstName+' '+employee.lastName+'</div>';
       data.modal = modal;
     });
     vm.$on('clear', function(property){

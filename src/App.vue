@@ -54,6 +54,28 @@ export default {
       }
       else {
         //send login request
+        var xhr = new XMLHttpRequest();
+        var url = "/api/login";
+        var vm = this;
+
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                //var json = JSON.parse(xhr.responseText);
+                //send the response to Vue
+                vm.$router.app.$emit('login', this.responseText);
+            }
+            else {
+              vm.$router.app.$emit('loginError'); // 404?
+            }
+        };
+        var data = JSON.stringify({"username": user, "password": pass});
+        console.log('data: ');
+        console.log(data);
+        xhr.send(data);
+        /*
+        //send login request
         var http = new XMLHttpRequest();
         var url = "/api/login";
         var params = "username="+user+"&password="+pass;
@@ -73,6 +95,7 @@ export default {
           }
         }
         http.send(params);
+        */
       }
     },
     loginHelp() {
