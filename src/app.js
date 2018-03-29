@@ -170,27 +170,6 @@ var app = new Vue({
     };
   },
   methods: {
-    getCustomer(id, callbackRoute) {
-      console.log('API call customer '+ id);
-      //send login request -- TODO use a function?
-      var url = "/api/Customers/"+id;
-      var request = new XMLHttpRequest();
-      //TODO should this timeout?
-      request.onreadystatechange = function() {
-          if (request.readyState == 4) {
-            //TODO use request.readyState == 4 && request.status == 200, add error handling
-            data.isSingle = true;
-            data.customer = JSON.parse(request.responseText);
-            //TODO pretty phone number
-            console.log(data.customer);
-            //vm.$router.push({ name: 'customerView', params: { id: id }});
-            console.log('API response');
-            app.$router.push(callbackRoute);
-          }
-      }; 
-      request.open('GET', url);
-      request.send();
-    },
     getEmployee(id, callbackRoute) {
       console.log('API call employee '+ id);
       //send login request -- TODO use a function?
@@ -263,6 +242,30 @@ var app = new Vue({
         }
       }
       xhr.send(jsonData);
+    },
+    getCustomer(id, callbackRoute) {
+      console.log('API call customer '+ id);
+      //send login request -- TODO use a function?
+      var url = "/api/Customers/"+id;
+      var request = new XMLHttpRequest();
+      //TODO should this timeout?
+      request.onreadystatechange = function() {
+          if (request.readyState == 4) {
+            //TODO use request.readyState == 4 && request.status == 200, add error handling
+            data.isSingle = true;
+            data.customer = JSON.parse(request.responseText);
+            //TODO pretty phone number
+            console.log(data.customer);
+            //vm.$router.push({ name: 'customerView', params: { id: id }});
+            console.log('API response');
+            app.$router.push(callbackRoute);
+          }
+      }; 
+      request.open('GET', url);
+      request.send();
+    },
+    postCustomer(customer) {
+
     }
   },
   mounted() {
@@ -286,18 +289,17 @@ var app = new Vue({
     vm.$on('logout', function() {
       //TODO use a fn for get/post?
       //send logout request
-      var http = new XMLHttpRequest();
+      var xhr = new XMLHttpRequest();
       var url = "/api/logout";
       var user = data.user.employeeId;
-      var params = "username="+user;
+      var jsonData = JSON.stringify({"username": user});
       var vm = this;
-      http.open("POST", url, true);
-
-      //Send the proper header information along with the request
-      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      http.onreadystatechange = function() {
+      
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function() {
         //Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 200) {
+        if(xhr.readyState == 4 && xhr.status == 201 || xhr.status == 200) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           data.isAuthenticated = false;
           data.isManager = false;
@@ -307,7 +309,7 @@ var app = new Vue({
           router.push({name : 'home'});
         }
       }
-      http.send(params);
+      xhr.send(jsonData);
     });
     vm.$on('loginHelp', function() {
       var modal = {};
