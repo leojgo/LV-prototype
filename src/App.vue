@@ -45,8 +45,7 @@ export default {
   },
   props: ['data'],
   methods: { 
-    login(data) {
-      //TODO check for empty inputs
+    login() {
       var user = document.querySelector("input[name=user]").value;
       var pass = document.querySelector("input[name=password]").value;
       if (user.length < 1 || pass.length < 1) {
@@ -61,41 +60,17 @@ export default {
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 201) {
-                //var json = JSON.parse(xhr.responseText);
-                //send the response to Vue
-                vm.$router.app.$emit('login', this.responseText);
-            }
-            else {
-              vm.$router.app.$emit('loginError'); // 404?
-            }
-        };
-        var data = JSON.stringify({"username": user, "password": pass});
-        console.log('data: ');
-        console.log(data);
-        xhr.send(data);
-        /*
-        //send login request
-        var http = new XMLHttpRequest();
-        var url = "/api/login";
-        var params = "username="+user+"&password="+pass;
-        var vm = this;
-        http.open("POST", url, true);
-
-        //Send the proper header information along with the request
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function() {
-          //Call a function when the state changes.
-          if(http.readyState == 4 && http.status == 200) {
-            //send the response to Vue
-            vm.$router.app.$emit('login', this.responseText);
+          //TODO 200 used for local testing, remove for prod
+          if (xhr.readyState === 4 && (xhr.status === 201 || xhr.status === 200)) {
+              //send the response to Vue
+              vm.$router.app.$emit('login', this.responseText);
           }
           else {
-            vm.$router.app.$emit('loginError'); // 404?
+            vm.$router.app.$emit('loginError'); // 404 or sever error -- TODO revise when API supports error handling with message return
           }
-        }
-        http.send(params);
-        */
+        };
+        var jsonDdata = JSON.stringify({"username": user, "password": pass});
+        xhr.send(jsonDdata);
       }
     },
     loginHelp() {

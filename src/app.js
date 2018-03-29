@@ -215,53 +215,54 @@ var app = new Vue({
     postEmployee(employee, callbackRoute) {
       console.log('emit submitEmployeeForm ');
       console.log(employee);
-      //TODO POST request to API
+      //send login request
       //send to server
-      var http = new XMLHttpRequest();
+      var xhr = new XMLHttpRequest();
       var url = "/api/employees"; //for new
+      var vm = this;
 
       var FirstName = employee.firstName;
       var LastName = employee.lastName;
       var EmployeeType = employee.employeeType;
       var PhoneNumber = employee.phoneNumber;
-      var params;
+      var jsonData;
       if (data.isNew) {
         var RawPw = employee.RawPw;
-        params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType+"&PhoneNumber="+PhoneNumber+"&RawPw="+RawPw;
+        jsonData = JSON.stringify({"FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "RawPw": RawPw});
       }
       else {
         //update employee info
         var url = "/api/Employee/"+employee.employeeId;
-        var EmployeeId = employee.employeeId;
         var Active = employee.active;
         var EmployeeTitle = employee.employeeTitle; //TODO remove?
-        var params = "FirstName="+FirstName+"&LastName="+LastName+"&EmployeeType="+EmployeeType+"&PhoneNumber="+PhoneNumber+"&active="+Active;
+        jsonData = JSON.stringify({"FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "active": Active});
       }
-      var vm = this;
-      http.open("POST", url, true);
-
-      //Send the proper header information along with the request
-      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      http.onreadystatechange = function() {
+      
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
         //Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 200) {
+        if(http.readyState == 4 && http.status == 201 || xhr.status == 200f) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           var employee = JSON.parse(this.responseText);
           if (data.isNew) {
             modal.title = 'New Employee Added';
             modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
             data.isNew = false; //TODO cleanup/move?
+            //TODO confirmation in UI?
           }
-          //TODO show modal confirming edit?
+          else {
+            //TODO confirmation in UI?
+          }
+          //TODO show modal confirmmation?
           data.isEdit = false; //TODO cleanup/move?
-          //vm.$router.push({ name: 'userView', params: { id: employee.employeeId }}); //display customer profile
           vm.$router.push(callbackRoute);
         }
         else {
-          data.loginError;
+          //TODO error handling
         }
       }
-      http.send(params);
+      xhr.send(jsonData);
     }
   },
   mounted() {
