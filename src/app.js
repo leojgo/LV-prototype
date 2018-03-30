@@ -263,8 +263,56 @@ var app = new Vue({
       request.open('GET', url);
       request.send();
     },
-    postCustomer(customer) {
+    postCustomer(customer, callbackRoute) {
+      var xhr = new XMLHttpRequest();
+      var url = "/api/Customers"; //for new
+      var vm = this;
 
+      var name_First = customer.firstName;
+      var name_Last = customer.lastName;
+      var add_Line1 = customer.AddLine1;
+      var add_City = customer.addCity;
+      var add_State = customer.AddState;
+      var add_Zip = customer.AddZip;
+      var phoneNumber = customer.phoneNumber;
+      var email = customer.email;
+      var newsletter = false; //TODO set
+
+      var jsonData;
+      if (data.isNew) {
+        jsonData = JSON.stringify({"name_First": name_First}); //TODO add remaining fields
+      }
+      else {
+        //update customer info
+        var url = "/api/Customers/"+customer.customerId;
+        var active = customer.active;
+        var accountBalace = customer.accountBalace;
+        jsonData = JSON.stringify({"name_First": name_First}); //TODO add remaining fields
+      }
+
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
+        //Call a function when the state changes.
+      if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
+          data.customer = JSON.parse(this.responseText);
+          if (data.isNew) {
+            data.isNew = false; //TODO cleanup/move?
+            //TODO confirmation in UI?
+          }
+          else {
+            //TODO confirmation in UI?
+          }
+          //TODO show modal confirmmation?
+          data.isEdit = false; //TODO cleanup/move?
+          vm.$router.push(callbackRoute);
+        }
+        else {
+          //TODO error handling
+        }
+      }
+      xhr.send(jsonData);
     }
   },
   mounted() {
@@ -414,109 +462,13 @@ var app = new Vue({
         }
         xhr.send(jsonData);
       }
-
-      //FPO
-      /*
-      var results = {};
-      for (var key in customers) {
-        if (key == query) {
-          //matched id
-          results[key] = (customers[key]);
-        }
-        else if (customers[key].phone == query) {
-          //matched phone -- needs formatting on keyup
-          results[key] = (customers[key]);
-        } 
-        else if ((customers[key].firstName + " " + customers[key].lastName).indexOf(query) > -1) {
-          //partial name match --TODO make case insensitive
-          results[key] = (customers[key]);
-        }
-      }
-      data.customers = results;
-      */
     });
-    //TODO refactor forms to use the same fn for create & edit??
-    vm.$on('submitCustomerForm', function(customer){
-      //POST request
-      //send to server
-      var http = new XMLHttpRequest();
-      var url = "/api/Customers";
-      //TODO this is ugly/errorprone, replace with a loop?
-      var Name_First = customer.Name_First;
-      var Name_Last = customer.Name_Last;
-      var Add_Line1 = customer.Add_Line1;
-      var Add_City = customer.Add_City;
-      var Add_State = customer.Add_State;
-      var Add_Zip = customer.Add_Zip;
-      var PhoneNumber = customer.PhoneNumber;
-      var Email = customer.Email;
-      var Newsletter = customer.Newsletter;
-      var params = "customerId="+id+"&name_First="+Name_First+"&name_Last="+Name_Last+"&add_Line1="+Add_Line1+"&add_City="+Add_City+"&add_State="+Add_State+"&add_Zip="+Add_Zip+"&phoneNumber="+PhoneNumber+"&email="+Email+"&newsletter="+Newsletter;    
-      if (!data.isNew) {
-        url = "/api/Customers/"+customer.customerId;
-        params = "Name_First="+Name_First+"&Name_Last="+Name_Last+"&Add_Line1="+Add_Line1+"&Add_City="+Add_City+"&Add_State="+Add_State+"&Add_Zip="+Add_Zip+"&PhoneNumber="+PhoneNumber+"&Email="+Email+"&Newsletter="+Newsletter;
-      }
-      var vm = this;
-      http.open("POST", url, true);
-
-      //Send the proper header information along with the request
-      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      http.onreadystatechange = function() {
-        //Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 200) {
-          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-          if (data.isNew) {
-            modal.title = 'New Customer Added';
-            var customer = JSON.parse(this.responseText);
-            modal.body = "Customer " + customer.customerId + " has been added to the Lackluster Video rental system.";
-          }
-          data.isNew = false; //TODO cleanup/move?
-          data.isEdit = false; //TODO cleanup/move?
-
-          customer.customerId = 10 ;// TODO remove when API is updated
-          vm.$router.push({ name: 'customerView', params: { id: id }}); //display customer profile
-        }
-      }
-      http.send(params);
-    }); 
     //add new customer
-    vm.$on('addCustomer', function(customer){
-      //POST request
-      //send to server
-      var http = new XMLHttpRequest();
-      var url = "/api/Customers";
-      //TODO this is ugly/errorprone, replace with a loop?
-      var Name_First = customer.Name_First;
-      var Name_Last = customer.Name_Last;
-      var Add_Line1 = customer.Add_Line1;
-      var Add_City = customer.Add_City;
-      var Add_State = customer.Add_State;
-      var Add_Zip = customer.Add_Zip;
-      var PhoneNumber = customer.PhoneNumber;
-      var Email = customer.Email;
-      var Newsletter = customer.Newsletter;
-      var params = "Name_First="+Name_First+"&Name_Last="+Name_Last+"&Add_Line1="+Add_Line1+"&Add_City="+Add_City+"&Add_State="+Add_State+"&Add_Zip="+Add_Zip+"&PhoneNumber="+PhoneNumber+"&Email="+Email+"&Newsletter="+Newsletter;
-      
-      var vm = this;
-      http.open("POST", url, true);
-
-      //Send the proper header information along with the request
-      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      http.onreadystatechange = function() {
-        //Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 200) {
-          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-
-          data.isNew = false; //TODO cleanup/move?
-          data.isEdit = false; //TODO cleanup/move?
-          modal.title = 'New Customer Added';
-          var customer = JSON.parse(this.responseText);
-          modal.body = "Customer " + customer.customerId + " has been added to the Lackluster Video rental system.";
-          customer.customerId = 10 ;// TODO remove when API is updated
-          vm.$router.push({ name: 'customerView', params: { id: id }}); //display customer profile
-        }
-      }
-      http.send(params);
+    vm.$on('createCustomer', function(customer) {
+      console.log('call createCustomer');
+      //TODO no employee yet -- need to rework callback
+      //var callbackRoute = { name: 'customerView', params: { id: customer.customerId }}; //go to view employee after creation 
+      app.postEmployee(customer, callbackRoute);
     });
     //view customer
     vm.$on('viewCustomer', function(id){
@@ -532,38 +484,8 @@ var app = new Vue({
       this.$router.push({ name: 'customerEdit', params: { id: id }});
     });
     //submit edit customer form
-    vm.$on('updateCustomer', function(id) {
-      //POST request
-      //send to server
-      var http = new XMLHttpRequest();
-      var url = "/api/Customers/"+id;
-      //TODO this is ugly/errorprone, replace with a loop?
-      var Name_First = customer.Name_First;
-      var Name_Last = customer.Name_Last;
-      var Add_Line1 = customer.Add_Line1;
-      var Add_City = customer.Add_City;
-      var Add_State = customer.Add_State;
-      var Add_Zip = customer.Add_Zip;
-      var PhoneNumber = customer.PhoneNumber;
-      var Email = customer.Email;
-      var Newsletter = customer.Newsletter;
-      //params are lowercase!!
-      var params = "customerId="+id+"&name_First="+Name_First+"&name_Last="+Name_Last+"&add_Line1="+Add_Line1+"&add_City="+Add_City+"&add_State="+Add_State+"&add_Zip="+Add_Zip+"&phoneNumber="+PhoneNumber+"&email="+Email+"&newsletter="+Newsletter;
-      
-      var vm = this;
-      http.open("POST", url, true);
-
-      //Send the proper header information along with the request
-      http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      http.onreadystatechange = function() {
-        //Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 200) {
-          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-          data.isEdit = false; //TODO cleanup/move?
-          vm.$router.push({ name: 'customerView', params: { id: id }}); //display customer
-        }
-      }
-      http.send(params);
+    vm.$on('updateCustomer', function(customer) {
+      app.postCustomer(customer, { name: 'customerView', params: { id: customer.customerId }});
     });
     //MOVIES
     //search movie database

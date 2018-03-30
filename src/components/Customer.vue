@@ -11,23 +11,27 @@
         <ul class="uk-iconnav uk-position-top-right">
           <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><span uk-icon="close" v-on:click="cancelEdit"></span></li>
           <li v-bind:class="{'uk-hidden' : data.isEdit}"><span uk-icon="pencil" v-on:click="editForm(data.customer.customerId)"></span></li>
-          <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"></a></li>
+          <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"  v-on:click="deleteCustomer()"></a></li>
         </ul>
       </h1> 
       <!--maybe can combine-->
-      <form v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
+      <form v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit(data)">
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="customerFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.customerFirstName }" v-on:focus="clearError('customerFirstName')" v-model="data.customer.nameFirst">
+          <span class="uk-text-small uk-text-danger" v-if="errors.customerFirstName">First name isn't long enough!</span>
         </div>
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="customerLastName" placeholder="Smith" v-bind:class="{ 'uk-form-danger' : errors.customerLastName }" v-on:focus="clearError('customerLastName')" v-model="data.customer.nameLast">
+          <span class="uk-text-small uk-text-danger" v-if="errors.customerLastName">Last name isn't long enough!</span>
         </div>
         <div class="uk-width-1-1">
           <input class="uk-input" type="text" name="customerAddress" placeholder="Address Line" v-bind:class="{ 'uk-form-danger' : errors.customerAddress }" v-on:focus="clearError('customerAddress')"v-model="data.customer.addLine1">
+          <span class="uk-text-small uk-text-danger" v-if="errors.customerAddress">Address isn't long enough!</span>
         </div>
         <!--City/State/ZIP: assume all local addresses-->
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="customerCity" placeholder="City" v-bind:class="{ 'uk-form-danger' : errors.customerCity }" v-on:focus="clearError('customerCity')" v-model="data.customer.addCity">
+          <span class="uk-text-small uk-text-danger" v-if="errors.customerCity">City isn't long enough!</span>
         </div>
         <!--TODO add binding-->
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
@@ -87,6 +91,7 @@
         </div>
         <div class="uk-width-1-2 uk-width-1-4@s">
           <input class="uk-input" type="text" name="customerZip" placeholder="60666" v-bind:class="{ 'uk-form-danger' : errors.customerZip }" v-on:focus="clearError('customerZip')" v-model="data.customer.addZip"> 
+          <span class="uk-text-small uk-text-danger" v-if="errors.customerZip">Please enter a valid zip code</span>
         </div>
         <!--change to multiple fields for US numbers and an alternate for int'l?-->
         <div class="uk-width-1-1">
@@ -101,7 +106,7 @@
         </div>
         <div class="uk-width-1-1">
           <!--TODO add binding-->
-          <label><input class="uk-checkbox" type="checkbox" name="customerNewsletter" checked> Add to Mailing List</label>
+          <label><input class="uk-checkbox" type="checkbox" name="customerNewsletter" v-model="data.customer.newsletter"> Add to Mailing List</label>
         </div>
         <div class="uk-width-1-1">
           <button class="uk-button uk-button-primary">Save</button>
@@ -125,7 +130,7 @@
       <label class="uk-form-label uk-text-large uk-text-muted uk-margin uk-display-block" for="customerKeyword">Find a Customer</label>
       <div class="uk-search uk-search-default uk-width-1-1">
         <input type="search" placeholder="Enter Customer ID, Name or Phone Number" class="uk-input" id="customerKeyword" name="customerKeyword" v-on:keyup.enter="search" v-on:focus="clearSearchError"> 
-        <span class="uk-text-small uk-text-danger" v-if="errors.emptyQuery">You forgot to enter your search query!</span>
+        <span class="uk-text-small uk-text-danger" v-if="nullQuery">You forgot to enter your search query!</span>
         <button v-on:click="search" class="uk-search-icon-flip uk-search-icon uk-icon" uk-search-icon></button>
         <!--<span class="uk-button uk-button-default"  v-on:click="search">Search</span>-->
       </div>
@@ -155,6 +160,9 @@
     data() {
       return {
         customerToEdit: null,
+        hasErrors: false,
+        nullQuery: false,
+        errorMessage: null,
         errors: {
           customerFirstName: false,
           customerLastName: false,
@@ -162,8 +170,7 @@
           customerCity: false,
           customerZip: false,
           customerPhone: false,
-          customerEmail: false,
-          emptyQuery: false
+          customerEmail: false
         }
       }
     },
@@ -171,15 +178,15 @@
       search() {
         var query = document.querySelector("input[name=customerKeyword]").value;
         if (query.length < 1) {
-          this.errors.emptyQuery = true;
+          this.nullQuery = true;
         }
         else {
-          this.errors.emptyQuery = false;
+          this.nullQuery = false;
           this.$router.app.$emit('searchCustomer', query);
         }
       },
       clearSearchError() {
-        this.errors.emptyQuery = false;
+        this.nullQuery = false;
       },
       view(id) {
         //console.log('emit viewCustomer');
@@ -228,57 +235,62 @@
       clearError(input) {
         this.errors[input] = false;
       },
-      handleSubmit() {
+      handleSubmit(data) {
         console.log('handle submit')
+        var customer = {
+          firstName: document.querySelector("input[name=customerFirstName]").value,
+          lastName: document.querySelector("input[name=customerLastName]").value,
+          addLine1: document.querySelector("input[name=customerAddress]").value,
+          addCity: document.querySelector("input[name=customerCity]").value,
+          addState: "IL",
+          addZip: document.querySelector("input[name=customerZip]").value,
+          email: document.querySelector("input[name=customerEmail]").value,
+          phoneNumber: document.querySelector("input[name=customerPhone]").value.replace("-",""),
+          //TODO handling for newsletter
+          newsletter: ""
+        }
         //check text inputs for content
         //check for valid phone
-        var hasError = false;
-        var phoneNumber = document.querySelector("input[name=customerPhone]");
-        if (phoneNumber.value.length != 12) {
-          this.phoneError = true;
-          hasError = true;
+        this.hasErrors = false;
+        //validate phoneNumber 
+        //TODO better handling for phone numbers
+        customer.phoneNumber = customer.phoneNumber.replace(/\D/g,'');
+        if (customer.phoneNumber.length != 10) {
+          this.errors.customerPhone = true;
+          if (!this.hasErrors) {
+            this.errorMessage = "";
+            this.hasErrors = true;
+          }
+          this.errorMessage = this.errorMessage + "Please enter a valid 10 digit phone number! ";
         }
         //check for valid email
-        var emailInput = document.querySelector("input[name=customerEmail]");
         var validEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if (!validEmail.test(String(emailInput.value).toLowerCase())) {
+        if (!validEmail.test(String(customer.email).toLowerCase())) {
           //add error class
-          this.emailError = true;
-          hasError = true;
+          this.errors.customerEmail = true;
+          this.hasErrors = true;
         };
         //validate zip
-        var zip = document.querySelector("input[name=customerZip]");
-        if (zip.value.replace(/\D/g,'') != zip.value || zip.value.length != 5) {
-          this.zipError = true;
+        if (customer.addZip != customer.addZip.replace(/\D/g,'') || customer.addZip.length != 5) {
+          this.errors.customerZip = true;
         }
         //check for missing inputs
         for (var input in this.errors) {
           if (document.querySelector("input[name="+input+"]").value.length < 1) {
             this.errors[input] = true;
-            hasError = true;
+            this.hasErrors = true;
           }
         }
-        if (hasError) {
-          //show error messages
-        }
-        else {
-          var newCustomer = {
-            firstName: document.querySelector("input[name=customerFirstName]").value,
-            lastName: document.querySelector("input[name=customerLastName]").value,
-            address: document.querySelector("input[name=customerAddress]").value,
-            city: document.querySelector("input[name=customerCity]").value,
-            state: "IL",
-            zip: document.querySelector("input[name=customerZip]").value,
-            email: document.querySelector("input[name=customerEmail]").value,
-            phone: document.querySelector("input[name=customerPhone]").value.replace("-","")
-          }
-          if (this.$router.app.data.isNew) {
-            console.log('emit addCustomer');
-            this.$router.app.$emit('addCustomer', newCustomer);
+        if (!this.hasErrors) {
+          if (data.isNew) {
+            //create customer
+            console.log('emit createCustomer');
+            this.$router.app.$emit('createsCustomer', customer);
           }
           else {
+            customer["customerId"] = this.customerToEdit;
             console.log('emit updateCustomer');
-            this.$router.app.$emit('updateCustomer', this.customerToEdit);
+            this.$router.app.$emit('updateCustomer', customer);
           }
         }
       },
@@ -287,7 +299,11 @@
         for (var input in this.errors) {
           this.errors[input] = false;
         }
+        this.hasErrors = false;
         this.$router.app.$emit('viewCustomer', this.customerToEdit); //get the data again in case fields
+      },
+      deleteCustomer(customer) {
+        this.$router.app.$emit('deleteCustomer', this.customerToEdit);
       }
     }
   }
