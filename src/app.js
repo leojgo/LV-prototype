@@ -277,7 +277,7 @@ var app = new Vue({
       var add_Zip = customer.AddZip;
       var phoneNumber = customer.phoneNumber;
       var email = customer.email;
-      var newsletter = false; //TODO set
+      var newsletter = customer.newsletter;
 
       var jsonData;
       if (data.isNew) {

@@ -31,10 +31,10 @@
         </div>
         <!--TODO add binding-->
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
-          <select class="uk-select" id="form-stacked-select">
+          <select class="uk-select" id="form-stacked-select" v-model="data.customer.addState">
               <option value="AL">AL</option>
               <option value="AK">AK</option>
-              <option value="AR">AR</option>  
+              <option value="AR">AR</option>
               <option value="AZ">AZ</option>
               <option value="CA">CA</option>
               <option value="CO">CO</option>
@@ -46,7 +46,7 @@
               <option value="HI">HI</option>
               <option value="IA">IA</option>  
               <option value="ID">ID</option>
-              <option value="IL" selected>IL</option>
+              <option value="IL">IL</option>
               <option value="IN">IN</option>
               <option value="KS">KS</option>
               <option value="KY">KY</option>
@@ -102,7 +102,7 @@
         </div>
         <div class="uk-width-1-1">
           <!--TODO add binding-->
-          <label><input class="uk-checkbox" type="checkbox" name="customerNewsletter" v-model="data.customer.newsletter"> Add to Mailing List</label>
+          <label><input class="uk-checkbox" type="checkbox" name="customerNewsletter" value="false" v-model="data.customer.newsletter"> Subscribe to Mailing List</label>
         </div>
         <div class="uk-width-1-1">
           <button class="uk-button uk-button-primary">Save</button>
@@ -243,7 +243,7 @@
           email: document.querySelector("input[name=customerEmail]").value,
           phoneNumber: document.querySelector("input[name=customerPhone]").value.replace("-",""),
           //TODO handling for newsletter
-          newsletter: ""
+          newsletter: document.querySelector("input[name=customerNewsletter]").value
         }
         //check text inputs for content
         //check for valid phone

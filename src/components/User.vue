@@ -151,6 +151,7 @@
           this.hasErrors = true;
           this.errorMessage = "Please make sure your to include your full name! ";
         }
+        //TODO better handling for phone numbers
         employee.phoneNumber = document.getElementsByName("userPhone")[0].value.replace(/\D/g,'');
         if (employee.phoneNumber.length != 10) {
           this.errors.userPhone = true;
