@@ -264,6 +264,7 @@ var app = new Vue({
       request.send();
     },
     postCustomer(customer, callbackRoute) {
+      //TODO Is callback needed? Does this ever go anywhere except to the customer's profile?
       var xhr = new XMLHttpRequest();
       var url = "/api/Customers"; //for new
       var vm = this;
@@ -280,14 +281,14 @@ var app = new Vue({
 
       var jsonData;
       if (data.isNew) {
-        jsonData = JSON.stringify({"name_First": name_First}); //TODO add remaining fields
+        jsonData = JSON.stringify({"NameFirst": name_First,"NameMiddleIn": null, "NameLast": name_Last, "AddLine1": add_Line1, "AddLine2":null, "AddCity": add_City, "AddState": add_State, "AddZip": add_Zip, "PhoneNumber": phoneNumber, "Email": email, "Newsletter": newsletter});
       }
       else {
         //update customer info
         var url = "/api/Customers/"+customer.customerId;
         var active = customer.active;
-        var accountBalace = customer.accountBalace;
-        jsonData = JSON.stringify({"name_First": name_First}); //TODO add remaining fields
+        var accountBalance = customer.accountBalance;
+        jsonData = JSON.stringify({"customerId": customer.customerId, "name_First": name_First, "name_Middle_In": null, "name_Last": name_Last, "add_Line1": add_Line1, "add_Line2": null, "add_City": add_City, "add_State": add_State, "add_Zip": add_Zip, "phoneNumber": phoneNumber, "email": email, "newsletter": newsletter, "accountBalance": accountBalance, "active": active});
       }
 
       xhr.open("POST", url, true);
@@ -295,18 +296,19 @@ var app = new Vue({
       xhr.onreadystatechange = function () {
         //Call a function when the state changes.
       if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
-          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-          data.customer = JSON.parse(this.responseText);
+          var response = JSON.parse(this.responseText);
+          console.log(response);
           if (data.isNew) {
             data.isNew = false; //TODO cleanup/move?
-            //TODO confirmation in UI?
+            var route = {name: 'customerView', params: {id: response.key }};
+            app.getCustomer(response.key, route);
           }
           else {
             //TODO confirmation in UI?
+            vm.$router.push(callbackRoute);
           }
           //TODO show modal confirmmation?
           data.isEdit = false; //TODO cleanup/move?
-          vm.$router.push(callbackRoute);
         }
         else {
           //TODO error handling
@@ -323,7 +325,7 @@ var app = new Vue({
       data.isAuthenticated = true;
       console.log(data.user);
       //TODO clarify roles -- this may be too simple of an implementation
-      if (data.user.employeeTitle == "Manager") {
+      if (data.user.employeeTitle != "Clerk") {
         data.isManager = true;
       }
     }); 
@@ -395,7 +397,7 @@ var app = new Vue({
     vm.$on('createEmployee', function(employee) {
       console.log('call createEmployee');
       var callbackRoute = { name: 'userView', params: { id: employee.employeeId }}; //go to view employee after creation
-      app.postEmployee(employee, callbackRoute);
+      app.postCustomer(employee, callbackRoute);
     });
     //update employee
     vm.$on('updateEmployee', function(employee) {
@@ -481,11 +483,12 @@ var app = new Vue({
       console.log('call createCustomer');
       //TODO no employee yet -- need to rework callback
       //var callbackRoute = { name: 'customerView', params: { id: customer.customerId }}; //go to view employee after creation 
-      app.postEmployee(customer, callbackRoute);
+      app.postCustomer(customer, null);
     });
     //submit edit customer form
     vm.$on('updateCustomer', function(customer) {
-      app.postCustomer(customer, { name: 'customerView', params: { id: customer.customerId }});
+      var callbackRoute = { name: 'customerView', params: { id: customer.customerId }};
+      app.postCustomer(customer, callbackRoute);
     });
      //delete employee
     vm.$on('deleteCustomer', function(customer) {
