@@ -174,13 +174,12 @@ var app = new Vue({
       console.log('API call employee '+ id);
       //send login request -- TODO use a function?
       var url = "/api/Employee/"+id;
-      var request = new XMLHttpRequest();
+      var xhr = new XMLHttpRequest();
       //TODO should this timeout?
-      request.onreadystatechange = function() {
-          if (request.readyState == 4) {
-            //TODO use request.readyState == 4 && request.status == 200, add error handling
+      xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
             data.isSingle = true;
-            data.employee = JSON.parse(request.responseText);
+            data.employee = JSON.parse(xhr.responseText);
             data.employee.isManager = data.employee.employeeTitle == "Manager"; //TODO this may not be sophisticaed enough
             //TODO updates following backend revisions?
             console.log(data.employee);
@@ -188,8 +187,8 @@ var app = new Vue({
             app.$router.push(callbackRoute);
           }
       }; 
-      request.open('GET', url);
-      request.send();
+      xhr.open('GET', url);
+      xhr.send();
     },
     postEmployee(employee, callbackRoute) {
       console.log('emit submitEmployeeForm ');
@@ -221,7 +220,7 @@ var app = new Vue({
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function () {
         //Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 201 || xhr.status == 200f) {
+      if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           var employee = JSON.parse(this.responseText);
           if (data.isNew) {
@@ -294,12 +293,12 @@ var app = new Vue({
       var user = data.user.employeeId;
       var jsonData = JSON.stringify({"username": user});
       var vm = this;
-      
+
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function() {
         //Call a function when the state changes.
-        if(xhr.readyState == 4 && xhr.status == 201 || xhr.status == 200) {
+        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           data.isAuthenticated = false;
           data.isManager = false;
@@ -364,10 +363,60 @@ var app = new Vue({
     });
     //CUSTOMERS
     //search customer database
-    vm.$on('searchCustomer', function(query){
-      //TODO GET request to API
+    vm.$on('searchCustomer', function(query) {
+      console.log('call searchCustomer');
+      var isRental = app.$route.path.indexOf('rental') > -1; //route str contains rental
+      console.log(isRental);
+      //validate query
+      var PhoneNumber = "";
+      var SearchTerm = "";
+      if (query.replace(/\D/g,'') == query) {
+        //all numbers
+        if (query.length == 10) {
+          //search is phone
+          PhoneNumber = query;
+        }
+      }
+      else {
+        //name search
+        SearchTerm = query;
+      }
+      if (SearchTerm.length == 0 && PhoneNumber.length == 0) {
+        //select customer
+        app.getCustomer(query);
+        if (isRental) {
+          //view customer url
+          app.getCustomer(query);
+        }
+        else {
+          app.getCustomer(query, { name: 'customerView', params: {id: query} });
+        }
+      }
+      else {
+        //search for name or phone
+        var xhr = new XMLHttpRequest();
+        var url = "/api/CustomerSearch";
+        var user = data.user.employeeId;
+        var jsonData = JSON.stringify({"PhoneNumber":PhoneNumber, "SearchTerm": SearchTerm});
+        var vm = this;
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.onreadystatechange = function () {
+          //Call a function when the state changes.
+          if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+            data.customers = JSON.parse(this.responseText);
+            console.log(data.customers);
+            //TODO select customer if only one result returned
+          }
+          else {
+            //TODO error handling
+          }
+        }
+        xhr.send(jsonData);
+      }
 
       //FPO
+      /*
       var results = {};
       for (var key in customers) {
         if (key == query) {
@@ -384,6 +433,7 @@ var app = new Vue({
         }
       }
       data.customers = results;
+      */
     });
     //TODO refactor forms to use the same fn for create & edit??
     vm.$on('submitCustomerForm', function(customer){

@@ -124,7 +124,8 @@
       <!--customer search view-->
       <label class="uk-form-label uk-text-large uk-text-muted uk-margin uk-display-block" for="customerKeyword">Find a Customer</label>
       <div class="uk-search uk-search-default uk-width-1-1">
-        <input type="search" placeholder="Enter Customer ID, Name or Phone Number" class="uk-input" id="customerKeyword" name="customerKeyword" v-on:keyup.enter="search">  
+        <input type="search" placeholder="Enter Customer ID, Name or Phone Number" class="uk-input" id="customerKeyword" name="customerKeyword" v-on:keyup.enter="search" v-on:focus="clearSearchError"> 
+        <span class="uk-text-small uk-text-danger" v-if="errors.emptyQuery">You forgot to enter your search query!</span>
         <button v-on:click="search" class="uk-search-icon-flip uk-search-icon uk-icon" uk-search-icon></button>
         <!--<span class="uk-button uk-button-default"  v-on:click="search">Search</span>-->
       </div>
@@ -136,10 +137,10 @@
         <!--loop over results-->
         <ul class="uk-list uk-list-divider">
           <!--move style to cutom css-->
-          <li v-for="(customer, id) in data.customers" style="position: relative" v-on:click="view(id)">
-            <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ id }}</span>
-            <strong>{{ customer.firstName }} {{ customer.lastName }}</strong><br />
-            <span class="uk-text-small">{{ customer.address }}, {{ customer.city }}, {{ customer.state }} {{ customer.zip }}<br />{{ customer.phone }}</span>
+          <li v-for="customer in data.customers" style="position: relative" v-on:click="view(customer.customerId)">
+            <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ customer.customerId }}</span>
+            <strong>{{ customer.nameFirst }} {{ customer.nameLast }}</strong><br />
+            <span class="uk-text-small">{{ customer.addLine1 }}, {{ customer.addCity }}, {{ customer.addState }} {{ customer.addZip }}<br />{{ customer.phoneNumber }}</span>
           </li>
         </ul>
       </div>
@@ -161,14 +162,24 @@
           customerCity: false,
           customerZip: false,
           customerPhone: false,
-          customerEmail: false
+          customerEmail: false,
+          emptyQuery: false
         }
       }
     },
     methods: {
       search() {
         var query = document.querySelector("input[name=customerKeyword]").value;
-        this.$router.app.$emit('searchCustomer', query);
+        if (query.length < 1) {
+          this.errors.emptyQuery = true;
+        }
+        else {
+          this.errors.emptyQuery = false;
+          this.$router.app.$emit('searchCustomer', query);
+        }
+      },
+      clearSearchError() {
+        this.errors.emptyQuery = false;
       },
       view(id) {
         //console.log('emit viewCustomer');
