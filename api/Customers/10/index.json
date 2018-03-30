@@ -1,0 +1,16 @@
+{
+    "customerId": 10,
+    "nameFirst": "Customer Name",
+    "nameMiddleIn": "F",
+    "nameLast": "Customer last",
+    "addLine1": "address line 1",
+    "addLine2": "address line 2",
+    "addCity": "test city",
+    "addState": "IL",
+    "addZip": 61571,
+    "phoneNumber": 1234567890,
+    "email": "email@domain.com",
+    "newsletter": true,
+    "accountBalance": 0,
+    "active": true
+}

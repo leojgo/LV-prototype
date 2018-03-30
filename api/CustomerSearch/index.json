@@ -1,0 +1,20 @@
+[
+    {
+        "customerId": 10,
+        "nameFirst": "Daniel",
+        "nameMiddleIn": "J",
+        "nameLast": "Karlinski",
+        "addLine1": "510 Catherine",
+        "addLine2": "",
+        "addCity": "Washington",
+        "addState": "Illinois",
+        "addZip": 61571,
+        "phoneNumber": 6305518540,
+        "email": "dan@karlinski.com",
+        "newsletter": false,
+        "accountBalance": 0,
+        "active": true
+    }
+]
+
+ 

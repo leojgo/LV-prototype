@@ -1,0 +1,20 @@
+[
+    {
+        "employeeId": 13,
+        "firstName": "TEST ACCOUNT",
+        "lastName": "Password is Password1",
+        "employeeType": 1,
+        "active": true,
+        "employeeTitle": "Manager",
+        "phoneNumber": 9999999999
+    },
+    {
+        "employeeId": 12,
+        "firstName": "TEST ACCOUNT",
+        "lastName": "Password is Password1",
+        "employeeType": 1,
+        "active": true,
+        "employeeTitle": "Manager",
+        "phoneNumber": 9999999999
+    }
+]
