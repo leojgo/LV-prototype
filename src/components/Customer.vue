@@ -11,7 +11,7 @@
         <ul class="uk-iconnav uk-position-top-right">
           <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><span uk-icon="close" v-on:click="cancelEdit"></span></li>
           <li v-bind:class="{'uk-hidden' : data.isEdit}"><span uk-icon="pencil" v-on:click="editForm(data.customer.customerId)"></span></li>
-          <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"  v-on:click="deleteCustomer()"></a></li>
+          <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"  v-on:click="deleteCustomer(data.customer)"></a></li>
         </ul>
       </h1> 
       <!--maybe can combine-->
@@ -303,7 +303,8 @@
         this.$router.app.$emit('viewCustomer', this.customerToEdit); //get the data again in case fields
       },
       deleteCustomer(customer) {
-        this.$router.app.$emit('deleteCustomer', this.customerToEdit);
+        customer.active = false;
+        this.$router.app.$emit('deleteCustomer', customer);
       }
     }
   }

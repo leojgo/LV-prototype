@@ -463,13 +463,6 @@ var app = new Vue({
         xhr.send(jsonData);
       }
     });
-    //add new customer
-    vm.$on('createCustomer', function(customer) {
-      console.log('call createCustomer');
-      //TODO no employee yet -- need to rework callback
-      //var callbackRoute = { name: 'customerView', params: { id: customer.customerId }}; //go to view employee after creation 
-      app.postEmployee(customer, callbackRoute);
-    });
     //view customer
     vm.$on('viewCustomer', function(id){
       data.isEdit = false;
@@ -483,9 +476,22 @@ var app = new Vue({
       //no get request since we're already viewing customer
       this.$router.push({ name: 'customerEdit', params: { id: id }});
     });
+        //add new customer
+    vm.$on('createCustomer', function(customer) {
+      console.log('call createCustomer');
+      //TODO no employee yet -- need to rework callback
+      //var callbackRoute = { name: 'customerView', params: { id: customer.customerId }}; //go to view employee after creation 
+      app.postEmployee(customer, callbackRoute);
+    });
     //submit edit customer form
     vm.$on('updateCustomer', function(customer) {
       app.postCustomer(customer, { name: 'customerView', params: { id: customer.customerId }});
+    });
+     //delete employee
+    vm.$on('deleteCustomer', function(customer) {
+      console.log('call customer');
+      //TODO where to go to go after deletion???
+      app.postCustomer(customer, { name: 'customerSearch'});
     });
     //MOVIES
     //search movie database
