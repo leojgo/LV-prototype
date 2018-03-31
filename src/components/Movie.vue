@@ -15,17 +15,17 @@
         </ul>
       </h1> 
       <!--maybe can combine-->
-      <form v-for="(movie, id) in data.selected" v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
-        <span class="uk-text-small">ISBN: {{ id }}</span><br />
+      <form v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
+        <span class="uk-text-small">ISBN: {{ movies[0].upc }}</span><br />
         <div class="uk-width-1-1">
-          <input class="uk-input" type="text" name="movieTitle" placeholder="Movie Title" v-bind:class="{ 'uk-form-danger' : errors.movieTitle }" v-on:focus="clearError('movieTitle')" v-model="movie.title">
+          <input class="uk-input" type="text" name="movieTitle" placeholder="Movie Title" v-bind:class="{ 'uk-form-danger' : errors.movieTitle }" v-on:focus="clearError('movieTitle')" v-model="movies[0].title">
         </div>
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="movieYear" placeholder="2018" v-bind:class="{ 'uk-form-danger' : errors.movieYear }" v-on:focus="clearError('movieYear')" v-model="movie.year">
+          <input class="uk-input" type="text" name="movieYear" placeholder="2018" v-bind:class="{ 'uk-form-danger' : errors.movieYear }" v-on:focus="clearError('movieYear')" v-model="movies[0].releaseYear">
         </div>
+        <!-- TODO
         <div class="uk-width-1-1@s uk-margin" v-if="data.isNew == false">
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
-          <!--show all existing elements with delete icon-->
           <ul class="uk-list uk-list-divider uk-text-small" id="stockList">
             <li v-for="copy in movie.copies" v-if="copy.inStock" class="uk-position-relative">{{ copy.id }} <span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span></li>
             <li v-for="copy in movie.copies" v-if="copy.inStock == false" class="uk-text-muted uk-position-relative">{{ copy.id }} <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Rented</span></li>
@@ -35,22 +35,23 @@
             <label class="uk-form-label" for="addCopy">Enter ID and click the "+" button to add a copy</label>
           </ul>
         </div>
+      -->
         <div class="uk-width-1-1">
           <button class="uk-button uk-button-primary">Save</button>
           <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit" v-if="data.isNew == false">Cancel</span>
         </div>
       </form>
       <div v-else>
-        <div v-for="(movie, id) in data.selected" class="uk-position-relative">
-          <span v-if="movie.noStock" class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Out of Stock</span>
-          <span v-else class="uk-label uk-label-success uk-text-small uk-position-top-right uk-margin-small-top">{{ stockCount }} In Stock</span>
+        <div class="uk-position-relative">
+          <span v-if="data.movie.stock==0" class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Out of Stock</span>
+          <span v-else class="uk-label uk-label-success uk-text-small uk-position-top-right uk-margin-small-top">{{ data.movie.stock }} In Stock</span>
           <span class="uk-text-small">ISBN: {{ $route.params.id }}</span><br />
-          <strong>{{ movie.title }}</strong><br />
-          <span class="uk-text-small">Release year: {{ movie.year }}</span>
+          <strong>{{ data.movie.title }}</strong><br />
+          <span class="uk-text-small">Release year: {{ data.movie.releaseYear }}</span>
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <ul class="uk-list uk-list-divider uk-text-small">
-            <li v-for="copy in movie.copies" v-if="copy.inStock" class="uk-position-relative">{{ copy.id }} <!--<span class="uk-label uk-label-success uk-text-small uk-position-top-right uk-margin-small-top">Available</span>--></li>
-            <li v-for="copy in movie.copies" v-if="copy.inStock == false" class="uk-text-muted uk-position-relative">{{ copy.id }} <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Rented</span></li>
+            <li v-for="movie in data.movie.copies" v-if="movie.status == 0" class="uk-position-relative">{{ movie.upc }}</li>
+            <li v-for="movie in data.movie.copies" v-if="movie.status == 1" class="uk-text-muted uk-position-relative">{{ movie.upc }} <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Rented</span></li>
           </ul>
         </div>
       </div>
@@ -67,11 +68,13 @@
         <!--loop over results-->
         <ul class="uk-list uk-list-divider">
           <!--move style to cutom css-->
-          <li v-for="(movie, id) in data.movies" style="position: relative" v-on:click="view(id)">
+          <li v-for="movie in data.movies" class="uk-position-relative" v-on:click="view(movie.upc)">
+            <!--TODO
             <span v-if="movie.noStock" class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Out of Stock</span>
-            <span class="uk-text-small">{{ id }}</span><br />
+          -->
+            <span class="uk-text-small">{{ movie.upc }}</span><br />
             <strong>{{ movie.title }}</strong><br />
-            <span class="uk-text-small">{{ movie.year }}</span>
+            <span class="uk-text-small">{{ movie.releaseYear }}</span>
           </li>
         </ul>
       </div>
@@ -99,10 +102,9 @@
         var query = document.querySelector("input[name=movieKeyword]").value;
         this.$router.app.$emit('searchMovie', query);
       },
-      view(id) {
-        this.movieToView = id;
-        console.log('view '+this.movieToView);
-        this.$router.app.$emit('viewMovie', id);
+      view(upc) {
+        console.log('emit view view');
+        this.$router.app.$emit('viewMovie', upc);
       },
       editForm(id) {
         //this.cancelEdit();

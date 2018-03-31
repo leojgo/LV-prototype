@@ -1,10 +1,10 @@
 [
-    {
-        "movieId": 2146,
-        "title": "asdf",
-        "releaseYear": "asdf",
-        "genre": "asdf",
-        "upc": "asdf",
-        "status": 0
-    }
+  {
+    "movieId": 2146,
+    "title": "Blade Runner",
+    "releaseYear": "1982",
+    "genre": "asdf",
+    "upc": 298347589,
+    "status": 0
+  }
 ]

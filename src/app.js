@@ -315,6 +315,12 @@ var app = new Vue({
         }
       }
       xhr.send(jsonData);
+    },
+    getMovie(id){
+
+    },
+    postMovie(){
+
     }
   },
   mounted() {
@@ -499,20 +505,102 @@ var app = new Vue({
     //MOVIES
     //search movie database
     vm.$on('searchMovie', function(query){
-      //TODO GET request to API
-
-      //FPO
-      var results = {};
-      for (var key in movies) {
-        if (key == query) {
-          results[key] = (movies[key]);
+      console.log('call searchMovies');
+      var upc = "";
+      var title = "";
+      if (query.replace(/\D/g,'') == query) {
+        //all numbers
+        upc = query;
+      }
+      else {
+        //title
+        title = query;
+      }
+      var xhr = new XMLHttpRequest();
+      var url = "/api/MovieSearch";
+      var jsonData = JSON.stringify({"Title": title, "ReleaseYear": null, "Genre": null, "Upc": upc});
+      var vm = this;
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
+        //Call a function when the state changes.
+        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          var copies = JSON.parse(this.responseText);
+          console.log(copies);
+          var movies = [{
+            title: copies[0].title,
+            upc: copies[0].upc,
+            releaseYear: copies[0].releaseYear,
+            inStock: copies[0].status == 0
+          }]
+          for (var i = 0; i<copies.length; i++) {
+            if (copies[i].upc == movies[i].upc) {
+              //update if showing as out of stock
+              if (!movies[i].inStock) {
+                movies[i].inStock = copies[i].status == 0; //keep setting until true
+              }
+            }
+            else {
+              //add to movies
+              var movie = {
+                title: copies[i].title,
+                upc: copies[i].upc,
+                releaseYear: copies[i].releaseYear,
+                inStock: copies[i].status == 0
+              }
+              movies.push(movie);
+            }
+          }
+          data.movies = movies;
         }
-        else if (movies[key].title.indexOf(query) > -1) {
-          results[key] = (movies[key]);
+        else {
+          //TODO error handling
         }
       }
-      data.movies = results;
+      xhr.send(jsonData);
     });
+    //view movie title
+    vm.$on('viewMovie', function(upc){
+      console.log('call viewMovie');
+      var upc = (""+upc).replace(/\D/g,'');
+      var title = "";
+      var xhr = new XMLHttpRequest();
+      var url = "/api/MovieSearch";
+      var jsonData = JSON.stringify({"Title": title, "ReleaseYear": null, "Genre": null, "Upc": upc});
+      var vm = this;
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
+        //Call a function when the state changes.
+        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          var copies = JSON.parse(this.responseText);
+          console.log(copies);
+          //process result
+          var stockCount = 0;
+          for (var i=0; i<copies.length; i++) {
+            console.log("processing "+i);
+            if (copies[i].status == 0) {
+              stockCount++;
+            }
+          }
+          data.movie = {
+            title: copies[0].title,
+            upc: copies[0].upc,
+            year: copies[0].ReleaseYear,
+            stock: stockCount,
+            copies: copies
+          };
+          //go to view movie page
+          var callbackRoute = { name: 'movieView', params: { id: upc }};
+          vm.$router.push(callbackRoute);
+        }
+        else {
+          //TODO error handling
+        }
+      }
+      xhr.send(jsonData);
+    });
+
     //add new movie title to movies database
     vm.$on('addMovie', function(movie) {
       //TODO POST request to API
@@ -541,34 +629,6 @@ var app = new Vue({
           inStock: true
         };
       }
-    });
-    //view movie title
-    vm.$on('viewMovie', function(id){
-      //TODO GET request to API
-
-      //FPO
-      data.isSingle = true;
-      var copies = [];
-      //loop over all movie copies
-      //console.log('view movies: loop over copies');
-      for (var item in items) {
-        if (items[item].movie == movies[id]) {
-          copies.push({
-            id : item,
-            inStock : items[item].inStock
-          });
-        }
-      }
-      //console.log(movies[id]);
-      data.selected = {};
-      data.selected[id] = movies[id];
-      for (var key in data.selected[id]) {
-        console.log(key);
-        //data.selected[id][key].copies = copies;
-      }
-      //console.log(data.selected[id].copies);
-      data.selected[id].copies = copies;
-      this.$router.push({ name: 'movieView', params: { id: id }});
     });
     //load edit form for movie title
     vm.$on('editMovie', function(id){
