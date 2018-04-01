@@ -319,8 +319,74 @@ var app = new Vue({
     getMovie(id){
 
     },
-    postMovie(){
+    postMovie(movie, callbackRoute) {
+      //TODO Is callback needed? Does this ever go anywhere except to the customer's profile?
+      var xhr = new XMLHttpRequest();
+      var url = "/api/Movies"; //for new
+      var vm = this;
 
+      var title = movie.title;
+      var genre = ""; //TODO?
+      var releaseYear = movie.releaseYear;
+      var upc = movie.upc;
+      var jsonData = "";
+
+      if (data.isNew) {
+        jsonData = JSON.stringify({"Title":title, "Genre":genre, "ReleaseYear":releaseYear, "Upc":upc});
+      }
+      else {
+        url = "/api/Movies/"+movie.movieId; //for new
+        jsonData = JSON.stringify({ "Title": title, "ReleaseYear": releaseYear, "Genre": genre, "Upc": upc, "Status": movie.status});
+      }
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
+        //Call a function when the state changes.
+      if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          var response = JSON.parse(this.responseText);
+          console.log(response);
+          if (data.isNew) {
+            data.isNew = false; //TODO cleanup/move?
+            //var route = {name: 'movieView', params: {id: response.upc }};
+            //app.getCustomer(response.key, route);
+            //TODO need API change
+          }
+          else {
+            //calls for deletes
+            for ()
+
+            //TODO confirmation in UI?
+            vm.$router.push(callbackRoute);
+          }
+          //TODO show modal confirmmation?
+          data.isEdit = false; //TODO cleanup/move?
+        }
+        else {
+          //TODO error handling
+        }
+      }
+      xhr.send(jsonData);
+
+    },
+    getReport(type, callbackRoute){
+      var jsonData = JSON.stringify({"reportType":type});
+      var xhr = new XMLHttpRequest();
+      var url = "/api/Reports"; //for new
+      var vm = this;
+
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
+        //Call a function when the state changes.
+      if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          data.reports = JSON.parse(this.responseText);
+          vm.$router.push(callbackRoute);
+        }
+        else {
+          //TODO error handling
+        }
+      }
+      xhr.send(jsonData);
     }
   },
   mounted() {
@@ -586,9 +652,10 @@ var app = new Vue({
           data.movie = {
             title: copies[0].title,
             upc: copies[0].upc,
-            year: copies[0].ReleaseYear,
+            releaseYear: copies[0].releaseYear,
             stock: stockCount,
-            copies: copies
+            copies: copies,
+            copiesEdit: []
           };
           //go to view movie page
           var callbackRoute = { name: 'movieView', params: { id: upc }};
@@ -614,36 +681,15 @@ var app = new Vue({
       data.nextId.movie++;
     });
     vm.$on('addCopy', function(item){
-      //TODO refactor based on API
-
-      //FPO
-      console.log(item);
-      for (var key in data.selected) {
-        console.log(data.selected[key].copies);
-        data.selected[key].copies.push({
-          id: item,
-          inStock: true,
-        });
-        items[item] = {
-          movie: movies[key],
-          inStock: true
-        };
-      }
+      //POST request
+      //on callback increment movie copiesEdit
     });
     //load edit form for movie title
     vm.$on('editMovie', function(id){
-      //TODO test
-      data.isEdit = true;
+      console.log('call editMovie '+id);
+      //data.isEdit = true;
       //no get request since we're already viewing a movie
       this.$router.push({ name: 'movieEdit', params: { id: id }});
-
-      //FPO -- remove after testing
-      /*
-      data.isEdit = true;
-      data.selected = {};
-      data.selected[id] = movies[id];
-      this.$router.push({ name: 'movieEdit', params: { id: id }});
-      */
     });
     //submit edit form for movie
     vm.$on('updateMovie', function(id){
