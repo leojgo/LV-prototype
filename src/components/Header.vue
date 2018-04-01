@@ -56,7 +56,7 @@
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
                       <li><a is="router-link" to="/reports/overdue">Overdue Rentals</a></li>
-                      <li><a is="router-link" to="/reports/movies">Popular Movies</a></li>
+                      <li><a is="router-link" to="/reports/popular">Popular Movies</a></li>
                       <li><a is="router-link" to="/reports/customers">Best Customers</a></li>
                   </ul>
               </div>
@@ -80,7 +80,7 @@
           <li><a is="router-link" to="/customers/new">Add Customer</a></li>
           <li class="uk-nav-header">Reports</li>
           <li><a is="router-link" to="/reports/overdue">Overdue Rentals</a></li>
-          <li><a is="router-link" to="/reports/movies">Popular Movies</a></li>
+          <li><a is="router-link" to="/reports/popular">Popular Movies</a></li>
           <li><a is="router-link" to="/reports/customers">Best Customers</a></li>
         </ul>
       </div>

@@ -353,7 +353,7 @@ var app = new Vue({
           }
           else {
             //calls for deletes
-            for ()
+            //for loop
 
             //TODO confirmation in UI?
             vm.$router.push(callbackRoute);
@@ -368,7 +368,7 @@ var app = new Vue({
       xhr.send(jsonData);
 
     },
-    getReport(type, callbackRoute){
+    getReport(type){
       var jsonData = JSON.stringify({"reportType":type});
       var xhr = new XMLHttpRequest();
       var url = "/api/Reports"; //for new
@@ -380,7 +380,7 @@ var app = new Vue({
         //Call a function when the state changes.
       if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           data.reports = JSON.parse(this.responseText);
-          vm.$router.push(callbackRoute);
+          //vm.$router.push(callbackRoute);
         }
         else {
           //TODO error handling
@@ -842,6 +842,18 @@ router.beforeEach((to, from, next) => {
       paymentType: null,
       cardDigits: null
     };
+  }
+  else if (to.fullPath.indexOf('reports') > -1) {
+    data.reports = {};
+    if (to.fullPath.indexOf('overdue') > -1) {
+      app.getReport('Overdue');
+    }
+    else if (to.fullPath.indexOf('popular') > -1) {
+      app.getReport('Popular');
+    }
+    else {
+      //app.getReport('best'); //TODO
+    } 
   }
   else {
     //view or edit obj
