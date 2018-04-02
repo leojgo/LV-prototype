@@ -144,7 +144,8 @@ var data = {
   movieTitles: null, // TODO what is this for??
   movies: null, //movies array for search
   movie: null, //selected movie (view/edit)
-  rentals: null, //list of rentals
+  rental: null, //current rental
+  //rentals: null, //list of rentals
   reports: null, //reports array for search
   isSingle: false, //single item flag
   isView: false,
@@ -246,22 +247,33 @@ var app = new Vue({
       console.log('API call customer '+ id);
       //send login request -- TODO use a function?
       var url = "/api/Customers/"+id;
-      var request = new XMLHttpRequest();
+      var xhr = new XMLHttpRequest();
+      var vm = this;
       //TODO should this timeout?
-      request.onreadystatechange = function() {
-          if (request.readyState == 4) {
+      xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
             //TODO use request.readyState == 4 && request.status == 200, add error handling
             data.isSingle = true;
-            data.customer = JSON.parse(request.responseText);
+            vm.$router.app.data.customer = JSON.parse(xhr.responseText);
             //TODO pretty phone number
             console.log(data.customer);
             //vm.$router.push({ name: 'customerView', params: { id: id }});
             console.log('API response');
-            app.$router.push(callbackRoute);
+            console.log(app.$route.path.indexOf('rental'));
+            if (app.$route.path.indexOf('rental') > -1) {
+              //set rental customer
+              var customer = JSON.parse(xhr.responseText);
+              vm.$router.app.$emit('rentalCustomer', customer);
+              //UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
+              console.log(data.rental);
+            }
+            else {
+              app.$router.push(callbackRoute);
+            }
           }
       }; 
-      request.open('GET', url);
-      request.send();
+      xhr.open('GET', url);
+      xhr.send();
     },
     postCustomer(customer, callbackRoute) {
       //TODO Is callback needed? Does this ever go anywhere except to the customer's profile?
@@ -317,7 +329,28 @@ var app = new Vue({
       xhr.send(jsonData);
     },
     getMovie(id){
+      console.log('call getMovie '+id);
+      var xhr = new XMLHttpRequest();
+      var url = "/api/Movies/"+id; //for new
+      var vm = this;
 
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          var newRental = app.$route.path.indexOf('rentals/new') > -1;
+          if (newRental) {
+            var movie = JSON.parse(xhr.responseText);
+            //update movies list
+            vm.data.rental.movies.push(movie);
+            //TODO errors?
+            console.log(data.rental);
+          }
+        }
+        else {
+          //TODO errors?
+        }
+      }; 
+      xhr.open('GET', url);
+      xhr.send();
     },
     postMovie(movie, callbackRoute) {
       //TODO Is callback needed? Does this ever go anywhere except to the customer's profile?
@@ -369,6 +402,7 @@ var app = new Vue({
 
     },
     getReport(type){
+      console.log('call get report '+type);
       var jsonData = JSON.stringify({"reportType":type});
       var xhr = new XMLHttpRequest();
       var url = "/api/Reports"; //for new
@@ -505,13 +539,12 @@ var app = new Vue({
       }
       if (SearchTerm.length == 0 && PhoneNumber.length == 0) {
         //select customer
-        app.getCustomer(query);
-        if (isRental) {
+        if (!isRental) {
           //view customer url
-          app.getCustomer(query);
+          app.getCustomer(query, { name: 'customerView', params: {id: query} });
         }
         else {
-          app.getCustomer(query, { name: 'customerView', params: {id: query} });
+          app.getCustomer(query, { name: 'rental', params: { id: 'new'}});
         }
       }
       else {
@@ -710,34 +743,20 @@ var app = new Vue({
     });
     //NEW RENTAL
     //new rental 1: select customer
-    vm.$on('rentalCustomer', function(customerId){
+    vm.$on('rentalCustomer', function(customer){
       //TODO refactor
-      var rentalId = data.nextId.rental;
-      data.selected[rentalId].customer = {};
-      data.selected[rentalId].customer[customerId] = customers[customerId];
+      //var rentalId = data.nextId.rental;
+      //data.selected[rentalId].customer = {};
+      //data.selected[rentalId].customer[customerId] = customers[customerId];
+      data.rental.customer = customer;
+      UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
+      console.log(data.rental);
     });
     //new rental 2: add movie to list of movies in rental?
     //return rental 1: add movie to list of movies in renturn?
     vm.$on('rentalAddMovie', function(id){
-      //TODO refactor
-      var title = null;
-      //get title
-      for (var key1 in items[id]) {
-        if (key1 == 'movie') {
-          for (var key2 in items[id][key1]) {
-            if (key2 == 'title') {
-              title = items[id][key1][key2];
-            }
-          }
-        }
-      }
-      //set
-      for (var key in data.selected) {
-        data.selected[key].movies.push({
-          id: id,
-          title: title
-        });
-      }
+      //TODO check for duplicates in rental list
+      app.getMovie(id);
     });
     //new rental 2: confirm movies to rent
     vm.$on('rentalMovies', function(movies){
@@ -746,8 +765,57 @@ var app = new Vue({
       data.selected[rentalId].movies = movies;
     });
     //new rental 3: submit rental
-    vm.$on('rentalSubmit', function(payment){
+    vm.$on('rentalSubmit', function(rental){
       //TODO POST request to API
+      console.log('emit submitRental ');
+      //send login request
+      //send to server
+      var xhr = new XMLHttpRequest();
+      var url = "/api/employees"; //for new
+      var vm = this;
+
+      var FirstName = employee.firstName;
+      var LastName = employee.lastName;
+      var EmployeeType = employee.employeeType;
+      var PhoneNumber = employee.phoneNumber;
+      var jsonData;
+      if (data.isNew) {
+        var RawPw = employee.RawPw;
+        jsonData = JSON.stringify({"FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "RawPw": RawPw});
+      }
+      else {
+        //update employee info
+        var url = "/api/Employee/"+employee.employeeId;
+        var Active = employee.active;
+        var EmployeeTitle = employee.employeeTitle; //TODO remove?
+        jsonData = JSON.stringify({"FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "active": Active});
+      }
+      
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
+        //Call a function when the state changes.
+      if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
+          var employee = JSON.parse(this.responseText);
+          if (data.isNew) {
+            modal.title = 'New Employee Added';
+            modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
+            data.isNew = false; //TODO cleanup/move?
+            //TODO confirmation in UI?
+          }
+          else {
+            //TODO confirmation in UI?
+          }
+          //TODO show modal confirmmation?
+          data.isEdit = false; //TODO cleanup/move?
+          vm.$router.push(callbackRoute);
+        }
+        else {
+          //TODO error handling
+        }
+      }
+      xhr.send(jsonData);
 
       //FPO
       var rentalId = data.nextId.rental;
@@ -813,11 +881,11 @@ router.beforeEach((to, from, next) => {
       };
     }
     else if (to.fullPath[1] == 'r') {
-      data.selected[data.nextId.rental] = {
+      data.rental = {
         customer: null,
         movies: [],
-        paymentType: null,
-        cardDigits: null
+        payment: null,
+        dueDate: null
       };
     }
     else {
