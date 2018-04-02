@@ -19,8 +19,8 @@
       <tbody>
         <tr v-for="report in data.reports">
           <td>{{ report.returnDate }}</td>
-          <td><a href="#">Cindy Johnson</a></td>
-          <td><a href="#">773-202-0987</a></td>
+          <td><a href="#">{{ report.custFirstName }} {{ report.custLastName }}</a></td>
+          <td><a href="#">{{ report.custPhoneNumber }}</a></td>
           <td><a href="#">{{ report.Title }}</a></td>
         </tr>
         <!--
