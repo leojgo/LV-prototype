@@ -313,7 +313,7 @@
       },
       totalFee: function() {
         if (this.$router.app.data.rental.customer != null) {
-          return this.$router.app.data.rental.customer.accountBalance + (return this.$router.app.data.rental.movies.length * 3);
+          return this.$router.app.data.rental.customer.accountBalance + (this.$router.app.data.rental.movies.length * 3);
         }
         else {
           return this.$router.app.data.rental.movies.length * 3;
