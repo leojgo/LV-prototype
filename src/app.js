@@ -403,7 +403,7 @@ var app = new Vue({
     },
     getReport(type){
       console.log('call get report '+type);
-      var jsonData = JSON.stringify({"reportType":type, "reportQty": 100}); //TODO make dynamic?
+      var jsonData = JSON.stringify({"reportType":type}); //TODO make dynamic?
       var xhr = new XMLHttpRequest();
       var url = "/api/Reports"; //for new
       var vm = this;
