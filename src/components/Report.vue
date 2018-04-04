@@ -80,21 +80,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>10</td>
-          <td><a href="#">Cindy Johnson</a></td>
-        </tr>
-        <tr>
-          <td>8</td>
-          <td><a href="#">Ellen Johnson</a></td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td><a href="#">Mark Thompson</a></td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td><a href="#">Harvey Dent</a></td>
+        <tr v-for="report in data.reports">
+          <td>{{ report.transactionCount }}</td>
+          <td><a href="#">{{ report.nameFirst }} {{ report.nameLast }}</a></td>
         </tr>
       </tbody>
     </table>

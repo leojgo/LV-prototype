@@ -403,7 +403,7 @@ var app = new Vue({
     },
     getReport(type){
       console.log('call get report '+type);
-      var jsonData = JSON.stringify({"reportType":type});
+      var jsonData = JSON.stringify({"reportType":type, "reportQty": 100}); //TODO make dynamic?
       var xhr = new XMLHttpRequest();
       var url = "/api/Reports"; //for new
       var vm = this;
@@ -939,7 +939,7 @@ router.beforeEach((to, from, next) => {
       app.getReport('Popular');
     }
     else {
-      //app.getReport('best'); //TODO
+      app.getReport('Customer');
     } 
   }
   else {
