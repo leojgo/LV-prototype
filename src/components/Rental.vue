@@ -259,16 +259,14 @@
       },
       submitNew(rental) {
         var payment = {};
-        var dueDate = new Date();
-        dueDate.setDate(today.getDate()+1);
         payment.type = document.getElementById('form-stacked-select').value;
         payment.digits = document.getElementById('cardDigits').value;
         rental.payment = payment;
-        rental.dueDate = dueDate;
-        this.$router.app.$emit('rentalSubmit', rental); 
+        this.$router.app.$emit('rentalNew', rental); 
       },
       submitReturn(payment) {
         //TODO change return logic to allow skipped payments
+        //TODO revise when API is done
         if (payment) {
 
         }
@@ -277,10 +275,7 @@
         }
         //prototype fn for payment submit
         var payment = {};
-        var d = new Date();
-        payment.rentalFee = 0;
-        payment.totalFee = this.lateFee;
-        payment.date = (d.getMonth()+1)+ "/" + d.getDate() + "/" + d.getFullYear(); //should be a date object
+        payment.date = new Date();
         payment.type = document.getElementById('form-stacked-select').value;
         payment.digits = document.getElementById('cardDigits').value;
         console.log('emit rental return');

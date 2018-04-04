@@ -116,9 +116,11 @@
           <strong>{{ data.customer.nameFirst }} {{ data.customer.nameLast }}</strong><br />
           <span class="uk-text-small">{{ data.customer.addLine1 }}, {{ data.customer.addCity }}, {{ data.customer.addState }} {{ data.customer.addZip }} <br />{{ data.customer.phoneNumber }}</span>
         </div>
+        <!-- feature tabled
         <hr />
         <button class="uk-button uk-button-default">View Rental History</button>
         <button class="uk-button uk-button-default" v-if="data.isManager">View Ledger</button>
+        -->
       </div>
     </div>
     <div v-else>

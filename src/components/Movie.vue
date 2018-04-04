@@ -15,17 +15,28 @@
         </ul>
       </h1> 
       <!--maybe can combine-->
-      <form v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit">
+      <form v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit(data)">
         <div class="uk-width-1-1">
-          <input class="uk-input" type="text" name="movieUpc" placeholder="UPC Number" v-bind:class="{ 'uk-form-danger' : errors.movieUpc }" v-on:focus="clearError('movieUpc')" v-model="data.movie.upc">
+          <span class="uk-text-small">UPC Number</span>
+          <input class="uk-input" type="text" name="movieUpc" placeholder="" v-bind:class="{ 'uk-form-danger' : errors.movieUpc }" v-on:focus="clearError('movieUpc')" v-model="data.movie.upc">
+          <span class="uk-text-small uk-text-danger" v-if="errors.movieUpc">Please enter a valid UPC number</span>
         </div>
         <div class="uk-width-1-1">
-          <input class="uk-input" type="text" name="movieTitle" placeholder="Movie Title" v-bind:class="{ 'uk-form-danger' : errors.movieTitle }" v-on:focus="clearError('movieTitle')" v-model="data.movie.title">
+          <span class="uk-text-small">Movie Title</span>
+          <input class="uk-input" type="text" name="movieTitle" placeholder="" v-bind:class="{ 'uk-form-danger' : errors.movieTitle }" v-on:focus="clearError('movieTitle')" v-model="data.movie.title">
+          <span class="uk-text-small uk-text-danger" v-if="errors.movieTitle">Please enter a movie title</span>
         </div>
         <div class="uk-width-1-2@s">
-          <input class="uk-input" type="text" name="movieYear" placeholder="2018" v-bind:class="{ 'uk-form-danger' : errors.movieYear }" v-on:focus="clearError('movieYear')" v-model="data.movie.releaseYear">
+          <span class="uk-text-small">Release Year</span>
+          <input class="uk-input" type="number" name="movieYear" placeholder="2018" v-bind:class="{ 'uk-form-danger' : errors.movieYear }" v-on:focus="clearError('movieYear')" v-model="data.movie.releaseYear">
+          <span class="uk-text-small uk-text-danger" v-if="errors.movieYear">Please enter a four digit release year</span>
         </div>
-        <div class="uk-width-1-1">
+        <div class="uk-width-1-2@s" v-if="data.isNew">
+          <span class="uk-text-small">Number of copies to add</span>
+          <input type="number" class="uk-input" placeholder="1" v-model="data.movie.qty" name="movieQty" v-bind:class="{ 'uk-form-danger' : errors.movieQty }" v-on:focus="clearError('movieQty')"/>
+          <span class="uk-text-small uk-text-danger" v-if="errors.movieQty">Please add one or more copies</span>
+        </div>
+        <div class="uk-width-1-1"  v-if="!data.isNew">
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <ul class="uk-list uk-list-divider uk-text-small">
             <li v-for="movie in data.movie.copies" v-if="movie.status == 0" class="uk-position-relative">{{ movie.upc }}</li>
@@ -47,8 +58,8 @@
           <span class="uk-text-small">Release year: {{ data.movie.releaseYear }}</span>
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <ul class="uk-list uk-list-divider uk-text-small">
-            <li v-for="movie in data.movie.copies" v-if="movie.status == 0" class="uk-position-relative">{{ movie.upc }}</li>
-            <li v-for="movie in data.movie.copies" v-if="movie.status == 1" class="uk-text-muted uk-position-relative">{{ movie.upc }} <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Rented</span></li>
+            <li v-for="movie in data.movie.copies" v-if="movie.status == 0" class="uk-position-relative">{{ movie.id }}</li>
+            <li v-for="movie in data.movie.copies" v-if="movie.status == 1" class="uk-text-muted uk-position-relative">{{ movie.id }} <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Rented</span></li>
           </ul>
         </div>
       </div>
@@ -87,10 +98,12 @@
         movieToView: null,
         copiesAdded: 0,
         copiesToDelete: [],
+        hasError: false,
         errors: {
           movieTitle: false,
           movieYear: false,
-          movieUpc: false
+          movieUpc: false,
+          movieQty: false
         }
       }
     }, 
@@ -131,34 +144,47 @@
           this.errors.addCopy = true;
         }
       },
-      handleSubmit() {
+      handleSubmit(data) {
         //check text inputs for content
-        //check for valid phone
-        var hasError = false;
+        this.hasError = false;
         //check for missing inputs
         for (var input in this.errors) {
-          console.log(document.querySelector("input[name="+input+"]"))
-          if (document.querySelector("input[name="+input+"]").value.length < 1) {
+          var inputVal= document.querySelector("input[name="+input+"]").value;
+          //check for empty inputs
+          //TODO trim whitespace
+          if (inputVal.length < 1) {
             this.errors[input] = true;
-            hasError = true;
-          }
-        }
-        if (hasError) {
-          //show error messages
-        }
-        else {
-          var newMovie = {
-            title: document.querySelector("input[name=movieTitle]").value,
-            year: document.querySelector("input[name=movieYear]").value,
-            copies: null,
-            noStock: true
-          }
-          //loop over copies
-          if (this.$router.app.data.isNew) {
-            this.$router.app.$emit('addMovie', newMovie);
+            this.hasError = true;
           }
           else {
-            this.$router.app.$emit('updateMovie', this.movieToEdit);
+            if (input == "movieUpc" && inputVal != inputVal.replace(/\D/g,'')) {
+              //UPC has chars that aren't integers
+              this.errors[input] = true;
+              this.hasError = true;
+            }
+            else if (input == "movieYear") {
+              var movieYear = parseInt(inputVal);
+              var today = new Date();
+              if (movieYear < 1888 || movieYear > today.getFullYear()) {
+                //year is out of range
+                this.errors[input] = true;
+                this.hasError = true;
+              }
+            }
+            else if (input == "movieQty" && parseInt(inputVal) < 1) {
+              //quantity under minimum
+              this.errors[input] = true;
+              this.hasError = true;
+            }
+          }
+        }
+        if (!this.hasError) {
+          console.log(data.movie);
+          if (data.isNew) {
+            this.$router.app.$emit('createMovie');
+          }
+          else {
+            this.$router.app.$emit('updateMovie');
           }
         }
       },

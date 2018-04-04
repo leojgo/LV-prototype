@@ -425,7 +425,8 @@ var app = new Vue({
   },
   mounted() {
     var vm = this;
-    console.log(vm);   
+    console.log(vm);  
+    //manager 1 employee 2 
     vm.$on('login', function(user){
       data.user = JSON.parse(user);
       data.isAuthenticated = true;
@@ -602,6 +603,7 @@ var app = new Vue({
       app.postCustomer(customer, { name: 'customerSearch'});
     });
     //MOVIES
+    //for status 1 is checked out, 0 is in stock, -1 is on hold
     //search movie database
     vm.$on('searchMovie', function(query){
       console.log('call searchMovies');
@@ -672,20 +674,25 @@ var app = new Vue({
       xhr.onreadystatechange = function () {
         //Call a function when the state changes.
         if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
-          var copies = JSON.parse(this.responseText);
+          var stock = JSON.parse(this.responseText);
+          var copies = [];
           console.log(copies);
           //process result
           var stockCount = 0;
-          for (var i=0; i<copies.length; i++) {
+          for (var i=0; i<stock.length; i++) {
             console.log("processing "+i);
-            if (copies[i].status == 0) {
+            if (stock[i].status == 0) {
               stockCount++;
+            }
+            copies[i] = {
+              id: stock[i].movieId,
+              status: stock[i].status
             }
           }
           data.movie = {
-            title: copies[0].title,
-            upc: copies[0].upc,
-            releaseYear: copies[0].releaseYear,
+            title: stock[0].title,
+            upc: stock[0].upc,
+            releaseYear: stock[0].releaseYear,
             stock: stockCount,
             copies: copies,
             copiesEdit: []
@@ -702,16 +709,39 @@ var app = new Vue({
     });
 
     //add new movie title to movies database
-    vm.$on('addMovie', function(movie) {
-      //TODO POST request to API
+    vm.$on('createMovie', function() {
+      console.log('call createMovie');
+      var Title = data.movie.title;
+      var Upc = data.movie.upc;
+      var ReleaseYear = data.movie.releaseYear;
+      var Qty = data.movie.qty;
 
-      //FPO
-      movies[data.nextId.movie] = movie;
-      data.isNew = false;
-      data.isEdit = false;
-      this.$router.app.$emit('viewMovie', data.nextId.movie);
-      //open modal?
-      data.nextId.movie++;
+      var xhr = new XMLHttpRequest();
+      var url = "/api/Movies";
+      var jsonData = JSON.stringify({"Title": Title, "ReleaseYear": ReleaseYear, "Genre": null, "Upc": Upc, "Qty": Qty});
+      var vm = this;
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
+        //Call a function when the state changes.
+        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          var stock = JSON.parse(this.responseText);
+          data.movie.copies = [];
+          data.movie.copiesEdit = [];
+          for (var i=0; i<stock.length; i++) {
+            data.movie.copies[i] = {
+              id: stock[i].id,
+              status: 0
+            }
+          }
+          console.log(data.movie);
+          vm.$router.push({name:'movieView', params: {id: data.movie.upc}});
+        }
+        else {
+          //TODO error handling
+        }
+      }
+      xhr.send(jsonData);
     });
     vm.$on('addCopy', function(item){
       //POST request
@@ -765,51 +795,42 @@ var app = new Vue({
       data.selected[rentalId].movies = movies;
     });
     //new rental 3: submit rental
-    vm.$on('rentalSubmit', function(rental){
+    vm.$on('rentalNew', function(rental){
       //TODO POST request to API
-      console.log('emit submitRental ');
+      console.log('call rentalNew');
       //send login request
       //send to server
       var xhr = new XMLHttpRequest();
-      var url = "/api/employees"; //for new
+      var url = "/api/Transactions"; //for new
       var vm = this;
 
-      var FirstName = employee.firstName;
-      var LastName = employee.lastName;
-      var EmployeeType = employee.employeeType;
-      var PhoneNumber = employee.phoneNumber;
-      var jsonData;
-      if (data.isNew) {
-        var RawPw = employee.RawPw;
-        jsonData = JSON.stringify({"FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "RawPw": RawPw});
+      var EmployeeId = 1;//TODO
+      var CustomerId = data.rental.customer.customerId;
+      var LateFeePaid = data.rental.customer.accountBalance;
+      var PaymentType = data.rental.payment.type;
+      var PaymentCard= data.rental.payment.card;
+      var MovieList = [];
+      var dueDate = new Date();
+
+      for (var i = 0; i<data.rental.movies.length; i++) {
+        var movie = {
+          id: data.rental.movies[i].movieId,
+          Cost: 3,
+          DueDate: dueDate
+        }
+        MovieList.push(movie);
       }
-      else {
-        //update employee info
-        var url = "/api/Employee/"+employee.employeeId;
-        var Active = employee.active;
-        var EmployeeTitle = employee.employeeTitle; //TODO remove?
-        jsonData = JSON.stringify({"FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "active": Active});
-      }
+
+      var jsonData = JSON.stringify({"EmployeeId": EmployeeId, "LateFeePaid": LateFeePaid, "PaymentType": PaymentType, "PaymentCard": PaymentCard, "MovieList": MovieList});
       
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function () {
         //Call a function when the state changes.
       if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
-          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-          var employee = JSON.parse(this.responseText);
-          if (data.isNew) {
-            modal.title = 'New Employee Added';
-            modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
-            data.isNew = false; //TODO cleanup/move?
-            //TODO confirmation in UI?
-          }
-          else {
-            //TODO confirmation in UI?
-          }
-          //TODO show modal confirmmation?
-          data.isEdit = false; //TODO cleanup/move?
-          vm.$router.push(callbackRoute);
+          //show confirmation
+          //TODO transaction
+          //vm.$router.push(callbackRoute);
         }
         else {
           //TODO error handling
@@ -876,9 +897,7 @@ router.beforeEach((to, from, next) => {
       data.customer = {};
     }
     else if (to.fullPath[1] == 'm') {
-      data.selected[data.nextId.movie] = {
-        copies: []
-      };
+      data.movie = {};
     }
     else if (to.fullPath[1] == 'r') {
       data.rental = {

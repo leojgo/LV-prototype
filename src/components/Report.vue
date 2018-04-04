@@ -23,32 +23,6 @@
           <td><a href="#">{{ report.custPhoneNumber }}</a></td>
           <td><a href="#">{{ report.Title }}</a></td>
         </tr>
-        <!--
-        <tr>
-          <td>2/23/18</td>
-          <td><a href="#">Cindy Johnson</a></td>
-          <td><a href="#">773-202-0987</a></td>
-          <td><a href="#">Blade Runner 2049</a></td>
-        </tr>
-        <tr>
-          <td>2/19/18</td>
-          <td><a href="#">Ellen Johnson</a></td>
-          <td><a href="#">773-661-0987</a></td>
-          <td><a href="#">Total Recall</a></td>
-        </tr>
-        <tr>
-          <td>2/21/18</td>
-          <td><a href="#">Mark Thompson</a></td>
-          <td><a href="#">773-221-8887</a></td>
-          <td><a href="#">The Fountain</a></td>
-        </tr>
-        <tr>
-          <td>2/23/18</td>
-          <td><a href="#">Harvey Dent</a></td>
-          <td><a href="#">773-311-8796</a></td>
-          <td><a href="#">Idiocracy</a></td>
-        </tr>
-      -->
       </tbody>
     </table>
     </div>
@@ -79,24 +53,7 @@
           <td>{{ report.count }}</td>
           <td><a href="#">{{ report.title }}</a></td>
         </tr>
-        <!--
-        <tr>
-          <td>8</td>
-          <td><a href="#">Blade Runner 2049</a></td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td><a href="#">Total Recall</a></td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td><a href="#">The Fountain</a></td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td><a href="#">Idiocracy</a></td>
-        </tr>
-      -->
+
       </tbody>
     </table>
     </div>
