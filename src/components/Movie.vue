@@ -109,6 +109,7 @@
     }, 
     methods: {
       search() {
+        //TODO validate for null query
         console.log("emit search");
         var query = document.querySelector("input[name=movieKeyword]").value;
         this.$router.app.$emit('searchMovie', query);

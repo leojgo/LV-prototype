@@ -48,7 +48,7 @@
                 <li v-for="movie in data.rental.movies" class="uk-position-relative">{{ movie.movieId }} <strong>{{ movie.title }}</strong><span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span></li>
               </ul>
               <div class="uk-inline uk-margin uk-width-1-1">
-                <input class="uk-input" type="text" name="addCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')" v-on:keyup.enter="addToCopies"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToCopies"></a>
+                <input class="uk-input" type="text" name="addCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')" v-on:keyup.enter="addToCopies"><span class="uk-form-icon uk-form-icon-flip"  uk-icon="icon: plus-circle" v-on:click="addToCopies"></span>
               </div>
               <button class="uk-button uk-button-primary" v-on:click="openPayment" v-if="hasMovies">Continue to Payment</button>
             </div>
@@ -65,9 +65,9 @@
                 <div class="uk-width-1-2@s uk-form-controls">
                   <select class="uk-select" id="form-stacked-select" v-on:change="changePayment">
                     <option disabled selected>Select Payment Type</option>
-                    <option value="0">Cash Payment</option>
-                    <option value="1" >Credit Card</option>
-                    <option value="2" >Debit Card</option>
+                    <option value="cash">Cash Payment</option>
+                    <option value="credit" >Credit Card</option>
+                    <option value="debit" >Debit Card</option>
                   </select>
                 </div>
                 <div class="uk-width-1-2@s" v-if="isCard">
@@ -82,21 +82,20 @@
         </ul>
       </div>
       <div v-else>
-        <div v-for="rental in data.selected" >
-          <strong>Confirmation Number</strong>: 9874668792983479<br />
-          <strong>Due date</strong>: {{ dueDate }}<br />
+        <div>
+          <strong>Confirmation Number</strong>: {{ data.rental.confirmation }}<br />
           <strong>Total Paid</strong>: ${{ totalFee }}<br />
-          <strong>Payment Type</strong>: Credit Card ({{ rental.payment.digits }})
-          <hr />
+          <strong>Payment Type</strong>: {{ data.rental.payment.type }} <span v-if="data.rental.payment.type != 'cash'">({{ data.rental.payment.digits }})</span><br />
+          <strong>Payment Date</strong>: {{ data.rental.payment.date }}
         </div>
         <h2 class="uk-heading-divider uk-text-small uk-text-bold">Customer</h2>
-        <div v-for="(customer, id) in rental.customer" class="uk-position-relative">
-          <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-large-right">{{ id }}</span> <strong>{{ customer.firstName }} {{ customer.lastName }}</strong><br />
-          <span class="uk-text-small">{{ customer.address }}, {{ customer.city }}, {{ customer.state }} {{ customer.zip }}<br />{{ customer.phone }}</span>
+        <div class="uk-position-relative">
+          <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-large-right">{{ data.rental.customer.customerId }}</span> <strong>{{ data.rental.customer.nameFirst }} {{ data.rental.customer.mameLast }}</strong><br />
+          <span class="uk-text-small">{{ data.rental.customer.addLine1 }}, {{ data.rental.customer.addCity }}, {{ data.rental.customer.addState }} {{ data.rental.customer.addZip }}<br />{{ data.rental.customer.phoneNumber }}</span>
         </div>
         <h2 class="uk-heading-divider uk-text-small uk-text-bold">Items Rented</h2>
         <ul class="uk-list uk-list-divider">
-          <li v-for="movie in rental.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong></li>
+          <li v-for="movie in data.rental.movies" class="uk-position-relative">{{ movie.movieId }} <strong>{{ movie.title }}</strong></li>
         </ul>
       </div>
     </div>
@@ -128,9 +127,9 @@
               <div class="uk-width-1-2@s uk-form-controls">
                 <select class="uk-select" id="form-stacked-select" v-on:change="changePayment">
                   <option disabled selected>Select Payment Type</option>
-                  <option value="0">Cash Payment</option>
-                  <option value="1" >Credit Card</option>
-                  <option value="2" >Debit Card</option>
+                  <option value="cash">Cash Payment</option>
+                  <option value="credit" >Credit Card</option>
+                  <option value="debit" >Debit Card</option>
                 </select>
               </div>
               <div class="uk-width-1-2@s" v-if="isCard">
@@ -145,11 +144,11 @@
         </li>
       </ul>
       <div v-else>
-        <div v-for="rental in data.selected" >
-          <strong>Confirmation Number</strong>: 9874668792983479<br />
-          <strong>Date</strong>: {{ rental.payment.date }}<br />
-          <strong>Total Paid</strong>: ${{ lateFee }}<br />
-          <strong>Payment Type</strong>: Credit Card ({{ rental.payment.digits }})
+        <div >
+          <strong>Confirmation Number</strong>: {{ data.rental.confirmation }}<br />
+          <strong>Total Paid</strong>: ${{ totalFee }}<br />
+          <strong>Payment Type</strong>: {{ data.rental.payment.type }} <span v-if="data.rental.payment.type != cash">({{ rental.payment.digits }})</span><br />
+          <strong>Payment Date</strong>: {{ data.rental.payment.date }}
           <hr />
         </div>
         <h2 class="uk-heading-divider uk-text-small uk-text-bold">Items Rented</h2>
@@ -207,10 +206,10 @@
         //validate input data
         var copyId = copy.value.replace(/\D/g,'');
         if (copy.value == copyId) {
+          console.log('emit rentalAddMovie');
           this.$router.app.$emit('rentalAddMovie', copyId);
           copy.value = "";
           copy.placeholder = "Add another movie..."; //change to computed property
-          //this.rentalFee += 3; //change to computed property
           /*
           if (this.hasMovies && !this.paymentVisible) {
             this.showPaymentButton = true;
@@ -262,6 +261,8 @@
         payment.type = document.getElementById('form-stacked-select').value;
         payment.digits = document.getElementById('cardDigits').value;
         rental.payment = payment;
+        console.log(rental);
+        console.log('emit rentalNew');
         this.$router.app.$emit('rentalNew', rental); 
       },
       submitReturn(payment) {

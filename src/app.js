@@ -233,7 +233,7 @@ var app = new Vue({
           else {
             //TODO confirmation in UI?
           }
-          //TODO show modal confirmmation?
+          //TODO show modal confirmation?
           data.isEdit = false; //TODO cleanup/move?
           vm.$router.push(callbackRoute);
         }
@@ -774,10 +774,6 @@ var app = new Vue({
     //NEW RENTAL
     //new rental 1: select customer
     vm.$on('rentalCustomer', function(customer){
-      //TODO refactor
-      //var rentalId = data.nextId.rental;
-      //data.selected[rentalId].customer = {};
-      //data.selected[rentalId].customer[customerId] = customers[customerId];
       data.rental.customer = customer;
       UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
       console.log(data.rental);
@@ -828,22 +824,15 @@ var app = new Vue({
       xhr.onreadystatechange = function () {
         //Call a function when the state changes.
       if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
-          //show confirmation
-          //TODO transaction
-          //vm.$router.push(callbackRoute);
+          data.rental.confirmation = this.responseText;
+          data.rental.payment.date = new Date();
+          data.isEdit = false;
         }
         else {
           //TODO error handling
         }
       }
       xhr.send(jsonData);
-
-      //FPO
-      var rentalId = data.nextId.rental;
-      data.selected[rentalId].payment = payment;
-      //add to rentals table
-      data.isEdit = false;
-      data.nextId.rental++;
     });
     //RETURN RENTAL
     //???wtf did I do here...
