@@ -1,0 +1,23 @@
+{
+        "EmployeeId":"999",
+        "CustomerId":"666",
+        "LateFeePaid": "6",
+        "PaymentType": "credit", 
+        "PaymentCard": "4889",
+        "MovieList":
+        [{
+                "id":"1",
+                "Cost":"3",
+                "DueDate":"2018-05-12"
+        },
+        {
+                "id":"2",
+                "Cost":"3",
+                "DueDate":"2018-05-12"
+        },
+        {
+                "id":"3",
+                "Cost":"3",
+                "DueDate":"2018-05-12"
+        }]
+}

@@ -634,14 +634,18 @@ var app = new Vue({
             releaseYear: copies[0].releaseYear,
             inStock: copies[0].status == 0
           }]
-          for (var i = 0; i<copies.length; i++) {
-            if (copies[i].upc == movies[i].upc) {
-              //update if showing as out of stock
-              if (!movies[i].inStock) {
-                movies[i].inStock = copies[i].status == 0; //keep setting until true
+          for (var i = 0; i < copies.length; i++) {
+            var inMovieList= false;
+            for (var j=0; j < movies.length; j++) {
+              if (copies[i].upc == movies[j].upc) {
+                //update if showing as out of stock
+                if (!movies[j].inStock) {
+                  movies[j].inStock = copies[i].status == 0; //keep setting until true
+                  inMovieList = true;
+                }
               }
             }
-            else {
+            if (!inMovieList) {
               //add to movies
               var movie = {
                 title: copies[i].title,
@@ -743,20 +747,57 @@ var app = new Vue({
       }
       xhr.send(jsonData);
     });
-    vm.$on('addCopy', function(item){
-      //POST request
-      //on callback increment movie copiesEdit
-    });
     //load edit form for movie title
     vm.$on('editMovie', function(id){
       console.log('call editMovie '+id);
-      //data.isEdit = true;
+      //get a local copy of the stock
+      var copies = data.movie.copies.slice(0);
+      for (var i=0; i < copies.length; i++) {
+        copies[i]["editStatus"] = 0; //0: update, -1: delete, 1: add
+      }
+      data.movie.copiesEdit = copies;
       //no get request since we're already viewing a movie
       this.$router.push({ name: 'movieEdit', params: { id: id }});
     });
+    vm.$on('addCopy', function(copy){
+      //add to local copies
+      data.movie.copiesEdit.push(copy);
+    });
+    vm.$on('deleteCopy', function(id){
+      //change status on local copies
+      var copies = data.movie.copiesEdit;
+      var copy;
+      for (var i=0; i < copies.length; i++) {
+        if (copies[i].id == id) {
+          console.log(copies[i].editStatus)
+          if (copies[i].editStatus == 1) {
+            //remove new item
+            copies.splice(i, 1);
+          }
+          else {
+            //change to delete status
+            copy = copies[i];
+            copy.editStatus = -1;
+            copies.splice(i, 1, copy);
+          }
+        }
+      }
+    });
+    vm.$on('undeleteCopy', function(id){
+      //change status on local copies
+      var copies = data.movie.copiesEdit;
+      var copy;
+      for (var i=0; i < copies.length; i++) {
+        if (copies[i].id == id) {
+          copy = copies[i];
+          copy.editStatus = 0;
+          copies.splice(i, 1, copy);
+        }
+      }
+    });
     //submit edit form for movie
     vm.$on('updateMovie', function(id){
-      //TODO POST request to API
+      //
 
       //FPO
       data.isEdit = false;

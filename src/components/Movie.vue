@@ -7,7 +7,7 @@
     <div v-if="data.isSingle">
       <!--single movie view-->
       <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Create Movie Title</h1>
-      <h1 v-else class="uk-text-large" style="position: relative">Movie Title
+      <h1 v-else class="uk-text-large uk-position-relative">Movie Title
         <ul class="uk-iconnav uk-position-top-right">
           <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><span uk-icon="close" v-on:click="cancelEdit(data.movie.upc)"></span></li>
           <li v-bind:class="{'uk-hidden' : data.isEdit}"><span  uk-icon="pencil" v-on:click="editForm(data.movie.upc)"></span></li>
@@ -31,20 +31,27 @@
           <input class="uk-input" type="number" name="movieYear" placeholder="2018" v-bind:class="{ 'uk-form-danger' : errors.movieYear }" v-on:focus="clearError('movieYear')" v-model="data.movie.releaseYear">
           <span class="uk-text-small uk-text-danger" v-if="errors.movieYear">Please enter a four digit release year</span>
         </div>
-        <div class="uk-width-1-2@s" v-if="data.isNew">
-          <span class="uk-text-small">Number of copies to add</span>
-          <input type="number" class="uk-input" placeholder="1" v-model="data.movie.qty" name="movieQty" v-bind:class="{ 'uk-form-danger' : errors.movieQty }" v-on:focus="clearError('movieQty')"/>
-          <span class="uk-text-small uk-text-danger" v-if="errors.movieQty">Please add one or more copies</span>
-        </div>
         <div class="uk-width-1-1"  v-if="!data.isNew">
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <ul class="uk-list uk-list-divider uk-text-small">
-            <li v-for="movie in data.movie.copies" v-if="movie.status == 0" class="uk-position-relative">{{ movie.upc }}</li>
-            <li v-for="movie in data.movie.copies" v-if="movie.status == 1" class="uk-text-muted uk-position-relative">{{ movie.upc }} <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Rented</span></li>
-            <li><button class="uk-button uk-button-default" v-on:click="addCopy">Add New Copy <span uk-icon="plus-circle"></span></button></li>
+            <li v-for="movie in data.movie.copiesEdit" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1'}" v-if="movie.editStatus != '-1'">
+              {{ movie.id }} 
+              <div class="uk-position-top-right" v-bind:class="{ 'deleted' : movie.deleted }">
+                <span class="uk-label uk-label-danger uk-text-small uk-margin-small-top uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
+                <span uk-icon="minus-circle" class="uk-icon" v-on:click="deleteCopy(movie.id)"></span>
+              </div>
+            </li>
+            <li v-else class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1'}">
+              <del>{{ movie.id }}</del>
+              <div class="uk-position-top-right" v-bind:class="{ 'deleted' : movie.deleted }">
+                <span class="uk-label uk-label-danger uk-text-small uk-margin-small-top uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
+                <span uk-icon="plus-circle" class="uk-icon" v-on:click="undeleteCopy(movie.id)"></span>
+              </div>
+            </li>
+            <li><button class="uk-button uk-button-default" v-on:click="addNewCopy(data.movie)">Add New Copy <span uk-icon="plus-circle"></span></button></li>
           </ul>
         </div>
-        <div class="uk-width-1-1">
+        <div class="uk-width-1-1" v-if="!data.isNew">
           <button class="uk-button uk-button-primary">Save</button>
           <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit(data.movie.upc)" v-if="data.isNew == false">Cancel</span>
         </div>
@@ -58,8 +65,7 @@
           <span class="uk-text-small">Release year: {{ data.movie.releaseYear }}</span>
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <ul class="uk-list uk-list-divider uk-text-small">
-            <li v-for="movie in data.movie.copies" v-if="movie.status == 0" class="uk-position-relative">{{ movie.id }}</li>
-            <li v-for="movie in data.movie.copies" v-if="movie.status == 1" class="uk-text-muted uk-position-relative">{{ movie.id }} <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Rented</span></li>
+            <li v-for="movie in data.movie.copies" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1' }">{{ movie.id }}<span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top" v-if="movie.status == 1">Rented</span></li>
           </ul>
         </div>
       </div>
@@ -96,8 +102,6 @@
       return {
         availableMovies: 0,
         movieToView: null,
-        copiesAdded: 0,
-        copiesToDelete: [],
         hasError: false,
         errors: {
           movieTitle: false,
@@ -127,12 +131,18 @@
         this.errors[input] = false;
       },
       deleteCopy(id){
-        this.copiesToDelete.push(id);
-        this.$router.emit('deleteMovieCopy');
+        this.$router.app.$emit('deleteCopy', id);
       },
-      addCopy() {
-        this.copiesAdded++;
-        this.$router.emit('createMovieCopy');
+      undeleteCopy(id){
+        this.$router.app.$emit('undeleteCopy', id);
+      },
+      addNewCopy(movie) {
+        var copy = {
+          id: "[NEW ITEM] "+movie.upc,
+          status: 0,
+          editStatus: 1
+        }
+        this.$router.app.$emit('addCopy',copy);
       },
       addToCopies() {
         var copy = document.querySelector("input[name=addCopy]");

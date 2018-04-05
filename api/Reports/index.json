@@ -1,0 +1,28 @@
+[
+    {
+        "title": "100 Muetes Del Jaripeo",
+        "returnDate": "5/12/2017 12:00:00 AM",
+        "count": 12,
+        "custFirstName": "Daniel",
+        "custLastName": "Karlinski",
+        "custPhoneNumber": 6305518540,
+        "customerId": 666,
+        "nameFirst": "Daniel",
+        "nameLast": "Karlinski",
+        "phoneNumber": 6305518540,
+        "transactionCount": 5
+    },
+    {
+        "title": "18-May",
+        "returnDate": "5/12/2017 12:00:00 AM",
+        "count": 11,
+        "custFirstName": "Daniel",
+        "custLastName": "Karlinski",
+        "custPhoneNumber": 6305518540,
+        "customerId": 666,
+        "nameFirst": "Daniel",
+        "nameLast": "Karlinski",
+        "phoneNumber": 6305518540,
+        "transactionCount": 3
+    }
+]

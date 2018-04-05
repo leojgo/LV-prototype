@@ -5,6 +5,14 @@
     "releaseYear": "1982",
     "genre": "asdf",
     "upc": 298347589,
+    "status": 1
+  },
+  {
+    "movieId": 2147,
+    "title": "Blade Runner",
+    "releaseYear": "1982",
+    "genre": "asdf",
+    "upc": 298347589,
     "status": 0
   }
 ]
