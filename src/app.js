@@ -699,7 +699,12 @@ var app = new Vue({
             releaseYear: stock[0].releaseYear,
             stock: stockCount,
             copies: copies,
-            copiesEdit: []
+            copiesEdit: [],
+            editRef: {
+              title: stock[0].title,
+              upc: stock[0].upc,
+              releaseYear: stock[0].releaseYear,
+            }
           };
           //go to view movie page
           var callbackRoute = { name: 'movieView', params: { id: upc }};
@@ -796,21 +801,60 @@ var app = new Vue({
       }
     });
     //submit edit form for movie
-    vm.$on('updateMovie', function(id){
-      //
-
-      //FPO
-      data.isEdit = false;
-      movies[id] = data.selected[id];
-      //update items
-      for (var key in data.selected) {
-        for (var item in data.selected[key].copies) {
-          if (item.inStock === null) {
-            items[item.id].pop();
-          }   
+    vm.$on('updateMovie', function(params){
+      //generate list for post
+      var MovieList = [];
+      if (params.hasEdit) {
+        MovieList = data.movie.copies.slice();
+        //full list
+        for (var i=0; i<params.delete.length; i++) {
+          //delete items
+          for (var j=0; j<MovieList.length; j++) {
+            if (MovieList[j].id == params.delete[i]) {
+              MovieList[j].status = 2;
+              break;
+            }
+          }
         }
       }
-      this.$router.push({ name: 'movieView', params: { id: id }});
+      else {
+        //only deletes
+        for (var i=0; i<params.delete.length; i++) {
+          var movie = {
+            id: params.delete[i],
+            status: 2
+          };
+          MovieList.push(movie);
+        }
+      }
+      var Title = data.movie.title;
+      var ReleaseYear = data.movie.releaseYear;
+      var Upc = data.movie.upc;
+
+      var xhr = new XMLHttpRequest();
+      var url = "/api/Movies";
+      var vm = this;
+      var jsonData = JSON.stringify({"Title": Title,"ReleaseYear": ReleaseYear,"Genre": "","Upc": Upc,"MovieList": MovieList});
+
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
+        //Call a function when the state changes.
+        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          var qty = data.movie.copiesEdit.length - data.movie.copies.length;
+          if (qty > 0) {
+            data.movie.qty = qty;
+            vm.$router.app.$emit('createMovie');
+          }
+          else {
+            vm.$router.app.$emit('viewMovie', data.movie.upc);
+          }
+        }
+        else {
+          //TODO error handling
+        }
+      }
+      xhr.send(jsonData);
     });
     //NEW RENTAL
     //new rental 1: select customer

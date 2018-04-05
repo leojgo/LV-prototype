@@ -36,19 +36,19 @@
           <ul class="uk-list uk-list-divider uk-text-small">
             <li v-for="movie in data.movie.copiesEdit" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1'}" v-if="movie.editStatus != '-1'">
               {{ movie.id }} 
-              <div class="uk-position-top-right" v-bind:class="{ 'deleted' : movie.deleted }">
-                <span class="uk-label uk-label-danger uk-text-small uk-margin-small-top uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
+              <div class="uk-align-right" v-bind:class="{ 'deleted' : movie.deleted }">
+                <span class="uk-label uk-label-danger uk-text-small uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
                 <span uk-icon="minus-circle" class="uk-icon" v-on:click="deleteCopy(movie.id)"></span>
               </div>
             </li>
             <li v-else class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1'}">
               <del>{{ movie.id }}</del>
-              <div class="uk-position-top-right" v-bind:class="{ 'deleted' : movie.deleted }">
-                <span class="uk-label uk-label-danger uk-text-small uk-margin-small-top uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
+              <div class="uk-align-right" v-bind:class="{ 'deleted' : movie.deleted }">
+                <span class="uk-label uk-label-danger uk-text-small uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
                 <span uk-icon="plus-circle" class="uk-icon" v-on:click="undeleteCopy(movie.id)"></span>
               </div>
             </li>
-            <li><button class="uk-button uk-button-default" v-on:click="addNewCopy(data.movie)">Add New Copy <span uk-icon="plus-circle"></span></button></li>
+            <li><span class="uk-button uk-button-default" v-on:click="addNewCopy(data.movie)">Add New Copy <span uk-icon="plus-circle"></span></span></li>
           </ul>
         </div>
         <div class="uk-width-1-1" v-if="!data.isNew">
@@ -103,6 +103,7 @@
         availableMovies: 0,
         movieToView: null,
         hasError: false,
+        copiesToDelete: [],
         errors: {
           movieTitle: false,
           movieYear: false,
@@ -132,9 +133,17 @@
       },
       deleteCopy(id){
         this.$router.app.$emit('deleteCopy', id);
+        if (id.indexOf('NEW ITEM') == -1) {
+          //add to delete list
+          this.copiesToDelete.push(id);
+        }
       },
       undeleteCopy(id){
         this.$router.app.$emit('undeleteCopy', id);
+        var index = this.copiesToDelete.indexOf(id);
+        if (index > -1) {
+          this.copiesToDelete.splice(index,1);
+        }
       },
       addNewCopy(movie) {
         var copy = {
@@ -158,9 +167,13 @@
       handleSubmit(data) {
         //check text inputs for content
         this.hasError = false;
-        //check for missing inputs
+        //check for missing inputs -- fix null error
         for (var input in this.errors) {
-          var inputVal= document.querySelector("input[name="+input+"]").value;
+          var inputField = document.querySelector("input[name="+input+"]");
+          if (inputField === null) {
+            continue;
+          }
+          var inputVal= inputField.value;
           //check for empty inputs
           //TODO trim whitespace
           if (inputVal.length < 1) {
@@ -195,7 +208,18 @@
             this.$router.app.$emit('createMovie');
           }
           else {
-            this.$router.app.$emit('updateMovie');
+            var hasEdits = false;
+            for (var key in data.movie.editRef) {
+              if (data.movie[key] != data.movie.editRef[key]) {
+                hasEdits = true;
+                break;
+              }
+            }
+            var params = {
+              hasEdits: hasEdits,
+              delete: this.copiesToDelete,
+            }
+            this.$router.app.$emit('updateMovie', params);
           }
         }
       },
