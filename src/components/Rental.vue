@@ -1,6 +1,6 @@
 <template>
   <div class="uk-section">
-    <!--single customer view-->
+    <!--single view-->
     <div class="uk-alert-danger uk-text-small" uk-alert>
       <!--<a class="uk-alert-close" uk-close></a>-->
       <p>Prototyope for placement only -- not for functional review!</p>
@@ -100,15 +100,16 @@
       </div>
     </div>
     <div v-else-if="$route.params.id == 'return'">
-      <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Return Rental</h1>
-      <h1 v-else class="uk-text-large uk-text-muted">Return Rental Confirmation</h1>
+      <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Return Rentals</h1>
+      <h1 v-else class="uk-text-large uk-text-muted">Return Rentals Confirmation</h1>
+      <!--
       <ul uk-accordion="multiple: true; collapsible:false" v-if="data.isNew" class="uk-width-1-1" id="newRental">
         <li id="rentalMovies">
-          <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.movies }">1</span> Movies</a>
+          <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.return.movies }">1</span> Movies</a>
           <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
-            <ul v-if="rental.movies.length > 0" class="uk-list uk-list-divider">
-              <li v-for="movie in rental.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong>
-                <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-large-right">2 Days Overdue</span>
+            <ul v-if="data.return.movies.length > 0" class="uk-list uk-list-divider">
+              <li v-for="movie in data.return.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong>
+                <!\--TODO <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-large-right">2 Days Overdue</span>--\>
                 <span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span></li>
             </ul>
             <div class="uk-inline uk-margin uk-width-1-1">
@@ -143,6 +144,21 @@
           </div>
         </li>
       </ul>
+      -->
+      <div class="" v-if="data.isNew" >
+        <ul v-if="data.return.movies.length > 0" class="uk-list uk-list-divider">
+          <li v-for="movie in data.return.movies" class="uk-position-relative">
+              {{ movie.id }} <strong>{{ movie.title }}</strong>
+              <span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span>
+          </li>
+        </ul>
+        <div class="uk-inline uk-margin uk-width-1-1">
+          <input class="uk-input" type="text" name="getCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.getCopy }" v-on:focus="clearError('addCopy')" v-on:keyup.enter="getCopy"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToCopies"></a>
+        </div>
+        <div class="uk-width-1-1">
+          <button class="uk-button uk-button-primary" v-on:click="submitReturn" v-if="isReturnComplete">Submit</button>
+        </div>
+      </div>
       <div v-else>
         <div >
           <strong>Confirmation Number</strong>: {{ data.rental.confirmation }}<br />
@@ -328,7 +344,7 @@
         return true;
       },
       isReturnComplete: function() {
-        return this.hasPayment;
+        return this.returnList.length > 0;
       },
       dueDate: function() {
         var d = new Date();

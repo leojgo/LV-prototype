@@ -144,7 +144,8 @@ var data = {
   movieTitles: null, // TODO what is this for??
   movies: null, //movies array for search
   movie: null, //selected movie (view/edit)
-  rental: null, //current rental
+  rental: null, //current new rental
+  return: null, //current rental return
   //rentals: null, //list of rentals
   reports: null, //reports array for search
   isSingle: false, //single item flag
@@ -428,7 +429,7 @@ var app = new Vue({
     console.log(vm);  
     //manager 1 employee 2 
     vm.$on('login', function(user){
-      data.user = JSON.parse(user);
+      data.user = user; //userId
       data.isAuthenticated = true;
       console.log(data.user);
       //TODO clarify roles -- this may be too simple of an implementation
@@ -473,10 +474,22 @@ var app = new Vue({
       modal.body = '<strong>Clerks</strong> can contact a manager for help accessing the system. <strong>Managers</strong> unable to access the system, should refer to the login instructions provided in the Lackluster Video Application manual.';
       data.modal = modal;
     });
-    vm.$on('resetLogin', function(){
-      modal.title = 'Reset Login';
-      modal.body = '<div class="uk-width-1-1">Reset password for employee '+employee.employeeId+', '+employee.firstName+' '+employee.lastName+'</div>';
-      data.modal = modal;
+    vm.$on('resetLogin', function(params){
+      var xhr = new XMLHttpRequest();
+      var url = "/api/resetPassword"+data.employee.employeeId;
+      var jsonData = JSON.stringify({"ManagerInfo":{"username":data.user,"password":params.managerPass},"NewPw":params.userPass});
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function() {
+        //Call a function when the state changes.
+        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          //TODO success message
+        }
+        else {
+          //TODO error handling
+        }
+      }
+      xhr.send(jsonData);
     });
     vm.$on('clear', function(property){
       console.log('clear ' + property);
@@ -877,7 +890,7 @@ var app = new Vue({
     });
     //new rental 3: submit rental
     vm.$on('rentalNew', function(rental){
-      //TODO POST request to API
+      //POST request to API
       console.log('call rentalNew');
       //send login request
       //send to server
@@ -885,7 +898,7 @@ var app = new Vue({
       var url = "/api/Transactions"; //for new
       var vm = this;
 
-      var EmployeeId = 1;//TODO
+      var EmployeeId = data.user;
       var CustomerId = data.rental.customer.customerId;
       var LateFeePaid = data.rental.customer.accountBalance;
       var PaymentType = data.rental.payment.type;

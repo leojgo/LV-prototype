@@ -15,7 +15,33 @@
         Employee ID: {{ data.employee.employeeId }}<br />
         <span class="uk-text-small">Phone Number: {{ data.employee.phoneNumber }}</span>
         <hr />
-        <button class="uk-button uk-button-default" v-on:click="resetLogin" uk-toggle="target: #modal">Reset Login</button>
+        <div v-if="!editPassword">
+          <button class="uk-button uk-button-default" v-on:click="resetLogin">Reset Login</button>
+        </div>
+        <div v-else uk-grid>
+          <div class="uk-width-1-2@s">
+            <input type="password" name="passwordReset" class="uk-input">
+            <span class="uk-text-small">please enter new password</span>
+          </div>
+          <div class="uk-width-1-2@s">
+            <input type="password" name="passwordResetConfirm" class="uk-input">
+            <span class="uk-text-small">please confirm new password</span>
+          </div>
+          <div class="uk-width-1-2@s">
+            <input type="password" name="managerPassword" class="uk-input">
+            <span class="uk-text-small">please enter your manager account password</span>
+          </div>
+          <div v-if="hasErrors" class="uk-width-1-1">
+            <div class="uk-alert-danger" uk-alert>
+            <!--TODO-->
+            </div>
+          </div>
+          <div class="uk-width-1-1">
+            <hr />
+            <button class="uk-button uk-button-primary" v-on:click="submitReset">Submit</button>
+            <button class="uk-button uk-button-default" v-on:click="cancelReset">Cancel</button>
+          </div>
+        </div>
       </div>
       <div v-else uk-grid>
         <div class="uk-width-1-2@s">
@@ -31,8 +57,8 @@
             <span v-if="errors.userPhone" class="uk-text-small uk-text-danger">please enter a valid phone number</span>
         </div>
         <div class="uk-width-1-2@s" v-if="data.isNew">
-            <input class="uk-input" type="password" name="userPass" placeholder="*****" v-bind:class="{ 'uk-form-danger' : errors.userPass }" v-on:focus="clearError('userPass')">
-            <span class="uk-text-small">please enter a password</span>
+          <input class="uk-input" type="password" name="userPass" placeholder="*****" v-bind:class="{ 'uk-form-danger' : errors.userPass }" v-on:focus="clearError('userPass')">
+          <span class="uk-text-small">please enter a password</span>
         </div>
         <div class="uk-width-1-2@s" v-if="data.isNew">
             <input class="uk-input" type="password" name="userPassConfirm" placeholder="*****" v-bind:class="{ 'uk-form-danger' : errors.userPass }" v-on:focus="clearError('userPass')">
@@ -95,6 +121,7 @@
       return {
         //TODO Revise form fields
         userToEdit: null,
+        editPassword: false,
         hasErrors: false,
         errorMessage: "An error has occurred!",
         errors: {
@@ -229,7 +256,18 @@
         }
       },
       resetLogin() {
-        this.$router.app.$emit('resetLogin');
+        this.editPassword = true;
+      },
+      cancelReset() {
+        this.editPassword = false;
+      },
+      submitReset() {
+        //TODO validation
+        var params = {
+          userPass: document.querySelector("input[name=passwordReset]").value,
+          managerpass: document.querySelector("input[name=managerPassword]").value
+        }
+        this.$router.app.$emit('resetLogin', params);
       }
     }
   }
