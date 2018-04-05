@@ -898,7 +898,7 @@ var app = new Vue({
       var url = "/api/Transactions"; //for new
       var vm = this;
 
-      var EmployeeId = data.user;
+      var EmployeeId = data.user.employeeId;
       var CustomerId = data.rental.customer.customerId;
       var LateFeePaid = data.rental.customer.accountBalance;
       var PaymentType = data.rental.payment.type;

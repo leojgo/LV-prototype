@@ -63,7 +63,7 @@ export default {
           //TODO 200 used for local testing, remove for prod
           if (xhr.readyState === 4 && (xhr.status === 201 || xhr.status === 200)) {
               //send the response to Vue
-              vm.$router.app.$emit('login', user);
+              vm.$router.app.$emit('login', JSON.parse(this.responseText));
           }
           else {
             vm.$router.app.$emit('loginError'); // 404 or sever error -- TODO revise when API supports error handling with message return
