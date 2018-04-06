@@ -342,7 +342,7 @@ var app = new Vue({
           console.log(movie);
           if (newRental) {
             //new rental
-            //TODO check status
+            //check status
             if (movie.status == 0) {
               vm.data.rental.movies.push(movie);
             }
@@ -356,6 +356,17 @@ var app = new Vue({
           }
           else {
             //rental return
+            //check status
+            if (movie.status == 1) {
+              vm.data.return.movies.push(movie);
+            }
+            else if (movie.status == 0) {
+              //TODO error movie not in stock
+            }
+            else {
+              //TODO error movie not found in system?
+            }
+            console.log(data.renturn);
           }
         }
         else {
@@ -942,8 +953,7 @@ var app = new Vue({
     //RETURN RENTAL
     //return rental 1: add movie to list of movies in renturn?
     vm.$on('returnAddMovie', function(id){
-      //TODO check for duplicates in rental list
-      //TODO check that movie is not in stock
+      console.log('call returnAddMovie');
       app.getMovie(id);
     });
     //return rental 2: submit to API

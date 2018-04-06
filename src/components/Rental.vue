@@ -1,10 +1,6 @@
 <template>
   <div class="uk-section">
     <!--single view-->
-    <div class="uk-alert-danger uk-text-small" uk-alert>
-      <!--<a class="uk-alert-close" uk-close></a>-->
-      <p>Prototyope for placement only -- not for functional review!</p>
-    </div>
     <div v-if="$route.params.id == 'new'">
       <h1 class="uk-text-large uk-text-muted" v-if="data.isEdit">New Rental</h1>
       <h1 class="uk-text-large uk-text-muted" v-else>New Rental Confirmation</h1>
@@ -105,7 +101,7 @@
       <div class="" v-if="data.isNew" >
         <ul v-if="data.return.movies.length > 0" class="uk-list uk-list-divider">
           <li v-for="movie in data.return.movies" class="uk-position-relative">
-              {{ movie.id }} <strong>{{ movie.title }}</strong>
+              {{ movie.movieId }} <strong>{{ movie.title }}</strong>
               <span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span>
           </li>
         </ul>
@@ -121,11 +117,10 @@
           <div class="uk-alert uk-alert-success">
             <p><strong>Thank you!</strong> Your return has been processed.</p>
           </div>
-          <hr />
         </div>
         <h2 class="uk-heading-divider uk-text-small uk-text-bold">Items Returned</h2>
         <ul class="uk-list uk-list-divider">
-          <li v-for="movie in data.return.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong></li>
+          <li v-for="movie in data.return.movies" class="uk-position-relative">{{ movie.movieId }} <strong>{{ movie.title }}</strong></li>
         </ul>
       </div>
     </div>
@@ -194,7 +189,7 @@
         var copyId = copy.value.replace(/\D/g,'');
         if (copy.value == copyId) {
           console.log('emit returnAddMovie');
-          this.$router.app.$emit('renturnAddMovie', copyId);
+          this.$router.app.$emit('returnAddMovie', copyId);
           copy.value = "";
           copy.placeholder = "Add another movie..."; //change to computed property
         }
@@ -253,10 +248,10 @@
         this.$router.app.$emit('rentalNew', rental); 
       },
       submitReturn() {
-        var movies = this.$router.app.data.return.movies;
+        var movies = this.$router.app.data.return.movies.slice(0);
         for (var i=0; i<movies.length; i++) {
           movies[i] = {
-            Id: movies[i].id
+            Id: movies[i].movieId
           }
         }
         console.log(movies);
