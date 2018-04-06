@@ -48,7 +48,7 @@
                 <li v-for="movie in data.rental.movies" class="uk-position-relative">{{ movie.movieId }} <strong>{{ movie.title }}</strong><span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span></li>
               </ul>
               <div class="uk-inline uk-margin uk-width-1-1">
-                <input class="uk-input" type="text" name="addCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')" v-on:keyup.enter="addToCopies"><span class="uk-form-icon uk-form-icon-flip"  uk-icon="icon: plus-circle" v-on:click="addToCopies"></span>
+                <input class="uk-input" type="text" name="addCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')" v-on:keyup.enter="addToRental"><span class="uk-form-icon uk-form-icon-flip"  uk-icon="icon: plus-circle" v-on:click="addToRental"></span>
               </div>
               <button class="uk-button uk-button-primary" v-on:click="openPayment" v-if="hasMovies">Continue to Payment</button>
             </div>
@@ -102,49 +102,6 @@
     <div v-else-if="$route.params.id == 'return'">
       <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Return Rentals</h1>
       <h1 v-else class="uk-text-large uk-text-muted">Return Rentals Confirmation</h1>
-      <!--
-      <ul uk-accordion="multiple: true; collapsible:false" v-if="data.isNew" class="uk-width-1-1" id="newRental">
-        <li id="rentalMovies">
-          <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.return.movies }">1</span> Movies</a>
-          <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
-            <ul v-if="data.return.movies.length > 0" class="uk-list uk-list-divider">
-              <li v-for="movie in data.return.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong>
-                <!\--TODO <span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-large-right">2 Days Overdue</span>--\>
-                <span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span></li>
-            </ul>
-            <div class="uk-inline uk-margin uk-width-1-1">
-              <input class="uk-input" type="text" name="addCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')" v-on:keyup.enter="addToCopies"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToCopies"></a>
-            </div>
-            <button class="uk-button uk-button-primary" v-on:click="openReturnPayment" v-if="showPaymentButton">Continue to Payment &amp; Confirmation</button>
-          </div>
-        </li>
-        <li id="rentalPayment">
-          <a class="uk-accordion-title" href="#"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.paymentType}">2</span> Payment &amp; Confirmation</a>
-          <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
-            <div uk-grid>
-              <div class="uk-width-1-2@">
-                Late Fee: ${{ lateFee }}
-              </div>
-              <div class="uk-width-1-2@s uk-form-controls">
-                <select class="uk-select" id="form-stacked-select" v-on:change="changePayment">
-                  <option disabled selected>Select Payment Type</option>
-                  <option value="cash">Cash Payment</option>
-                  <option value="credit" >Credit Card</option>
-                  <option value="debit" >Debit Card</option>
-                </select>
-              </div>
-              <div class="uk-width-1-2@s" v-if="isCard">
-                <input class="uk-input" type="text" id="cardDigits" name="cardDigits" placeholder="Enter card number last 4 digits" v-bind:class="{ 'uk-form-danger' : errors.cardDigits }" v-on:focus="clearError('cardDigits')" v-on:keyup="validateDigits">
-              </div>
-              <div class="uk-width-1-1">
-                <button class="uk-button uk-button-primary" v-on:click="submitReturn" v-if="isReturnComplete">Submit</button>
-                <button class="uk-button uk-button-default" v-on:click="submitReturn">Skip Payment</button>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-      -->
       <div class="" v-if="data.isNew" >
         <ul v-if="data.return.movies.length > 0" class="uk-list uk-list-divider">
           <li v-for="movie in data.return.movies" class="uk-position-relative">
@@ -153,7 +110,7 @@
           </li>
         </ul>
         <div class="uk-inline uk-margin uk-width-1-1">
-          <input class="uk-input" type="text" name="getCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.getCopy }" v-on:focus="clearError('addCopy')" v-on:keyup.enter="getCopy"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToCopies"></a>
+          <input class="uk-input" type="text" name="addReturn" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.getCopy }" v-on:focus="clearError('addReturn')" v-on:keyup.enter="addToReturn"><a class="uk-form-icon uk-form-icon-flip" href="#" uk-icon="icon: plus-circle" v-on:click="addToReturn"></a>
         </div>
         <div class="uk-width-1-1">
           <button class="uk-button uk-button-primary" v-on:click="submitReturn" v-if="isReturnComplete">Submit</button>
@@ -161,15 +118,14 @@
       </div>
       <div v-else>
         <div >
-          <strong>Confirmation Number</strong>: {{ data.rental.confirmation }}<br />
-          <strong>Total Paid</strong>: ${{ totalFee }}<br />
-          <strong>Payment Type</strong>: {{ data.rental.payment.type }} <span v-if="data.rental.payment.type != cash">({{ rental.payment.digits }})</span><br />
-          <strong>Payment Date</strong>: {{ data.rental.payment.date }}
+          <div class="uk-alert uk-alert-success">
+            <p><strong>Thank you!</strong> Your return has been processed.</p>
+          </div>
           <hr />
         </div>
-        <h2 class="uk-heading-divider uk-text-small uk-text-bold">Items Rented</h2>
+        <h2 class="uk-heading-divider uk-text-small uk-text-bold">Items Returned</h2>
         <ul class="uk-list uk-list-divider">
-          <li v-for="movie in rental.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong></li>
+          <li v-for="movie in data.return.movies" class="uk-position-relative">{{ movie.id }} <strong>{{ movie.title }}</strong></li>
         </ul>
       </div>
     </div>
@@ -188,13 +144,15 @@
         hasPayment: false,
         paymentVisible: false,
         showPaymentButton: false,
+        paymentType: null,
         isCard: false,
         hasDigits: false,
         //rentalFee: 0,
         //lateFee: 6,
         errors: {
           addCopy: false,
-          addCardDigits: false
+          addCardDigits: false,
+          addReturn: false
         }
       }
     },
@@ -216,7 +174,7 @@
       clearItem(){
 
       },
-      addToCopies() {
+      addToRental() {
         //TODO refactor
         var copy = document.querySelector("input[name=addCopy]");
         //validate input data
@@ -226,13 +184,22 @@
           this.$router.app.$emit('rentalAddMovie', copyId);
           copy.value = "";
           copy.placeholder = "Add another movie..."; //change to computed property
-          /*
-          if (this.hasMovies && !this.paymentVisible) {
-            this.showPaymentButton = true;
-          }*/
         }
         else {
           this.errors.addCopy = true
+        }
+      },
+      addToReturn(){
+        var copy = document.querySelector("input[name=addReturn]");
+        var copyId = copy.value.replace(/\D/g,'');
+        if (copy.value == copyId) {
+          console.log('emit returnAddMovie');
+          this.$router.app.$emit('renturnAddMovie', copyId);
+          copy.value = "";
+          copy.placeholder = "Add another movie..."; //change to computed property
+        }
+        else {
+          this.errors.addReturn = true
         }
       },
       openPayment() {
@@ -246,7 +213,8 @@
         this.showPaymentButton = false;
       },
       changePayment(event) {
-        if (event.target.value != "0") {
+        this.paymentType = event.target.value;
+        if (this.paymentType != "cash") {
           this.isCard = true;
           if (this.hasDigits) {
             this.hasPayment = true;
@@ -274,29 +242,25 @@
       },
       submitNew(rental) {
         var payment = {};
-        payment.type = document.getElementById('form-stacked-select').value;
-        payment.digits = document.getElementById('cardDigits').value;
+        payment.type = this.paymentType;
+        payment.digits = null;
+        if (this.isCard) {
+          payment.digits = document.getElementById('cardDigits').value;
+        }
         rental.payment = payment;
         console.log(rental);
         console.log('emit rentalNew');
         this.$router.app.$emit('rentalNew', rental); 
       },
-      submitReturn(payment) {
-        //TODO change return logic to allow skipped payments
-        //TODO revise when API is done
-        if (payment) {
-
+      submitReturn() {
+        var movies = this.$router.app.data.return.movies;
+        for (var i=0; i<movies.length; i++) {
+          movies[i] = {
+            Id: movies[i].id
+          }
         }
-        else {
-
-        }
-        //prototype fn for payment submit
-        var payment = {};
-        payment.date = new Date();
-        payment.type = document.getElementById('form-stacked-select').value;
-        payment.digits = document.getElementById('cardDigits').value;
-        console.log('emit rental return');
-        this.$router.app.$emit('rentalReturn', payment); 
+        console.log(movies);
+        this.$router.app.$emit('rentalReturn', movies);
       },
       clearError() {
 
@@ -344,7 +308,7 @@
         return true;
       },
       isReturnComplete: function() {
-        return this.returnList.length > 0;
+        return this.$router.app.data.return.movies.length > 0;
       },
       dueDate: function() {
         var d = new Date();

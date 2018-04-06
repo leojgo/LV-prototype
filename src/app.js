@@ -338,21 +338,35 @@ var app = new Vue({
       xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           var newRental = app.$route.path.indexOf('rentals/new') > -1;
+          var movie = JSON.parse(xhr.responseText);
+          console.log(movie);
           if (newRental) {
-            var movie = JSON.parse(xhr.responseText);
-            //update movies list
-            vm.data.rental.movies.push(movie);
-            //TODO errors?
+            //new rental
+            //TODO check status
+            if (movie.status == 0) {
+              vm.data.rental.movies.push(movie);
+            }
+            else if (movie.status == 1) {
+              //TODO error movie not in stock
+            }
+            else {
+              //TODO error movie not found in system?
+            }
             console.log(data.rental);
+          }
+          else {
+            //rental return
           }
         }
         else {
-          //TODO errors?
+          //TODO other errors?
         }
       }; 
       xhr.open('GET', url);
       xhr.send();
     },
+    /*
+    //TODO remove?
     postMovie(movie, callbackRoute) {
       //TODO Is callback needed? Does this ever go anywhere except to the customer's profile?
       var xhr = new XMLHttpRequest();
@@ -401,7 +415,7 @@ var app = new Vue({
       }
       xhr.send(jsonData);
 
-    },
+    },*/
     getReport(type){
       console.log('call get report '+type);
       var jsonData = JSON.stringify({"reportType":type}); //TODO make dynamic?
@@ -877,16 +891,9 @@ var app = new Vue({
       console.log(data.rental);
     });
     //new rental 2: add movie to list of movies in rental?
-    //return rental 1: add movie to list of movies in renturn?
     vm.$on('rentalAddMovie', function(id){
-      //TODO check for duplicates in rental list
+      console.log('call rentalAddMovie');
       app.getMovie(id);
-    });
-    //new rental 2: confirm movies to rent
-    vm.$on('rentalMovies', function(movies){
-      //TODO refactor based on API
-      var rentalId = data.nextId.rental;
-      data.selected[rentalId].movies = movies;
     });
     //new rental 3: submit rental
     vm.$on('rentalNew', function(rental){
@@ -933,15 +940,33 @@ var app = new Vue({
       xhr.send(jsonData);
     });
     //RETURN RENTAL
-    //???wtf did I do here...
-    vm.$on('rentalReturn', function(payment){
-      var rentalId = data.nextId.rental;
-      //movies??
-      data.selected[rentalId].payment = payment;
-      //add to returns table
-      data.isEdit = false;
-      data.isNew = false;
-      data.nextId.rental++;
+    //return rental 1: add movie to list of movies in renturn?
+    vm.$on('returnAddMovie', function(id){
+      //TODO check for duplicates in rental list
+      //TODO check that movie is not in stock
+      app.getMovie(id);
+    });
+    //return rental 2: submit to API
+    vm.$on('rentalReturn', function(movieList){
+      var xhr = new XMLHttpRequest();
+      var url = "/api/Return";
+      var vm = this;
+      var jsonData = JSON.stringify({"MovieList": movieList});
+      
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
+      xhr.onreadystatechange = function () {
+        //Call a function when the state changes.
+      if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+          //TODO success message?
+          data.isNew = false;
+          data.isEdit = false;
+        }
+        else {
+          //TODO error handling
+        }
+      }
+      xhr.send(jsonData);
     });
   }
 });
@@ -1009,12 +1034,8 @@ router.beforeEach((to, from, next) => {
     data.isView = false;
     data.isEdit = true;
     data.isNew = true;
-    data.selected = {};
-    data.selected[data.nextId.rental] = {
-      customer: null,
-      movies: [],
-      paymentType: null,
-      cardDigits: null
+    data.return = {
+      movies: []
     };
   }
   else if (to.fullPath.indexOf('reports') > -1) {
