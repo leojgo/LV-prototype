@@ -1,5 +1,5 @@
-# Lackluster Video Prototype
-Prototyping for Lackluster Video App Assignment UIS CS Capstone. Built with [VueJS](https://vuejs.org/) and [UIKit](https://getuikit.com/).
+# Video Store Prototype
+Prototyping for Video Store App Assignment UIS CS Capstone. Built with [VueJS](https://vuejs.org/) and [UIKit](https://getuikit.com/).
 
 ----
 
