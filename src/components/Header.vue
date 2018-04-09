@@ -7,7 +7,7 @@
     </div>
     <nav class="uk-navbar-container uk-container" uk-navbar>
       <div class="uk-navbar-left uk-visible@s">
-        <a href="/" class="uk-navbar-item uk-logo" is="router-link" to="/">
+        <a href="/index.html" class="uk-navbar-item uk-logo" is="router-link" to="/">
           {{ data.company }}
         </a>
       </div>

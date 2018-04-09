@@ -47,9 +47,9 @@
             <li><span class="uk-button uk-button-default" v-on:click="addNewCopy(data.movie)">Add New Copy <span uk-icon="plus-circle"></span></span></li>
           </ul>
         </div>
-        <div class="uk-width-1-1" v-if="!data.isNew">
+        <div class="uk-width-1-1">
           <button class="uk-button uk-button-primary">Save</button>
-          <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit(data.movie.upc)" v-if="data.isNew == false">Cancel</span>
+          <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit(data.movie.upc)" v-if="!data.isNew">Cancel</span>
         </div>
       </form>
       <div v-else>

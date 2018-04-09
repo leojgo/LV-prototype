@@ -542,7 +542,7 @@ var app = new Vue({
     vm.$on('createEmployee', function(employee) {
       console.log('call createEmployee');
       var callbackRoute = { name: 'userView', params: { id: employee.employeeId }}; //go to view employee after creation
-      app.postCustomer(employee, callbackRoute);
+      app.postEmployee(employee, callbackRoute);
     });
     //update employee
     vm.$on('updateEmployee', function(employee) {
