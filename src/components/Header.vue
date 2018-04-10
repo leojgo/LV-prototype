@@ -68,7 +68,7 @@
       <div class="uk-offcanvas-bar">
         <button class="uk-offcanvas-close" type="button" uk-close></button>
         <ul class="uk-nav uk-nav-default">
-          <li v-if="data.isManager"><a href="/users">Users</a></li>
+          <li v-if="data.isManager"><a href="/users/search">Users</a></li>
           <li class="uk-nav-header">Rentals</li>
           <li><a is="router-link" to="/rentals/new">New Rental</a></li>
           <li><a is="router-link" to="/rentals/return">Return Rental</a></li>
