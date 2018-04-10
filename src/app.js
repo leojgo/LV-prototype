@@ -4,8 +4,8 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './routes.js';
 
-console = {};
-console.log = function() {} 
+//console = {};
+//console.log = function() {} 
 //silence logging for now
 
 //import UIkit from './js/uikit'; 
@@ -425,7 +425,7 @@ var app = new Vue({
     });
     //update employee
     vm.$on('updateEmployee', function(employee) {
-      console.log('call updateEmployee');
+      console.log('call updateEmployee '+employee.employeeId);
       var callbackRoute = { name: 'userView', params: { id: employee.employeeId }}; //go to view employee after update
       app.postEmployee(employee, callbackRoute);
     });
@@ -870,22 +870,19 @@ router.beforeEach((to, from, next) => {
     data.isNew = false;
     if (to.fullPath[1] == 'u') {
       //TODO refactor/rename -- it's not really a search
-      //get users
-      console.log(data.employees == null);
-      if (data.employees == null) {
-        //send login request -- TODO use a function?
-        var url = "/api/employees";
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function() {
-            if (request.readyState == 4 && request.status == 200) {
-              //TODO use request.readyState == 4 && request.status == 200, add error handling
-              data.employees = JSON.parse(request.responseText);
-              console.log(data.employees);
-            }
-        }; 
-        request.open('GET', url);
-        request.send();
-      }
+      //send login request -- TODO use a function?
+      var url = "/api/employees";
+      var request = new XMLHttpRequest();
+      request.onreadystatechange = function() {
+          if (request.readyState == 4 && request.status == 200) {
+            //TODO use request.readyState == 4 && request.status == 200, add error handling
+            data.employees = JSON.parse(request.responseText);
+            console.log(data.employees);
+            next();
+          }
+      }; 
+      request.open('GET', url);
+      request.send();
     }
   }
   else if (to.fullPath.indexOf('new') > -1) {
@@ -894,12 +891,15 @@ router.beforeEach((to, from, next) => {
     data.isEdit = true;
     data.isNew = true;
     data.selected = {};
+    next();
     //probably better as a switch
     if (to.fullPath[1] == 'c') {
       data.customer = {};
+      next();
     }
     else if (to.fullPath[1] == 'm') {
       data.movie = {};
+      next();
     }
     else if (to.fullPath[1] == 'r') {
       data.rental = {
@@ -908,16 +908,19 @@ router.beforeEach((to, from, next) => {
         payment: null,
         dueDate: null
       };
+      next();
     }
     else {
       //user
       data.employee = {};
+      next();
     }
   }
   else if (to.fullPath.indexOf('edit') > -1) {
     data.isSingle = true;
     data.isEdit = true;
     data.isNew = false;
+    next();
   }
   else if (to.fullPath.indexOf('return') > -1) {
     data.isSingle = true;
@@ -927,17 +930,21 @@ router.beforeEach((to, from, next) => {
     data.return = {
       movies: []
     };
+    next();
   }
   else if (to.fullPath.indexOf('reports') > -1) {
     data.reports = {};
     if (to.fullPath.indexOf('overdue') > -1) {
       app.getReport('Overdue');
+      next();
     }
     else if (to.fullPath.indexOf('popular') > -1) {
       app.getReport('Popular');
+      next();
     }
     else {
       app.getReport('Customer');
+      next();
     } 
   }
   else {
@@ -945,6 +952,6 @@ router.beforeEach((to, from, next) => {
     data.isSingle = true;
     data.isEdit = false;
     data.isNew = false;
+    next();
   }
-  next();
 });
