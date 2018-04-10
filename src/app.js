@@ -12,125 +12,6 @@ import router from './routes.js';
 
 // components can be called from the imported UIkit reference
 // UIkit.notification('Hello world.');
-var customer1 = {
-  firstName: "Cindy",
-  lastName: "Johnson",
-  address: "123 Fake St",
-  city: "Springfield",
-  state: "IL",
-  zip: "60666",
-  email: "cindy@example.com",
-  phone: "773-131-8770" //for pete's sake don't store like this :P
-};
-var customer2 = {
-  firstName: "Cindy",
-  lastName: "Johnson",
-  address: "239 Elm St",
-  city: "Springfield",
-  state: "IL",
-  zip: "60666",
-  email: "cindyisreallycool@example.com",
-  phone: "773-998-2664"
-};
-var customer3 = {
-  firstName: "Ellen",
-  lastName: "Johnson",
-  address: "1548 Overlook Ct",
-  city: "Springfield",
-  state: "IL",
-  zip: "60666",
-  email: "ellen@example.com",
-  phone: "773-081-2761"
-};
-var customers = {
-  "10" : customer1, 
-  "123456" : customer2,
-  "023490" : customer3
-};
-var lastCustomer = 123456;
-var movie1 = {
-  title: "Blade Runner",
-  year: "1982",
-  copies: null, //get these later
-  noStock: false //just a placeholder to test label
-};
-var movie2 = {
-  title: "Blade Runner 2049",
-  year: "2017",
-  copies: null,
-  noStock: false
-};
-var movie3 = {
-  title: "Blade Runner: The Final Cut",
-  year: "1982",
-  copies: null,
-  noStock: true
-};
-var movies = {
-  "123456789" : movie1,
-  "123456788" : movie2,
-  "123456787" : movie3
-};
-var lastMovie = 123456789;
-var items = {
-  "9929398448" : {
-    movie : movies["123456789"], //0
-    inStock : true,
-    //how are these retired? do we need to have active vs inactive?
-  },
-  "9929398449" : {
-    movie : movies["123456789"], //0
-    inStock : false,
-
-  },
-  "9929398447" : {
-    movie : movies["123456789"], //0
-    inStock : true,
-  },
-  "9929398446" : {
-    movie : movies["123456788"], //1
-    inStock : true,
-  },
-  "9929398445" : {
-    movie : movies["123456788"], //1
-    inStock : true,
-  },
-  "9929398444" : {
-    movie : movies["123456787"], //2
-    inStock : false,
-  },
-  "9929398443" : {
-    movie : movies["123456787"], //2
-    inStock : false,
-  }
-};
-var lastItem = 9929398449;
-var rental1 = {
-  customer : customers[0],
-  movies : ["9929398448","9929398443"],
-  paymentType : 0,
-  cardDigits : null,
-  dueDate: 20180224,
-  endDate: null
-};
-var rental2 = {
-  customer : customers[1],
-  movies : ["9929398448","9929398443"],
-  paymentType : 0,
-  cardDigits : null,
-  dueDate: 20180224,
-  endDate: null
-};
-var rentals = {
-  "112233445566" : rental1,
-  "112233445567" : rental2,
-};
-var lastRental = 112233445567;
-var users = {
-  "443" : customer1,
-  "442" : customer2,
-  "441" : customer3 
-}
 var data = {
   company: 'Lackluster Video', //company name
   loginError: false, //flag for whether login error occurred
@@ -152,13 +33,6 @@ var data = {
   isView: false,
   isEdit: false, //edit state flag
   isNew: false, //add state flag
-  selected: null, //item to view or edit
-  nextId: {
-    customer: lastCustomer+1,
-    movie: lastMovie+1,
-    copy: lastItem+1,
-    rental: lastRental+1
-  },
   modal: null //modal dialog obj
 };
 var app = new Vue({
@@ -225,6 +99,7 @@ var app = new Vue({
       if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           var employee = JSON.parse(this.responseText);
+          console.log(employee);
           if (data.isNew) {
             modal.title = 'New Employee Added';
             modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
@@ -255,7 +130,7 @@ var app = new Vue({
           if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
             //TODO use request.readyState == 4 && request.status == 200, add error handling
             data.isSingle = true;
-            vm.$router.app.data.customer = JSON.parse(xhr.responseText);
+            data.customer = JSON.parse(xhr.responseText);
             //TODO pretty phone number
             console.log(data.customer);
             //vm.$router.push({ name: 'customerView', params: { id: id }});
@@ -440,6 +315,7 @@ var app = new Vue({
         //Call a function when the state changes.
       if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           data.reports = JSON.parse(this.responseText);
+          console.log(data.reports);
           //vm.$router.push(callbackRoute);
         }
         else {
@@ -481,8 +357,7 @@ var app = new Vue({
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function() {
         //Call a function when the state changes.
-        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
-          //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
+        if(xhr.readyState == 4 && (xhr.status == 204 || xhr.status == 200)) {
           data.isAuthenticated = false;
           data.isManager = false;
           data.user = null;
@@ -625,6 +500,7 @@ var app = new Vue({
         //add new customer
     vm.$on('createCustomer', function(customer) {
       console.log('call createCustomer');
+      console.log(customer);
       //TODO no employee yet -- need to rework callback
       //var callbackRoute = { name: 'customerView', params: { id: customer.customerId }}; //go to view employee after creation 
       app.postCustomer(customer, null);
