@@ -286,6 +286,7 @@
             this.$router.app.$emit('createCustomer', customer);
           }
           else {
+            customer.active = true;
             customer["customerId"] = this.customerToEdit;
             console.log('emit updateCustomer');
             this.$router.app.$emit('updateCustomer', customer);

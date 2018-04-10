@@ -47,7 +47,7 @@ var app = new Vue({
   },
   methods: {
     getEmployee(id, callbackRoute) {
-      console.log('API call employee '+ id);
+      console.log('API call get employee '+ id);
       //send login request -- TODO use a function?
       var url = "/api/Employee/"+id;
       var xhr = new XMLHttpRequest();
@@ -67,7 +67,7 @@ var app = new Vue({
       xhr.send();
     },
     postEmployee(employee, callbackRoute) {
-      console.log('emit submitEmployeeForm ');
+      console.log('API call post employee');
       console.log(employee);
       //send login request
       //send to server
@@ -120,7 +120,7 @@ var app = new Vue({
       xhr.send(jsonData);
     },
     getCustomer(id, callbackRoute) {
-      console.log('API call customer '+ id);
+      console.log('API call get customer '+ id);
       //send login request -- TODO use a function?
       var url = "/api/Customers/"+id;
       var xhr = new XMLHttpRequest();
