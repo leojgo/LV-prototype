@@ -4,6 +4,10 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './routes.js';
 
+console = {};
+console.log = function() {} 
+//silence logging for now
+
 //import UIkit from './js/uikit'; 
 //import Icons from './dist/js/uikit-icons';
 
