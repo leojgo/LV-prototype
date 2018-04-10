@@ -73,10 +73,10 @@
           <li><a is="router-link" to="/rentals/new">New Rental</a></li>
           <li><a is="router-link" to="/rentals/return">Return Rental</a></li>
           <li class="uk-nav-header">Movies</li>
-          <li><a is="router-link" to="/movies/search" v-on:click.native="clear('customers')">Search Movies</a></li>
-          <li><a href="#">Add New Movie</a></li>
+          <li><a is="router-link" to="/movies/search">Search Movies</a></li>
+          <li><a is="router-link" to="/movies/new">Add New Movie</a></li>
           <li class="uk-nav-header">Customers</li>
-          <li><a is="router-link" to="/customers/search" v-on:click.native="clear('customers')">Search Movies</a></li>
+          <li><a is="router-link" to="/customers/search">Search Movies</a></li>
           <li><a is="router-link" to="/customers/new">Add Customer</a></li>
           <li class="uk-nav-header">Reports</li>
           <li><a is="router-link" to="/reports/overdue">Overdue Rentals</a></li>
