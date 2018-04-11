@@ -884,6 +884,10 @@ router.beforeEach((to, from, next) => {
       request.open('GET', url);
       request.send();
     }
+    else {
+      // go to cust or inventory
+      next();
+    }
   }
   else if (to.fullPath.indexOf('new') > -1) {
     data.isSingle = true;
