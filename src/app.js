@@ -100,7 +100,7 @@ var app = new Vue({
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function () {
         //Call a function when the state changes.
-      if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+      if (xhr.readyState == 4 && (xhr.status == 204 || xhr.status == 200)) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           var employee = JSON.parse(this.responseText);
           console.log(employee);
