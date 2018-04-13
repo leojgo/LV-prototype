@@ -86,14 +86,26 @@ var app = new Vue({
       var jsonData;
       if (data.isNew) {
         var RawPw = employee.RawPw;
-        jsonData = JSON.stringify({"FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "RawPw": RawPw});
+        jsonData = JSON.stringify({
+          "FirstName": FirstName, 
+          "LastName": LastName, 
+          "EmployeeType": EmployeeType, 
+          "PhoneNumber": PhoneNumber, 
+          "RawPw": RawPw
+        });
       }
       else {
         //update employee info
         var url = "/api/Employee/"+employee.employeeId;
         var Active = employee.active;
         var EmployeeTitle = employee.employeeTitle; //TODO remove?
-        jsonData = JSON.stringify({"FirstName": FirstName, "LastName": LastName, "EmployeeType": EmployeeType, "PhoneNumber": PhoneNumber, "active": Active});
+        jsonData = JSON.stringify({
+          "FirstName": FirstName, 
+          "LastName": LastName, 
+          "EmployeeType": EmployeeType, 
+          "PhoneNumber": PhoneNumber, 
+          "active": Active
+        });
       }
       
       xhr.open("POST", url, true);
@@ -162,14 +174,40 @@ var app = new Vue({
 
       var jsonData;
       if (data.isNew) {
-        jsonData = JSON.stringify({"NameFirst": name_First,"NameMiddleIn": null, "NameLast": name_Last, "AddLine1": add_Line1, "AddLine2":null, "AddCity": add_City, "AddState": add_State, "AddZip": add_Zip, "PhoneNumber": phoneNumber, "Email": email, "Newsletter": newsletter});
+        jsonData = JSON.stringify({
+          "NameFirst": customer.firstName;,
+          "NameMiddleIn":"",
+          "NameLast": customer.lastName,
+          "AddLine1": customer.AddLine1,
+          "AddLine2":"",
+          "AddCity": customer.addCity,
+          "AddState": customer.AddState,
+          "AddZip": customer.AddZip,
+          "PhoneNumber":customer.phoneNumber,
+          "Email": customer.email,
+          "Newsletter": customer.newsletter
+        });
       }
       else {
         //update customer info
         var url = "/api/Customers/"+customer.customerId;
         var active = customer.active;
         var accountBalance = customer.accountBalance;
-        jsonData = JSON.stringify({"customerId": customer.customerId, "NameFirst": name_First, "NameMiddleIn": null, "NameLast": name_Last, "add_Line1": add_Line1, "add_Line2": null, "AddCity": add_City, "AddState": add_State, "add_Zip": add_Zip, "phoneNumber": phoneNumber, "email": email, "newsletter": newsletter, "accountBalance": accountBalance, "active": active});
+        jsonData = JSON.stringify({
+          "nameFirst": customer.firstName,
+          "nameMiddleIn": "",
+          "nameLast": customer.lastName,
+          "addLine1": customer.AddLine1,
+          "addLine2": "",
+          "addCity": customer.addCity,
+          "addState": customer.AddState,
+          "addZip": customer.AddZip,
+          "phoneNumber": customer.phoneNumber,
+          "email": customer.email,
+          "newsletter": customer.newsletter,
+          "accountBalance": customer.accountBalance,
+          "active": customer.active
+        });
       }
 
       xhr.open("POST", url, true);
