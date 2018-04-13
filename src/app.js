@@ -608,10 +608,10 @@ var app = new Vue({
       xhr.send(jsonData);
     });
     //view movie title
-    vm.$on('viewMovie', function(upc){
+    vm.$on('viewMovie', function(movie){
       console.log('call viewMovie');
-      var upc = (""+upc).replace(/\D/g,'');
-      var title = "";
+      var upc = (""+movie.upc).replace(/\D/g,'');
+      var title = movie.title;
       var xhr = new XMLHttpRequest();
       var url = "/api/MovieSearch";
       var jsonData = JSON.stringify({"Title": title, "ReleaseYear": null, "Genre": null, "Upc": upc});
