@@ -841,7 +841,14 @@ var app = new Vue({
         MovieList.push(movie);
       }
 
-      var jsonData = JSON.stringify({"EmployeeId": EmployeeId, "LateFeePaid": LateFeePaid, "PaymentType": PaymentType, "PaymentCard": PaymentCard, "MovieList": MovieList});
+      var jsonData = JSON.stringify({
+        "EmployeeId": EmployeeId, 
+        "CustomerId": CustomerId,
+        "LateFeePaid": LateFeePaid, 
+        "PaymentType": PaymentType, 
+        "PaymentCard": PaymentCard, 
+        "MovieList": MovieList
+      });
       
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
