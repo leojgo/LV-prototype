@@ -175,7 +175,7 @@ var app = new Vue({
       var jsonData;
       if (data.isNew) {
         jsonData = JSON.stringify({
-          "NameFirst": customer.firstName;,
+          "NameFirst": customer.firstName,
           "NameMiddleIn":"",
           "NameLast": customer.lastName,
           "AddLine1": customer.AddLine1,
