@@ -19,7 +19,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist/assets/'),
     publicPath: '/ui-prototype/dist/assets/',
-    filename: '[name].js'
+    filename: 'dev.js'
   },
   module: {
     rules: [

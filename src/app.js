@@ -4,8 +4,8 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './routes.js';
 
-//console = {};
-//console.log = function() {} 
+console = {};
+console.log = function() {} 
 //silence logging for now
 
 //import UIkit from './js/uikit'; 
@@ -102,9 +102,9 @@ var app = new Vue({
         //Call a function when the state changes.
       if (xhr.readyState == 4 && (xhr.status == 204 || xhr.status == 200)) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-          var employee = JSON.parse(this.responseText);
-          console.log(employee);
           if (data.isNew) {
+            var employee = JSON.parse(this.responseText);
+            console.log(employee);
             modal.title = 'New Employee Added';
             modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
             data.isNew = false; //TODO cleanup/move?
@@ -180,7 +180,7 @@ var app = new Vue({
         var url = "/api/Customers/"+customer.customerId;
         var active = customer.active;
         var accountBalance = customer.accountBalance;
-        jsonData = JSON.stringify({"customerId": customer.customerId, "name_First": name_First, "name_Middle_In": null, "name_Last": name_Last, "add_Line1": add_Line1, "add_Line2": null, "add_City": add_City, "add_State": add_State, "add_Zip": add_Zip, "phoneNumber": phoneNumber, "email": email, "newsletter": newsletter, "accountBalance": accountBalance, "active": active});
+        jsonData = JSON.stringify({"customerId": customer.customerId, "NameFirst": name_First, "NameMiddleIn": null, "NameLast": name_Last, "add_Line1": add_Line1, "add_Line2": null, "AddCity": add_City, "AddState": add_State, "add_Zip": add_Zip, "phoneNumber": phoneNumber, "email": email, "newsletter": newsletter, "accountBalance": accountBalance, "active": active});
       }
 
       xhr.open("POST", url, true);
@@ -480,6 +480,9 @@ var app = new Vue({
             data.customers = JSON.parse(this.responseText);
             console.log(data.customers);
             //TODO select customer if only one result returned
+          }
+          else if (xhr.status == 404) {
+            alert('Sorry we could not a find a customer that matched your search!'); //TODO replace with nicer alert
           }
           else {
             //TODO error handling

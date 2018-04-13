@@ -6,14 +6,14 @@
       <!--LOGIN-->
       <form v-else class="uk-section">
         <div class="uk-margin">
-          <input class="uk-input" type="text" name="user" placeholder="username" v-on:keyup.enter="login" v-on:focus="clearLoginError">
+          <input class="uk-input" type="text" name="user" placeholder="user id" v-on:keyup.enter="login" v-on:focus="clearLoginError">
         </div>
         <div class="uk-margin">
           <input class="uk-input" type="password" name="password" placeholder="********" v-on:keyup.enter="login" v-on:focus="clearLoginError">
         </div>
         <div v-if="data.loginError" class="uk-alert-danger uk-text-small" uk-alert>
             <!--<a class="uk-alert-close" uk-close></a>-->
-            <p>Username/password combination incorrect!</p>
+            <p>User id/password combination incorrect!</p>
         </div>
         <!--change link to button or submit input on final build-->
         <a class="uk-button uk-button-default" v-on:click="login(data)">Login</a>
