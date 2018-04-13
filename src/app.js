@@ -830,8 +830,18 @@ var app = new Vue({
       var PaymentType = data.rental.payment.type;
       var PaymentCard= data.rental.payment.card;
       var MovieList = [];
-      var dueDate = new Date();
-
+      var today = new Date();
+      var dueDate = today;
+      dueDate.setDate(today.getDate()+1);
+      var day = dueDate.getDate();
+      var month = dueDate.getMonth() + 1;
+      if (day < 10) {
+        day = "0"+day;
+      }
+      if (month < 10) {
+        month = "0"+month;
+      }
+      dueDate = dueDate.getFullYear()+"-"+month+"-"+day;
       for (var i = 0; i<data.rental.movies.length; i++) {
         var movie = {
           id: data.rental.movies[i].movieId,
