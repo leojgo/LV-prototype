@@ -360,7 +360,7 @@ var app = new Vue({
       data.isAuthenticated = true;
       console.log(data.user);
       //TODO clarify roles -- this may be too simple of an implementation
-      if (data.user.employeeTitle != "Clerk") {
+      if (data.user.employeeTitle == "Manager") {
         data.isManager = true;
       }
     }); 
@@ -638,26 +638,30 @@ var app = new Vue({
               id: stock[i].movieId,
               status: stock[i].status
             }
-          }
-          data.movie = {
-            title: stock[0].title,
-            upc: stock[0].upc,
-            releaseYear: stock[0].releaseYear,
-            stock: stockCount,
-            copies: copies,
-            copiesEdit: [],
-            editRef: {
-              title: stock[0].title,
-              upc: stock[0].upc,
-              releaseYear: stock[0].releaseYear,
+            if(i == stock.length) {
+              data.movie = {
+                title: stock[0].title,
+                upc: stock[0].upc,
+                releaseYear: stock[0].releaseYear,
+                stock: stockCount,
+                copies: copies,
+                copiesEdit: [],
+                editRef: {
+                  title: stock[0].title,
+                  upc: stock[0].upc,
+                  releaseYear: stock[0].releaseYear,
+                }
+              };
             }
-          };
+
+          }
           //go to view movie page
           var callbackRoute = { name: 'movieView', params: { id: data.movie.upc }};
           vm.$router.push(callbackRoute);
         }
         else {
-          //TODO error handling
+          // TODO push an alert error (not found)
+
         }
       }
       xhr.send(jsonData);
