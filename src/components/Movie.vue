@@ -24,7 +24,7 @@
         </div>
         <div class="uk-width-1-2@s">
           <span class="uk-text-small">Release Year</span>
-          <input class="uk-input" type="number" name="movieYear" placeholder="2018" v-bind:class="{ 'uk-form-danger' : errors.movieYear }" v-on:focus="clearError('movieYear')" v-model="data.movie.releaseYear">
+          <input class="uk-input" type="number" name="movieYear" v-bind:placeholder="currentYear" v-bind:class="{ 'uk-form-danger' : errors.movieYear }" v-on:focus="clearError('movieYear')" v-model="data.movie.releaseYear">
           <span class="uk-text-small uk-text-danger" v-if="errors.movieYear">Please enter a four digit release year</span>
         </div>
         <div class="uk-width-1-1"  v-if="!data.isNew">
@@ -130,7 +130,7 @@
       },
       deleteCopy(id){
         this.$router.app.$emit('deleteCopy', id);
-        if (id.indexOf('NEW ITEM') == -1) {
+        if (id[0] != '[') {
           //add to delete list
           this.copiesToDelete.push(id);
         }
@@ -150,6 +150,7 @@
         }
         this.$router.app.$emit('addCopy',copy);
       },
+      /*
       addToCopies() {
         var copy = document.querySelector("input[name=addCopy]");
         //validate input data
@@ -160,7 +161,7 @@
         else {
           this.errors.addCopy = true;
         }
-      },
+      },*/
       handleSubmit(data) {
         //check text inputs for content
         this.hasError = false;
@@ -202,13 +203,18 @@
         if (!this.hasError) {
           console.log(data.movie);
           if (data.isNew) {
+            data.movie.qty = 1;//hardcode movie qtq
             this.$router.app.$emit('createMovie');
           }
           else {
             var hasEdits = false;
             for (var key in data.movie.editRef) {
+              console.log(key);
+              console.log(data.movie[key]);
+              console.log(data.movie.editRef[key]);
               if (data.movie[key] != data.movie.editRef[key]) {
                 hasEdits = true;
+                console.log('has edits to movie fields')
                 break;
               }
             }
@@ -216,7 +222,13 @@
               hasEdits: hasEdits,
               delete: this.copiesToDelete,
             }
+            console.log('emit updateMovie');
             this.$router.app.$emit('updateMovie', params);
+          }
+        }
+        else {
+          for (i in erorrs) {
+            console.log(errors[i])
           }
         }
       },
@@ -231,6 +243,10 @@
       }
     },
     computed: {
+      currentYear: function(){
+        var today = new Date();
+        return today.getFullYear();
+      }
       /*
       //moved to method in app
       stockCount: function() {

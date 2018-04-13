@@ -630,7 +630,7 @@ var app = new Vue({
           //process result
           var stockCount = 0;
           for (var i=0; i<stock.length; i++) {
-            console.log("processing "+i);
+            //console.log("processing "+i);
             if (stock[i].status == 0) {
               stockCount++;
             }
@@ -653,7 +653,7 @@ var app = new Vue({
             }
           };
           //go to view movie page
-          var callbackRoute = { name: 'movieView', params: { id: upc }};
+          var callbackRoute = { name: 'movieView', params: { id: data.movie.upc }};
           vm.$router.push(callbackRoute);
         }
         else {
@@ -672,13 +672,13 @@ var app = new Vue({
       var Qty = data.movie.qty;
 
       var xhr = new XMLHttpRequest();
-      var url = "http://csc478team201.uisad.uis.edu/api/Movies";
+      var url = "/api/Movies";
       var jsonData = JSON.stringify({
         "Title": Title, 
         "ReleaseYear": ReleaseYear, 
         "Genre": null, 
         "Upc": Upc, 
-        "Qty": 1
+        "Qty": Qty
       });
       var vm = this;
       xhr.open("POST", url, true);
@@ -754,11 +754,14 @@ var app = new Vue({
     });
     //submit edit form for movie
     vm.$on('updateMovie', function(params){
+      console.log('call updateMove with params:');
+      console.log(params);
       //generate list for post
       var MovieList = [];
       if (params.hasEdit) {
+        //send entire list
         MovieList = data.movie.copies.slice();
-        //full list
+        //iterate
         for (var i=0; i<params.delete.length; i++) {
           //delete items
           for (var j=0; j<MovieList.length; j++) {
@@ -770,7 +773,7 @@ var app = new Vue({
         }
       }
       else {
-        //only deletes
+        //process deletes
         for (var i=0; i<params.delete.length; i++) {
           var movie = {
             id: params.delete[i],
@@ -778,35 +781,46 @@ var app = new Vue({
           };
           MovieList.push(movie);
         }
+
       }
-      var Title = data.movie.title;
-      var ReleaseYear = data.movie.releaseYear;
-      var Upc = data.movie.upc;
-
-      var xhr = new XMLHttpRequest();
-      var url = "/api/Movies";
       var vm = this;
-      var jsonData = JSON.stringify({"Title": Title,"ReleaseYear": ReleaseYear,"Genre": "","Upc": Upc,"MovieList": MovieList});
+      if (MovieList.length == 0) {
+        //only additions
+        var qty = data.movie.copiesEdit.length - data.movie.copies.length;
+        if (qty > 0) {
+          data.movie.qty = qty;
+          vm.$router.app.$emit('createMovie');
+        }
+      }
+      else {
+        var Title = data.movie.title;
+        var ReleaseYear = data.movie.releaseYear;
+        var Upc = data.movie.upc;
 
-      xhr.open("POST", url, true);
-      xhr.setRequestHeader("Content-type", "application/json");
-      xhr.onreadystatechange = function () {
-        //Call a function when the state changes.
-        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
-          var qty = data.movie.copiesEdit.length - data.movie.copies.length;
-          if (qty > 0) {
-            data.movie.qty = qty;
-            vm.$router.app.$emit('createMovie');
+        var xhr = new XMLHttpRequest();
+        var url = "/api/Movies";
+        var jsonData = JSON.stringify({"Title": Title,"ReleaseYear": ReleaseYear,"Genre": "","Upc": Upc,"MovieList": MovieList});
+
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.onreadystatechange = function () {
+          //Call a function when the state changes.
+          if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
+            var qty = data.movie.copiesEdit.length - data.movie.copies.length;
+            if (qty > 0) {
+              data.movie.qty = qty;
+              vm.$router.app.$emit('createMovie');
+            }
+            else {
+              vm.$router.app.$emit('viewMovie', data.movie.upc);
+            }
           }
           else {
-            vm.$router.app.$emit('viewMovie', data.movie.upc);
+            //TODO error handling
           }
         }
-        else {
-          //TODO error handling
-        }
+        xhr.send(jsonData);
       }
-      xhr.send(jsonData);
     });
     //NEW RENTAL
     //new rental 1: select customer
