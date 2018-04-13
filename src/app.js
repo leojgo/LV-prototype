@@ -571,34 +571,37 @@ var app = new Vue({
         if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           var copies = JSON.parse(this.responseText);
           console.log(copies);
-          var movies = [{
+          var movies = [];
+          movies.push({
             title: copies[0].title,
             upc: copies[0].upc,
             releaseYear: copies[0].releaseYear,
             inStock: copies[0].status == 0
-          }]
+          });
+          console.log(movies);
+          var lastIndex = 0;
           for (var i = 0; i < copies.length; i++) {
-            var inMovieList= false;
-            for (var j=0; j < movies.length; j++) {
-              if (copies[i].upc == movies[j].upc) {
-                //update if showing as out of stock
-                if (!movies[j].inStock) {
-                  movies[j].inStock = copies[i].status == 0; //keep setting until true
-                  inMovieList = true;
-                }
+            if (copies[i].upc == movies[lastIndex].upc) {
+              //same upc -- check stock
+              if (!movies[lastIndex].inStock && parseInt(copies[i].status) == 0) {
+                //update stock
+                movies[lastIndex].inStock = true;
               }
             }
-            if (!inMovieList) {
-              //add to movies
+            else {
+              //different upc  -- add to movies
               var movie = {
-                title: copies[i].title,
-                upc: copies[i].upc,
-                releaseYear: copies[i].releaseYear,
-                inStock: copies[i].status == 0
-              }
-              movies.push(movie);
+                  title: copies[i].title,
+                  upc: copies[i].upc,
+                  releaseYear: copies[i].releaseYear,
+                  inStock: copies[i].status == 0
+                }
+                console.log('new title');
+                movies.push(movie);
+                lastIndex++;
             }
           }
+          console.log(movies);
           data.movies = movies;
         }
         else {

@@ -79,7 +79,7 @@
         <ul class="uk-list uk-list-divider">
           <!--move style to cutom css-->
           <li v-for="movie in data.movies" class="uk-position-relative" v-on:click="view(movie)">
-            <span v-if="movie.stock == 0" class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Out of Stock</span>
+            <span v-if="!movie.inStock" class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top">Out of Stock</span>
             <span class="uk-text-small">{{ movie.upc }}</span><br />
             <strong>{{ movie.title }}</strong><br />
             <span class="uk-text-small">{{ movie.releaseYear }}</span>
