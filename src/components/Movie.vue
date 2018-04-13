@@ -173,7 +173,7 @@
           var inputVal= inputField.value;
           //check for empty inputs
           //TODO trim whitespace
-          if (inputVal.length < 1) {
+          if (inputVal.length < 1 && input != "movieYear") {
             this.errors[input] = true;
             this.hasError = true;
           }
@@ -183,7 +183,7 @@
               this.errors[input] = true;
               this.hasError = true;
             }
-            else if (input == "movieYear") {
+            else if (input == "movieYear" && inputVal.length > 0) {
               var movieYear = parseInt(inputVal);
               var today = new Date();
               if (movieYear < 1888 || movieYear > today.getFullYear()) {

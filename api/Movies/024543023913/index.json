@@ -1,7 +1,7 @@
 {
     "movieId": 2143,
     "title": "TITLE_TEST",
-    "releaseYear": "YEAR_TEST",
+    "releaseYear": "",
     "genre": "GENRE_TEST",
     "upc": "UPC_TEST",
     "status": 1
