@@ -5,7 +5,7 @@
       <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Create Movie Title</h1>
       <h1 v-else class="uk-text-large uk-position-relative">Movie Title
         <ul class="uk-iconnav uk-position-top-right">
-          <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><span uk-icon="close" v-on:click="cancelEdit(data.movie.upc)"></span></li>
+          <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><span uk-icon="close" v-on:click="cancelEdit(data.movie)"></span></li>
           <li v-bind:class="{'uk-hidden' : data.isEdit}"><span  uk-icon="pencil" v-on:click="editForm(data.movie.upc)"></span></li>
           <li v-if="data.isManager"><span uk-icon="icon: trash"></span></li>
         </ul>
@@ -49,7 +49,7 @@
         </div>
         <div class="uk-width-1-1">
           <button class="uk-button uk-button-primary">Save</button>
-          <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit(data.movie.upc)" v-if="!data.isNew">Cancel</span>
+          <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit(data.movie)" v-if="!data.isNew">Cancel</span>
         </div>
       </form>
       <div v-else>
@@ -220,14 +220,14 @@
           }
         }
       },
-      cancelEdit(upc) {
+      cancelEdit(movie) {
         //get rid of any error highlighting
         for (var input in this.errors) {
           this.errors[input] = false;
         }
         //reset to initial values
-        this.$router.app.$emit('cancelEdit');
-        this.$router.app.$emit('viewMovie',upc);
+        //this.$router.app.$emit('cancelEdit');
+        this.$router.app.$emit('viewMovie',movie);
       }
     },
     computed: {
