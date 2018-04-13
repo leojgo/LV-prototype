@@ -672,13 +672,13 @@ var app = new Vue({
       var Qty = data.movie.qty;
 
       var xhr = new XMLHttpRequest();
-      var url = "/api/Movies";
+      var url = "http://csc478team201.uisad.uis.edu/api/Movies";
       var jsonData = JSON.stringify({
         "Title": Title, 
         "ReleaseYear": ReleaseYear, 
         "Genre": null, 
         "Upc": Upc, 
-        "Qty": 0
+        "Qty": 1
       });
       var vm = this;
       xhr.open("POST", url, true);
