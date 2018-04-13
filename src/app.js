@@ -673,7 +673,13 @@ var app = new Vue({
 
       var xhr = new XMLHttpRequest();
       var url = "/api/Movies";
-      var jsonData = JSON.stringify({"Title": Title, "ReleaseYear": ReleaseYear, "Genre": null, "Upc": Upc, "Qty": Qty});
+      var jsonData = JSON.stringify({
+        "Title": Title, 
+        "ReleaseYear": ReleaseYear, 
+        "Genre": null, 
+        "Upc": Upc, 
+        "Qty": 0
+      });
       var vm = this;
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
