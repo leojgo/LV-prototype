@@ -164,7 +164,7 @@ var app = new Vue({
 
       console.log(customer);
       console.log('call postCustomer');
-      
+
       var jsonData;
       if (data.isNew) {
         jsonData = JSON.stringify({
@@ -225,6 +225,9 @@ var app = new Vue({
           //TODO error handling
         }
       }
+
+      console.log('send jsonData');
+      console.log(jsonData);
       xhr.send(jsonData);
     },
     getMovie(id){
