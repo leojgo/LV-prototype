@@ -289,6 +289,7 @@
             customer.active = true;
             customer["customerId"] = this.customerToEdit;
             console.log('emit updateCustomer');
+            console.log(customer);
             this.$router.app.$emit('updateCustomer', customer);
           }
         }

@@ -162,16 +162,9 @@ var app = new Vue({
       var url = "/api/Customers"; //for new
       var vm = this;
 
-      var name_First = customer.firstName;
-      var name_Last = customer.lastName;
-      var add_Line1 = customer.AddLine1;
-      var add_City = customer.addCity;
-      var add_State = customer.AddState;
-      var add_Zip = customer.AddZip;
-      var phoneNumber = customer.phoneNumber;
-      var email = customer.email;
-      var newsletter = customer.newsletter;
-
+      console.log(customer);
+      console.log('call postCustomer');
+      
       var jsonData;
       if (data.isNew) {
         jsonData = JSON.stringify({
@@ -205,7 +198,6 @@ var app = new Vue({
           "phoneNumber": customer.phoneNumber,
           "email": customer.email,
           "newsletter": customer.newsletter,
-          "accountBalance": customer.accountBalance,
           "active": customer.active
         });
       }
