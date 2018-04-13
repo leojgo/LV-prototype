@@ -824,9 +824,9 @@ var app = new Vue({
       var url = "/api/Transactions"; //for new
       var vm = this;
 
-      var EmployeeId = data.user.employeeId;
-      var CustomerId = data.rental.customer.customerId;
-      var LateFeePaid = data.rental.customer.accountBalance;
+      var EmployeeId = data.user.employeeId + ""; //to string
+      var CustomerId = data.rental.customer.customerId + "";
+      var LateFeePaid = data.rental.customer.accountBalance + "";
       var PaymentType = data.rental.payment.type;
       var PaymentCard= data.rental.payment.card;
       var MovieList = [];
@@ -844,8 +844,8 @@ var app = new Vue({
       dueDate = dueDate.getFullYear()+"-"+month+"-"+day;
       for (var i = 0; i<data.rental.movies.length; i++) {
         var movie = {
-          id: data.rental.movies[i].movieId,
-          Cost: 3,
+          id: data.rental.movies[i].movieId+"",
+          Cost: "3",
           DueDate: dueDate
         }
         MovieList.push(movie);
