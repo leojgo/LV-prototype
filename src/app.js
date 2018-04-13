@@ -102,17 +102,6 @@ var app = new Vue({
         //Call a function when the state changes.
       if (xhr.readyState == 4 && (xhr.status == 204 || xhr.status == 200)) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
-          if (data.isNew) {
-            var employee = JSON.parse(this.responseText);
-            console.log(employee);
-            modal.title = 'New Employee Added';
-            modal.body = "Employee " + employee.employeeId + " has been added to the Lackluster Video system users.";
-            data.isNew = false; //TODO cleanup/move?
-            //TODO confirmation in UI?
-          }
-          else {
-            //TODO confirmation in UI?
-          }
           //TODO show modal confirmation?
           data.isEdit = false; //TODO cleanup/move?
           vm.$router.push(callbackRoute);
