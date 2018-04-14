@@ -612,7 +612,7 @@ var app = new Vue({
     });
     //view movie title
     vm.$on('viewMovie', function(movie){
-      console.log('call viewMovie');
+      console.log('call viewMovie '+movie.upc);
       var upc = (""+movie.upc).replace(/\D/g,'');
       var title = movie.title;
       var xhr = new XMLHttpRequest();
@@ -638,7 +638,7 @@ var app = new Vue({
               id: stock[i].movieId,
               status: stock[i].status
             }
-            if(i == stock.length) {
+            if (i == stock.length) {
               data.movie = {
                 title: stock[0].title,
                 upc: stock[0].upc,
@@ -652,6 +652,8 @@ var app = new Vue({
                   releaseYear: stock[0].releaseYear,
                 }
               };
+              console.log('finish processing upc search');
+              console.log(data.movie);
             }
 
           }
