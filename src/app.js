@@ -806,7 +806,7 @@ var app = new Vue({
         var Upc = data.movie.upc;
 
         var xhr = new XMLHttpRequest();
-        var url = "/api/Movies";
+        var url = "/api/movieBatch";
         var jsonData = JSON.stringify({"Title": Title,"ReleaseYear": ReleaseYear,"Genre": "","Upc": Upc,"MovieList": MovieList});
 
         xhr.open("POST", url, true);
