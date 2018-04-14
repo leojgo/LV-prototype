@@ -656,7 +656,7 @@ var app = new Vue({
 
           }
           //go to view movie page
-          var callbackRoute = { name: 'movieView', params: { id: data.movie.upc }};
+          var callbackRoute = { name: 'movieView', params: { id: movie.upc }};
           vm.$router.push(callbackRoute);
         }
         else {
