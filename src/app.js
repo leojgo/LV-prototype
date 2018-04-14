@@ -912,7 +912,7 @@ var app = new Vue({
     //return rental 2: submit to API
     vm.$on('rentalReturn', function(movieList){
       var xhr = new XMLHttpRequest();
-      var url = "/api/Return";
+      var url = "/api/return";
       var vm = this;
       var jsonData = JSON.stringify({"MovieList": movieList});
       
