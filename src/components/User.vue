@@ -65,7 +65,7 @@
             <span class="uk-text-small">please confirm password</span>
         </div>
         <div class="uk-width-1-1" v-model="data.employee.isManager">
-          <label class="uk-margin-right"><input class="uk-radio" type="radio" name="isManager" value="0" :checked="!data.employee.isManager"> Clerk</label>
+          <label class="uk-margin-right"><input class="uk-radio" type="radio" name="isManager" value="2" :checked="!data.employee.isManager"> Clerk</label>
           <label><input class="uk-radio" type="radio" name="isManager" value="1" :checked="data.employee.isManager"> Manager</label>
         </div>
         <div v-if="hasErrors" class="uk-width-1-1">
