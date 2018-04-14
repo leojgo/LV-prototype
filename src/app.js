@@ -638,24 +638,26 @@ var app = new Vue({
               id: stock[i].movieId,
               status: stock[i].status
             }
-            if (i == stock.length) {
-              data.movie = {
+          }
+          if (stock.length > 0) {
+            data.movie = {
+              title: stock[0].title,
+              upc: stock[0].upc,
+              releaseYear: stock[0].releaseYear,
+              stock: stockCount,
+              copies: copies,
+              copiesEdit: [],
+              editRef: {
                 title: stock[0].title,
                 upc: stock[0].upc,
                 releaseYear: stock[0].releaseYear,
-                stock: stockCount,
-                copies: copies,
-                copiesEdit: [],
-                editRef: {
-                  title: stock[0].title,
-                  upc: stock[0].upc,
-                  releaseYear: stock[0].releaseYear,
-                }
-              };
-              console.log('finish processing upc search');
-              console.log(data.movie);
-            }
-
+              }
+            };
+            console.log('finish processing upc search');
+            console.log(data.movie);
+          }
+          else {
+            alert('Sorry we cannot find any copies of that movie in the system!');
           }
           //go to view movie page
           var callbackRoute = { name: 'movieView', params: { id: movie.upc }};
