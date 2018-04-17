@@ -402,8 +402,14 @@ var app = new Vue({
     });
     vm.$on('resetLogin', function(params){
       var xhr = new XMLHttpRequest();
-      var url = "/api/resetPassword"+data.employee.employeeId;
-      var jsonData = JSON.stringify({"ManagerInfo":{"username":data.user,"password":params.managerPass},"NewPw":params.userPass});
+      var url = "/api/resetPassword/"+data.employee.employeeId;
+      var jsonData = JSON.stringify({
+        "ManagerInfo":{
+            "username":data.user.employeeId, 
+            "password":params.managerPass
+        },
+        "NewPw": params.userPass
+      });
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function() {

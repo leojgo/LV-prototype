@@ -265,7 +265,7 @@
         //TODO validation
         var params = {
           userPass: document.querySelector("input[name=passwordReset]").value,
-          managerpass: document.querySelector("input[name=managerPassword]").value
+          managerPass: document.querySelector("input[name=managerPassword]").value
         }
         this.$router.app.$emit('resetLogin', params);
       }
