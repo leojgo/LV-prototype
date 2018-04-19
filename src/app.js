@@ -965,7 +965,8 @@ router.beforeEach((to, from, next) => {
             next();
           }
       }; 
-      request.open('GET', url);
+      request.open('POST', url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
       request.send();
     }
     else {
