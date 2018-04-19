@@ -67,6 +67,7 @@ var app = new Vue({
             app.$router.push(callbackRoute);
           }
       }; 
+      xhr.setRequestHeader("Content-type", "application/json");
       xhr.open("POST", url, true);
       xhr.send();
     },
@@ -153,6 +154,7 @@ var app = new Vue({
             }
           }
       }; 
+      xhr.setRequestHeader("Content-type", "application/json");
       xhr.open('POST', url, true);
       xhr.send();
     },
