@@ -67,7 +67,7 @@ var app = new Vue({
             app.$router.push(callbackRoute);
           }
       }; 
-      xhr.open('GET', url);
+      xhr.open("POST", url, true);
       xhr.send();
     },
     postEmployee(employee, callbackRoute) {
@@ -153,7 +153,7 @@ var app = new Vue({
             }
           }
       }; 
-      xhr.open('GET', url);
+      xhr.open('POST', url, true);
       xhr.send();
     },
     postCustomer(customer, callbackRoute) {
