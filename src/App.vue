@@ -54,7 +54,7 @@ export default {
       else {
         //send login request
         var xhr = new XMLHttpRequest();
-        var url = "/api/login";
+        var url = "/api/login/0";
         var vm = this;
 
         xhr.open("POST", url, true);

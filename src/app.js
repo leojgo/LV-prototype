@@ -117,6 +117,10 @@ var app = new Vue({
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           //TODO show modal confirmation?
           data.isEdit = false; //TODO cleanup/move?
+          if (data.isNew) {
+            //TODO set callback to user id returned from response
+            var callbackRoute = { name: 'userView', params: { id: 2 }};
+          }
           vm.$router.push(callbackRoute);
         }
         else {
@@ -450,8 +454,7 @@ var app = new Vue({
     });
     vm.$on('createEmployee', function(employee) {
       console.log('call createEmployee');
-      var callbackRoute = { name: 'userView', params: { id: employee.employeeId }}; //go to view employee after creation
-      app.postEmployee(employee, callbackRoute);
+      app.postEmployee(employee);
     });
     //update employee
     vm.$on('updateEmployee', function(employee) {
