@@ -129,6 +129,10 @@
           userLastName: false,
           userPhone: false,
           userPass: false
+        },
+        resetErrors: {
+          userass: false,
+          managerPass: false
         }
       }
     },
@@ -262,12 +266,62 @@
         this.editPassword = false;
       },
       submitReset() {
-        //TODO validation
-        var params = {
-          userPass: document.querySelector("input[name=passwordReset]").value,
-          managerPass: document.querySelector("input[name=managerPassword]").value
+        //validation
+        var userPass = document.querySelector("input[name=passwordReset]").value;
+        var userPassConfirm = document.querySelector("input[name=passwordResetConfirm]").value
+        var managerPass = document.querySelector("input[name=managerPassword]").value
+        if (userPass.length < 6 || userPass.length > 20) {
+          //password too short or too long!
+          if (!this.hasErrors) {
+            this.errorMessage = "";
+            this.hasErrors = true;
+          }
+          this.errorMessage = this.errorMessage + "New password needs to be between 6 and 20 characters long! ";
+          this.resetErrors.userPass = true;
         }
-        this.$router.app.$emit('resetLogin', params);
+        else {
+          var validPW = userPass.match(/[^a-z0-9]/);
+          var validMangerPW = managerPass.match(/[^a-z0-9]/);
+          //matches char req'ts
+          if (validPW != null) {
+            //doesn't match confirmation
+            if (userPass != userPassConfirm) {
+              this.hasErrors = true;
+              this.errorMessage = this.errorMessage + "New password and cofirmation don't match! ";
+              this.resetErrors.userPass = true;
+            }
+            //manager password too short or too long
+            if (managerPass.length < 6 || managerPass.length > 20) {
+              this.hasErrors = true;
+              this.errorMessage = this.errorMessage + "Manager password needs to be between 6 and 20 characters long! ";
+              this.resetErrors.managerPass = true;
+            }
+            else {
+              //manager password doesn't mach char req'ts
+              if (validManagerPW == null) {
+                this.hasErrors = true;
+                this.errorMessage = this.errorMessage + "Manager password needs to have a number, an uppercase letter, and a lowercase letter! ";
+              }
+              this.resetErrors.managerPass = true;
+            }
+            if (!hasErrors) {
+              this.hasErrors = false;
+              var params = {
+                userPass: document.querySelector("input[name=passwordReset]").value,
+                managerPass: document.querySelector("input[name=managerPassword]").value
+              }
+              this.$router.app.$emit('resetLogin', params);
+            }
+          }
+          else {
+            if (!this.hasErrors) {
+              this.errorMessage = "";
+              this.hasErrors = true;
+            }
+            this.errorMessage = this.errorMessage + "New password needs to have a number, an uppercase letter, and a lowercase letter! ";
+            this.resetErrors.userPass = true;
+          }
+        }
       }
     }
   }
