@@ -956,18 +956,18 @@ router.beforeEach((to, from, next) => {
       //TODO refactor/rename -- it's not really a search
       //send login request -- TODO use a function?
       var url = "/api/employees";
-      var request = new XMLHttpRequest();
+      var xhr = new XMLHttpRequest();
       request.onreadystatechange = function() {
-          if (request.readyState == 4 && request.status == 200) {
+          if (xhr.readyState == 4 && xhr.status == 200) {
             //TODO use request.readyState == 4 && request.status == 200, add error handling
-            data.employees = JSON.parse(request.responseText);
+            data.employees = JSON.parse(xhr.responseText);
             console.log(data.employees);
             next();
           }
       }; 
-      request.open('POST', url, true);
+      xhr.open('POST', url, true);
       xhr.setRequestHeader("Content-type", "application/json");
-      request.send();
+      xhr.send();
     }
     else {
       // go to cust or inventory
