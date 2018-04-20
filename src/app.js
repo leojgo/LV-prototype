@@ -957,7 +957,7 @@ router.beforeEach((to, from, next) => {
       //send login request -- TODO use a function?
       var url = "/api/employees";
       var xhr = new XMLHttpRequest();
-      request.onreadystatechange = function() {
+      xhr.onreadystatechange = function() {
           if (xhr.readyState == 4 && xhr.status == 200) {
             //TODO use request.readyState == 4 && request.status == 200, add error handling
             data.employees = JSON.parse(xhr.responseText);
