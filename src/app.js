@@ -424,6 +424,7 @@ var app = new Vue({
         if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           //TODO success message
           data.resetSuccess = true;
+          console.log(data);
         }
         else {
           //TODO error handling

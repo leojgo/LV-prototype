@@ -296,7 +296,7 @@
             //doesn't match confirmation
             if (userPass != userPassConfirm) {
               this.hasErrors = true;
-              this.errorMessage = this.errorMessage + "New password and cofirmation don't match! ";
+              this.errorMessage = this.errorMessage + "New password and confirmation don't match! ";
               this.resetErrors.userPass = true;
             }
             //manager password too short or too long
@@ -319,6 +319,7 @@
                 userPass: document.querySelector("input[name=passwordReset]").value,
                 managerPass: document.querySelector("input[name=managerPassword]").value
               }
+              this.editPassword = false; //TODO refactor this for better error handling
               this.$router.app.$emit('resetLogin', params);
             }
           }
