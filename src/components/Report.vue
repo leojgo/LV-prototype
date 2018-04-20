@@ -17,7 +17,7 @@
           <td>{{ report.returnDate }}</td>
           <td><a href="#">{{ report.custFirstName }} {{ report.custLastName }}</a></td>
           <td><a href="#">{{ report.custPhoneNumber }}</a></td>
-          <td><a href="#">{{ report.Title }}</a></td>
+          <td><a href="#">{{ report.title }}</a></td>
         </tr>
       </tbody>
     </table>

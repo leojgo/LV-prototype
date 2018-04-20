@@ -16,24 +16,27 @@
         <span class="uk-text-small">Phone Number: {{ data.employee.phoneNumber }}</span>
         <hr />
         <div v-if="!editPassword">
+          <div class="uk-alert uk-alert-success" v-if="data.resetSuccess">
+            <p><strong>Success!</strong> Password reset confirmed.</p>
+          </div>
           <button class="uk-button uk-button-default" v-on:click="resetLogin">Reset Login</button>
         </div>
         <div v-else uk-grid>
           <div class="uk-width-1-2@s">
-            <input type="password" name="passwordReset" class="uk-input">
-            <span class="uk-text-small">please enter new password</span>
+            <input type="password" name="passwordReset" class="uk-input" v-bind:class="{ 'uk-form-danger' : resetErrors.userPass }" v-on:focus="clearResetError('userPass')">
+            <span class="uk-text-small" >please enter new password</span>
           </div>
           <div class="uk-width-1-2@s">
-            <input type="password" name="passwordResetConfirm" class="uk-input">
+            <input type="password" name="passwordResetConfirm" class="uk-input" v-bind:class="{ 'uk-form-danger' : resetErrors.userPass }" v-on:focus="clearResetError('userPass')">
             <span class="uk-text-small">please confirm new password</span>
           </div>
           <div class="uk-width-1-2@s">
-            <input type="password" name="managerPassword" class="uk-input">
+            <input type="password" name="managerPassword" class="uk-input" v-bind:class="{ 'uk-form-danger' : resetErrors.managerPass }" v-on:focus="clearResetError('managerPass')">
             <span class="uk-text-small">please enter your manager account password</span>
           </div>
           <div v-if="hasErrors" class="uk-width-1-1">
             <div class="uk-alert-danger" uk-alert>
-            <!--TODO-->
+              {{ errorMessage }}
             </div>
           </div>
           <div class="uk-width-1-1">
@@ -131,7 +134,7 @@
           userPass: false
         },
         resetErrors: {
-          userass: false,
+          userPass: false,
           managerPass: false
         }
       }
@@ -149,6 +152,9 @@
       },
       clearError(input) {
         this.errors[input] = false;
+      },
+      clearResetError(input) {
+        this.resetErrors[input] = false;
       },
       cancelEdit() {
         //get rid of any error highlighting
@@ -261,11 +267,14 @@
       },
       resetLogin() {
         this.editPassword = true;
+        this.$router.app.data.resetSuccess = false;
       },
       cancelReset() {
         this.editPassword = false;
       },
       submitReset() {
+        this.errorMessage = "";
+        this.hasErrors = false;
         //validation
         var userPass = document.querySelector("input[name=passwordReset]").value;
         var userPassConfirm = document.querySelector("input[name=passwordResetConfirm]").value
@@ -281,7 +290,7 @@
         }
         else {
           var validPW = userPass.match(/[^a-z0-9]/);
-          var validMangerPW = managerPass.match(/[^a-z0-9]/);
+          this.errorMessage = "";
           //matches char req'ts
           if (validPW != null) {
             //doesn't match confirmation
@@ -298,14 +307,14 @@
             }
             else {
               //manager password doesn't mach char req'ts
+              var validManagerPW = managerPass.match(/[^a-z0-9]/);
               if (validManagerPW == null) {
                 this.hasErrors = true;
                 this.errorMessage = this.errorMessage + "Manager password needs to have a number, an uppercase letter, and a lowercase letter! ";
+                this.resetErrors.managerPass = true;
               }
-              this.resetErrors.managerPass = true;
             }
-            if (!hasErrors) {
-              this.hasErrors = false;
+            if (!this.hasErrors) {
               var params = {
                 userPass: document.querySelector("input[name=passwordReset]").value,
                 managerPass: document.querySelector("input[name=managerPassword]").value
@@ -314,10 +323,7 @@
             }
           }
           else {
-            if (!this.hasErrors) {
-              this.errorMessage = "";
-              this.hasErrors = true;
-            }
+            this.hasErrors = true;
             this.errorMessage = this.errorMessage + "New password needs to have a number, an uppercase letter, and a lowercase letter! ";
             this.resetErrors.userPass = true;
           }

@@ -19,6 +19,7 @@ import router from './routes.js';
 var data = {
   company: 'Lackluster Video', //company name
   loginError: false, //flag for whether login error occurred
+  resetSuccess: false, //flag for whether reset password occurred
   isAuthenticated: false, //auth flag
   isManager: false, //manager flag
   user: null, //user obj -- current user
@@ -31,7 +32,7 @@ var data = {
   movie: null, //selected movie (view/edit)
   rental: null, //current new rental
   return: null, //current rental return
-  //rentals: null, //list of rentals
+  //rentals: null, //list of rentals -- feature tabled
   reports: null, //reports array for search
   isSingle: false, //single item flag
   isView: false,
@@ -422,6 +423,7 @@ var app = new Vue({
         //Call a function when the state changes.
         if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           //TODO success message
+          data.resetSuccess = true;
         }
         else {
           //TODO error handling
