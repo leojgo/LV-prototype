@@ -251,7 +251,8 @@ var app = new Vue({
       var xhr = new XMLHttpRequest();
       var url = "/api/Movies/"+id; //for new
       var vm = this;
-
+      xhr.open('POST', url, true);
+      xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           var newRental = app.$route.path.indexOf('rentals/new') > -1;
@@ -283,14 +284,13 @@ var app = new Vue({
             else {
               //TODO error movie not found in system?
             }
-            console.log(data.renturn);
+            console.log(data.return);
           }
         }
         else {
           //TODO other errors?
         }
       }; 
-      xhr.open('GET', url);
       xhr.send();
     },
     /*
@@ -730,7 +730,8 @@ var app = new Vue({
             }
           }
           console.log(data.movie);
-          vm.$router.push({name:'movieView', params: {id: data.movie.upc}});
+          //vm.$router.push({name:'movieView', params: {id: data.movie.upc}});  //make sure to issue another get request
+          vm.$router.$emit('viewMovie', Upc);
         }
         else {
           //TODO error handling
