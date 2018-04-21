@@ -851,8 +851,8 @@ var app = new Vue({
               vm.$router.app.$emit('createMovie');
             }
             else {
-              console.log('emit viewmovie');
-              vm.$router.app.$emit('viewMovie', data.movie.upc);
+              console.log('emit viewmovie '+movie.title);
+              vm.$router.app.$emit('viewMovie', data.movie);
             }
           }
           else {
