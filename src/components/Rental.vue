@@ -161,9 +161,8 @@
       },
       clearCustomer() {
         //TODO refactor
-        //this.hasCustomer = false;
-        //document.querySelector("input[name=customerKeyword]").value = this.customerQuery;
-        this.$router.app.$emit('searchCustomer', this.customerQuery); //restore previous search
+        this.$router.app.$emit('rentalClearCustomer');
+        //this.$router.app.$emit('searchCustomer', this.customerQuery); //restore previous search
         UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
       },
       clearItem(){

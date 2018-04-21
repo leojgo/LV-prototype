@@ -873,6 +873,10 @@ var app = new Vue({
       UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
       console.log(data.rental);
     });
+    //undo
+    vm.$on.('rentalClearCustomer', function(){
+      data.rental.customer = null;
+    });
     //new rental 2: add movie to list of movies in rental?
     vm.$on('rentalAddMovie', function(id){
       console.log('call rentalAddMovie');
