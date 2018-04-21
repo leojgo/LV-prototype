@@ -875,7 +875,7 @@ var app = new Vue({
       console.log(data.rental);
     });
     //undo
-    vm.$on.('rentalClearCustomer', function(){
+    vm.$on('rentalClearCustomer', function(){
       data.rental.customer = null;
     });
     //new rental 2: add movie to list of movies in rental?
