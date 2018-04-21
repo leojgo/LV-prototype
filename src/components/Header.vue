@@ -28,7 +28,7 @@
               <a href="#">Rentals</a>
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
-                      <li><a is="router-link" to="/rentals/new" v-on:click.native="clearCustomerSearch">New Rental</a></li>
+                      <li><a is="router-link" to="/rentals/new" v-on:click.native="clearRental">New Rental</a></li>
                       <li><a is="router-link" to="/rentals/return">Return Rental</a></li>
                   </ul>
               </div>
@@ -70,8 +70,8 @@
         <ul class="uk-nav uk-nav-default">
           <li v-if="data.isManager"><a is="router-link" to="/users/search">Users</a></li>
           <li class="uk-nav-header">Rentals</li>
-          <li><a is="router-link" to="/rentals/new">New Rental</a></li>
-          <li><a is="router-link" to="/rentals/return">Return Rental</a></li>
+          <li><a is="router-link" to="/rentals/new" v-on:click="clearRental">New Rental</a></li>
+          <li><a is="router-link" to="/rentals/return" v-on:click="clearReturn">Return Rental</a></li>
           <li class="uk-nav-header">Movies</li>
           <li><a is="router-link" to="/movies/search">Search Movies</a></li>
           <li><a is="router-link" to="/movies/new">Add New Movie</a></li>
@@ -95,6 +95,14 @@
       logout() {
         console.log('emit logout event');
         this.$router.app.$emit('logout');
+      },
+      clearRental() {
+        console.log('emit clear on rental');
+        this.$router.app.$emit('clear', 'rental');
+      },
+      clearRenturn() {
+        console.log('emit clear on renturn');
+        this.$router.app.$emit('clear', 'return');
       },
       clearCustomerSearch() {
         console.log('emit clear on search');
