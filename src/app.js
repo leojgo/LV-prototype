@@ -4,6 +4,15 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './routes.js';
 
+    window.onbeforeunload = function(e) {
+      console.log('onbeforeunload');
+      if (data.isAuthenticated) {
+        var dialogText = 'Refreshing the page will cause you to be logged out of the system. Do you still want to continue?';
+        e.returnValue = dialogText;
+        return dialogText;
+      }
+    };
+
 //console = {};
 //console.log = function() {} 
 //silence logging for now
@@ -361,6 +370,7 @@ var app = new Vue({
   mounted() {
     var vm = this;
     console.log(vm);  
+
     //manager 1 employee 2 
     vm.$on('login', function(user){
       data.user = user; //userId
@@ -776,7 +786,7 @@ var app = new Vue({
     });
     //submit edit form for movie
     vm.$on('updateMovie', function(params){
-      console.log('call updateMove with params:');
+      console.log('call updateMovie with params:');
       console.log(params);
       //generate list for post
       var MovieList = [];
@@ -815,13 +825,20 @@ var app = new Vue({
         }
       }
       else {
+        console.log(data.movie);
+        console.log(params);
         var Title = data.movie.title;
         var ReleaseYear = data.movie.releaseYear;
         var Upc = data.movie.upc;
 
         var xhr = new XMLHttpRequest();
         var url = "/api/movieBatch";
-        var jsonData = JSON.stringify({"Title": Title,"ReleaseYear": ReleaseYear,"Genre": "","Upc": Upc,"MovieList": MovieList});
+        var jsonData = JSON.stringify({
+          "Title": Title,
+          "ReleaseYear": ReleaseYear,
+          "Genre": "","Upc": Upc,
+          "MovieList": MovieList
+        });
 
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json");
@@ -831,9 +848,11 @@ var app = new Vue({
             var qty = data.movie.copiesEdit.length - data.movie.copies.length;
             if (qty > 0) {
               data.movie.qty = qty;
+              console.log('emit createmovie');
               vm.$router.app.$emit('createMovie');
             }
             else {
+              console.log('emit viewmovie');
               vm.$router.app.$emit('viewMovie', data.movie.upc);
             }
           }

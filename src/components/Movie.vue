@@ -219,6 +219,7 @@
               }
             }
             var params = {
+              upc: data.movie.upc,
               hasEdits: hasEdits,
               delete: this.copiesToDelete,
             }
