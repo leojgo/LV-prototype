@@ -839,7 +839,6 @@ var app = new Vue({
           "Genre": "","Upc": Upc,
           "MovieList": MovieList
         });
-
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.onreadystatechange = function () {
@@ -860,6 +859,8 @@ var app = new Vue({
             //TODO error handling
           }
         }
+        console.log('POST to '+url);
+        console.log(jsonData);
         xhr.send(jsonData);
       }
     });
