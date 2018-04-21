@@ -380,6 +380,8 @@ var app = new Vue({
       if (data.user.employeeTitle == "Manager") {
         data.isManager = true;
       }
+      //send to dashboard
+      router.push({name : 'home'});
     }); 
     vm.$on('loginError', function(){
       data.loginError = true;
