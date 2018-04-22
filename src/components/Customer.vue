@@ -10,6 +10,8 @@
           <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"  v-on:click="deleteCustomer(data.customer)"></a></li>
         </ul>
       </h1> 
+      <div class="uk-alert uk-alert-success" v-if="data.successMessage">{{ data.successMessage }}</div>
+      <div class="uk-alert uk-alert-danger" v-if="data.erorMessage">{{ data.errorMessage }}</div>
       <!--maybe can combine-->
       <form v-if="data.isEdit" class="uk-form" uk-grid @submit.prevent="handleSubmit(data)">
         <div class="uk-width-1-2@s">
@@ -116,8 +118,9 @@
           <strong>{{ data.customer.nameFirst }} {{ data.customer.nameLast }}</strong><br />
           <span class="uk-text-small">{{ data.customer.addLine1 }}, {{ data.customer.addCity }}, {{ data.customer.addState }} {{ data.customer.addZip }} <br />{{ data.customer.phoneNumber }}</span>
         </div>
-        <!-- feature tabled
         <hr />
+        <button class="uk-button uk-button-default" is="router-link" to="/rentals/new">Start Rental</button>
+        <!-- feature tabled
         <button class="uk-button uk-button-default">View Rental History</button>
         <button class="uk-button uk-button-default" v-if="data.isManager">View Ledger</button>
         -->

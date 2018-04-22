@@ -9,10 +9,9 @@
           <li><a href="#" uk-icon="icon: trash" v-on:click="deleteEmployee(data.employee)"></a></li>
         </ul>
       </h1>
+      <div class="uk-alert uk-alert-success" v-if="data.successMessage">{{ data.successMessage }}</div>
+      <div class="uk-alert uk-alert-danger" v-if="data.erorMessage">{{ data.errorMessage }}</div>
       <div v-if="!data.isEdit" class="uk-position-relative">
-        <div class="uk-alert uk-alert-danger" v-if="!data.employee.active">
-          <p><strong>Employee deleted!</strong> This employee account is no longer active!</p>
-        </div>
         <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ data.employee.employeeTitle }}</span>
         <strong>{{ data.employee.firstName }} {{ data.employee.lastName }}</strong><br />
         Employee ID: {{ data.employee.employeeId }}<br />

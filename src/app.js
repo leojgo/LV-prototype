@@ -32,6 +32,8 @@ var data = {
   isAuthenticated: false, //auth flag
   isManager: false, //manager flag
   user: null, //user obj -- current user
+  errorMessage: null, //set errorMessage to show error
+  successMessage: null,  //set successMessage to show success
   employees: null, //list of employees
   employee: null, //selected employee (view/edit)
   customers: null, //cusomters array for search
@@ -126,10 +128,20 @@ var app = new Vue({
       if (xhr.readyState == 4 && (xhr.status == 204 || xhr.status == 200)) {
           //TODO change conditional to make sure we have status OKAY (200), add fallback for errors
           //TODO show modal confirmation?
-          data.isEdit = false; //TODO cleanup/move?
+          //data.isEdit = false; //routing should handle this?
           if (data.isNew) {
             //TODO set callback to user id returned from response
             var callbackRoute = { name: 'userView', params: { id: 2 }};
+          }
+          else {
+            if (Active) {
+              //success message?
+              data.successMessage = 'Employee '+employee.employeeId+', '+FirstName + ' ' + LastName + ' updated successfully!'
+            }
+            else {
+              //show success message for delete on custommer search
+              data.successMessage = 'Employee '+employee.employeeId+', '+FirstName + ' ' + LastName + ' deleted successfully!'
+            }
           }
           vm.$router.push(callbackRoute);
         }
@@ -226,12 +238,20 @@ var app = new Vue({
           var response = JSON.parse(this.responseText);
           console.log(response);
           if (data.isNew) {
-            data.isNew = false; //TODO cleanup/move?
+            //data.isNew = false;  //routing should take care of this
             var route = {name: 'customerView', params: {id: response.key }};
             app.getCustomer(response.key, route);
           }
           else {
-            //TODO confirmation in UI?
+            if (customer.active) {
+              //success message?
+              data.successMessage = 'Customer '+customer.customerId+', '+customer.firstName + ' ' + custommer.lastName + ' updated successfully!'
+            }
+            else {
+              //show success message for delete on custommer search
+              data.successMessage = 'Customer '+customer.customerId+', '+customer.firstName + ' ' + custommer.lastName + ' deleted successfully!'
+            }
+            console.log(data);
             vm.$router.push(callbackRoute);
           }
           //TODO show modal confirmmation?
@@ -458,6 +478,10 @@ var app = new Vue({
         data[property] = null;
       }
     });
+    vm.$on('clearMessages', function(){
+      data.errorMessage = null;
+      data.successMessage = null;
+    });
     vm.$on('cancelEdit', function(){
       data.isEdit = false;
     });
@@ -577,9 +601,8 @@ var app = new Vue({
     });
      //delete employee
     vm.$on('deleteCustomer', function(customer) {
-      console.log('call customer');
-      //TODO where to go to go after deletion???
-      app.postCustomer(customer, { name: 'customerSearch'});
+      console.log('call deleteCustomer');
+      app.postCustomer(customer, {name: 'customerSearch'});
     });
     //MOVIES
     //for status 1 is checked out, 0 is in stock, -1 is on hold
