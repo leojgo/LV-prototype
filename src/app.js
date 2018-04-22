@@ -239,16 +239,19 @@ var app = new Vue({
           console.log(response);
           if (data.isNew) {
             //data.isNew = false;  //routing should take care of this
+            console.log('created customer');
             var route = {name: 'customerView', params: {id: response.key }};
             app.getCustomer(response.key, route);
           }
           else {
             if (customer.active) {
               //success message?
+              console.log('updated customer');
               data.successMessage = 'Customer '+customer.customerId+', '+customer.firstName + ' ' + custommer.lastName + ' updated successfully!'
             }
             else {
               //show success message for delete on custommer search
+              console.log('deleted customer');
               data.successMessage = 'Customer '+customer.customerId+', '+customer.firstName + ' ' + custommer.lastName + ' deleted successfully!'
             }
             console.log(data);
