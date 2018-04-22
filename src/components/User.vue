@@ -10,6 +10,9 @@
         </ul>
       </h1>
       <div v-if="!data.isEdit" class="uk-position-relative">
+        <div class="uk-alert uk-alert-danger" v-if="!data.employee.active">
+          <p><strong>Employee deleted!</strong> This employee account is no longer active!</p>
+        </div>
         <span class="uk-label uk-label uk-text-small uk-position-top-right uk-margin-small-top">{{ data.employee.employeeTitle }}</span>
         <strong>{{ data.employee.firstName }} {{ data.employee.lastName }}</strong><br />
         Employee ID: {{ data.employee.employeeId }}<br />
@@ -96,7 +99,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="employee in data.employees">
+        <tr v-for="employee in data.employees" v-if="employee.active">
           <!--TODO make date reactive-->
           <td>2/23/18</td>
           <td><span class="uk-text-primary" v-on:click="viewEmployee(employee.employeeId)">{{ employee.firstName }} {{ employee.lastName }}</span></td>
