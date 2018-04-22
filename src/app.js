@@ -446,7 +446,17 @@ var app = new Vue({
     });
     vm.$on('clear', function(property){
       console.log('clear ' + property);
-      data[property] = null;
+      if (property == 'rental') {
+        data.rental = {
+          customer: null,
+          movies: [],
+          payment: null,
+          dueDate: null
+        };
+      }
+      else {
+        data[property] = null;
+      }
     });
     vm.$on('cancelEdit', function(){
       data.isEdit = false;

@@ -100,7 +100,7 @@
         console.log('emit clear on rental');
         this.$router.app.$emit('clear', 'rental');
       },
-      clearRenturn() {
+      clearReturn() {
         console.log('emit clear on renturn');
         this.$router.app.$emit('clear', 'return');
       },
