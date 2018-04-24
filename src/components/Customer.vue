@@ -247,7 +247,7 @@
           lastName: document.querySelector("input[name=customerLastName]").value,
           addLine1: document.querySelector("input[name=customerAddress]").value,
           addCity: document.querySelector("input[name=customerCity]").value,
-          addState: document.querySelector("input[name=customerState]").value,
+          addState: document.getElementById("form-stacked-select").options[document.getElementById("form-stacked-select").selectedIndex].value,
           addZip: document.querySelector("input[name=customerZip]").value,
           email: document.querySelector("input[name=customerEmail]").value,
           phoneNumber: document.querySelector("input[name=customerPhone]").value.replace("-",""),
