@@ -469,8 +469,8 @@ var app = new Vue({
     vm.$on('clear', function(property){
       console.log('clear ' + property);
       console.log(this.$route.path);
-      console.log(this.$route.path.indexOf('rentals/new') > -1);
       var isRental = this.$route.path.indexOf('rentals/new') > -1;
+      var isReturn = this.$route.path.indexOf('rentals/return') > -1;
       if (isRental && property == 'rental') {
         data.isEdit = true;
         data.rental = {
@@ -478,6 +478,13 @@ var app = new Vue({
           movies: [],
           payment: null,
           dueDate: null
+        };
+      }
+      else if (isReturn && property == 'return') {
+        data.isEdit = true; //may not actually be needed
+        data.isNew = true;
+        data.return = {
+          movies: []
         };
       }
       else {

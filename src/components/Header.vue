@@ -29,7 +29,7 @@
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
                       <li><a is="router-link" to="/rentals/new" v-on:click.native="clearRental">New Rental</a></li>
-                      <li><a is="router-link" to="/rentals/return" v-on:click.native="resetMessage">Return Rental</a></li>
+                      <li><a is="router-link" to="/rentals/return" v-on:click.native="clearReturn">Return Rental</a></li>
                   </ul>
               </div>
           </li>
@@ -71,7 +71,7 @@
           <li v-if="data.isManager"><a is="router-link" to="/users/search" v-on:click.native="resetMessage">Users</a></li>
           <li class="uk-nav-header">Rentals</li>
           <li><a is="router-link" to="/rentals/new" v-on:click.native="clearRental">New Rental</a></li>
-          <li><a is="router-link" to="/rentals/return" v-on:click.native="resetMessage">Return Rental</a></li>
+          <li><a is="router-link" to="/rentals/return" v-on:click.native="clearReturn">Return Rental</a></li>
           <li class="uk-nav-header">Movies</li>
           <li><a is="router-link" to="/movies/search">Search Movies</a></li>
           <li><a is="router-link" to="/movies/new">Add New Movie</a></li>
