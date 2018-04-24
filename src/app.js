@@ -138,10 +138,6 @@ var app = new Vue({
               //success message?
               data.successMessage = 'Employee updated successfully!'
             }
-            else {
-              //show success message for delete on customer search
-              data.successMessage = 'Employee deleted successfully!'
-            }
           }
           vm.$router.push(callbackRoute);
         }
@@ -528,7 +524,8 @@ var app = new Vue({
     //delete employee
     vm.$on('deleteEmployee', function(employee) {
       console.log('call deleteEmployee');
-      var callbackRoute = { name: 'userList' }; //go to list of employees after deletion
+      //var callbackRoute = { name: 'userList' }; //go to list of employees after deletion
+      var callbackRoute = { name: 'userView', params: { id: employee.employeeId }}; //go to view employee after delete
       app.postEmployee(employee, callbackRoute);
     });
     //CUSTOMERS

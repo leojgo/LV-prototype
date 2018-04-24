@@ -27,7 +27,11 @@
           <div class="uk-alert uk-alert-success" v-if="data.resetSuccess">
             <p><strong>Success!</strong> Password reset confirmed.</p>
           </div>
-          <button class="uk-button uk-button-default" v-on:click="resetLogin">Reset Login</button>
+          <button class="uk-button uk-button-default" v-on:click="resetLogin" v-if="data.employee.active">Reset Login</button>
+          <div v-else class="uk-alert uk-alert-danger">
+          <p>This employee has been <strong>deleted</strong>! Made a mistake? Simply, restore the account.</p>
+          <button class="uk-button uk-button-danger uk-button-small" v-on:click="restoreEmployee(data.employee)">Restore</button>
+        </div>
         </div>
         <div v-else uk-grid>
           <div class="uk-width-1-2@s">
@@ -175,6 +179,10 @@
       },
       deleteEmployee(employee) {
         employee.active = false;
+        this.$router.app.$emit('deleteEmployee', employee);
+      },
+      restoreEmployee(employee) {
+        employee.active = true;
         this.$router.app.$emit('deleteEmployee', employee);
       },
       handleSubmit(data) {
