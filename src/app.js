@@ -235,11 +235,9 @@ var app = new Vue({
       xhr.onreadystatechange = function () {
         //Call a function when the state changes.
       if (xhr.readyState == 4 && (xhr.status == 204 || xhr.status == 200)) {
-          console.log(this.responseText);
-          var response = JSON.parse(this.responseText);
-          console.log(response);
           if (data.isNew) {
             //data.isNew = false;  //routing should take care of this
+            var response = JSON.parse(this.responseText);
             console.log('created customer');
             var route = {name: 'customerView', params: {id: response.key }};
             app.getCustomer(response.key, route);
