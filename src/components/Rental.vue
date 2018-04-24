@@ -50,7 +50,7 @@
             </div>
           </li>
           <li id="rentalPayment">
-            <a class="uk-accordion-title" href="#" v-bind:class="{'uk-disabled' : !hasMovies }"><span class="uk-label" v-bind:class="{'uk-label-success' : data.selected.paymentType}">3</span> Payment &amp; Confirmation</a>
+            <a class="uk-accordion-title" href="#" v-bind:class="{'uk-disabled' : !hasMovies }"><span class="uk-label" v-bind:class="{'uk-label-success' : data.rental.payment != null}">3</span> Payment &amp; Confirmation</a>
             <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
               <div uk-grid>
                 <div class="uk-width-1-2@">

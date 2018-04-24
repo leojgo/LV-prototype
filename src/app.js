@@ -468,7 +468,10 @@ var app = new Vue({
     });
     vm.$on('clear', function(property){
       console.log('clear ' + property);
-      if (property == 'rental') {
+      console.log(this.$route.path);
+      console.log(this.$route.path.indexOf('rentals/new') > -1);
+      var isRental = this.$route.path.indexOf('rentals/new') > -1;
+      if (isRental && property == 'rental') {
         data.isEdit = true;
         data.rental = {
           customer: null,
