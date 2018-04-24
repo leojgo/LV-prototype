@@ -223,13 +223,23 @@
         }
       },
       validateDigits(event) {
-        var digits = event.target.value.replace(/\D/g);
-        event.target.value = digits;
-        if (digits.length == 4) {
-          this.hasDigits = true;
-          this.hasPayment = true;
+        var digits = event.target.value;
+        digits.replace(/\D/g);
+        console.log(digits);
+        if (digits.indexOf('undefined') == -1) {
+          event.target.value = digits;
+          console.log('valid card')
+          if (digits.length == 4) {
+            this.hasDigits = true;
+            this.hasPayment = true;
+          }
+          else {
+            this.hasDigits = false;
+            this.hasPayment = false;
+          }
         }
         else {
+          console.log('card not valid!')
           this.hasDigits = false;
           this.hasPayment = false;
         }
