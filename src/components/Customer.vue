@@ -4,7 +4,7 @@
       <!--single customer view-->
       <h1 v-if="data.isNew" class="uk-text-large uk-text-muted">Create Customer Account</h1>
       <h1 v-else class="uk-text-large  uk-text-muted uk-position-relative">Customer Account
-        <ul class="uk-iconnav uk-position-top-right">
+        <ul class="uk-iconnav uk-position-top-right" v-if="data.customer.active">
           <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><span uk-icon="close" v-on:click="cancelEdit"></span></li>
           <li v-bind:class="{'uk-hidden' : data.isEdit}"><span uk-icon="pencil" v-on:click="editForm(data.customer.customerId)"></span></li>
           <li v-if="data.isManager"><a href="#" uk-icon="icon: trash"  v-on:click="deleteCustomer(data.customer)"></a></li>
@@ -33,7 +33,7 @@
         </div>
         <!--TODO add binding-->
         <div class="uk-width-1-2 uk-width-1-4@s uk-form-controls">
-          <select class="uk-select" id="form-stacked-select" v-model="data.customer.addState">
+          <select class="uk-select" id="form-stacked-select" name="customerSTate" v-model="data.customer.addState">
               <option value="AL">AL</option>
               <option value="AK">AK</option>
               <option value="AR">AR</option>
@@ -119,7 +119,11 @@
           <span class="uk-text-small">{{ data.customer.addLine1 }}, {{ data.customer.addCity }}, {{ data.customer.addState }} {{ data.customer.addZip }} <br />{{ data.customer.phoneNumber }}</span>
         </div>
         <hr />
-        <button class="uk-button uk-button-default" is="router-link" to="/rentals/new">Start Rental</button>
+        <button class="uk-button uk-button-default" is="router-link" to="/rentals/new" v-if="data.customer.active">Start Rental</button>
+        <div v-else class="uk-alert uk-alert-danger">
+          <p>This customer has been <strong>deleted</strong>! Made a mistake? Simply, restore the account.</p>
+          <button class="uk-button uk-button-danger uk-button-small" v-on:click="restoreCustomer">Restore</button>
+        </div>
         <!-- feature tabled
         <button class="uk-button uk-button-default">View Rental History</button>
         <button class="uk-button uk-button-default" v-if="data.isManager">View Ledger</button>
@@ -243,7 +247,7 @@
           lastName: document.querySelector("input[name=customerLastName]").value,
           addLine1: document.querySelector("input[name=customerAddress]").value,
           addCity: document.querySelector("input[name=customerCity]").value,
-          addState: "IL",
+          addState: document.querySelector("input[name=customerState]").value,
           addZip: document.querySelector("input[name=customerZip]").value,
           email: document.querySelector("input[name=customerEmail]").value,
           phoneNumber: document.querySelector("input[name=customerPhone]").value.replace("-",""),
@@ -307,6 +311,10 @@
       },
       deleteCustomer(customer) {
         customer.active = false;
+        this.$router.app.$emit('deleteCustomer', customer);
+      },
+      restoreCustomer(customer) {
+        customer.active = true;
         this.$router.app.$emit('deleteCustomer', customer);
       }
     }

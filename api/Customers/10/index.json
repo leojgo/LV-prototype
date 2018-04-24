@@ -1,16 +1,1 @@
-{
-    "customerId":3,
-    "nameFirst":"Test",
-    "nameMiddleIn":"",
-    "nameLast":"Manager",
-    "addLine1":"",
-    "addLine2":null,
-    "addCity":"",
-    "addState":"",
-    "addZip":0,
-    "phoneNumber":"1111111111",
-    "email":"",
-    "newsletter":false,
-    "accountBalance":0,
-    "active":true
-}
+{"customerId":10,"nameFirst":"Clint","nameMiddleIn":"","nameLast":"Eastwood","addLine1":"123 Monterey","addLine2":"","addCity":"Carmel","addState":"IL","addZip":95301,"phoneNumber":"9161234567","email":"makemyday@punk.com","newsletter":false,"accountBalance":0,"active":false}

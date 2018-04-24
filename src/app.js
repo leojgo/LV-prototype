@@ -139,7 +139,7 @@ var app = new Vue({
               data.successMessage = 'Employee '+employee.employeeId+', '+FirstName + ' ' + LastName + ' updated successfully!'
             }
             else {
-              //show success message for delete on custommer search
+              //show success message for delete on customer search
               data.successMessage = 'Employee '+employee.employeeId+', '+FirstName + ' ' + LastName + ' deleted successfully!'
             }
           }
@@ -247,12 +247,12 @@ var app = new Vue({
             if (customer.active) {
               //success message?
               console.log('updated customer');
-              data.successMessage = 'Customer '+customer.customerId+', '+customer.firstName + ' ' + custommer.lastName + ' updated successfully!'
+              data.successMessage = 'Customer '+customer.customerId+', '+customer.firstName + ' ' + customer.lastName + ', updated successfully!'
             }
             else {
               //show success message for delete on custommer search
               console.log('deleted customer');
-              data.successMessage = 'Customer '+customer.customerId+', '+customer.firstName + ' ' + custommer.lastName + ' deleted successfully!'
+              //data.successMessage = 'Customer '+customer.customerId+', '+customer.nameFirst + ' ' + customer.nameLast + ', deleted successfully!'
             }
             console.log(data);
             vm.$router.push(callbackRoute);
@@ -482,6 +482,7 @@ var app = new Vue({
       }
     });
     vm.$on('clearMessages', function(){
+      console.log('call clearMessages');
       data.errorMessage = null;
       data.successMessage = null;
     });
@@ -587,6 +588,7 @@ var app = new Vue({
     vm.$on('editCustomer', function(id) {
       data.isEdit = true;
       //no get request since we're already viewing customer
+      this.$router.app.$emit('clearMessages'); 
       this.$router.push({ name: 'customerEdit', params: { id: id }});
     });
         //add new customer
@@ -602,10 +604,13 @@ var app = new Vue({
       var callbackRoute = { name: 'customerView', params: { id: customer.customerId }};
       app.postCustomer(customer, callbackRoute);
     });
-     //delete employee
+     //delete customer
     vm.$on('deleteCustomer', function(customer) {
       console.log('call deleteCustomer');
-      app.postCustomer(customer, {name: 'customerSearch'});
+      //var callbackRoute = {name: 'customerSearch'};
+      this.$router.app.$emit('clearMessages');
+      var callbackRoute = { name: 'customerView', params: { id: customer.customerId }};
+      app.postCustomer(customer, callbackRoute);
     });
     //MOVIES
     //for status 1 is checked out, 0 is in stock, -1 is on hold
@@ -1050,6 +1055,7 @@ router.beforeEach((to, from, next) => {
     //probably better as a switch
     if (to.fullPath[1] == 'c') {
       data.customer = {};
+      data.customer[addState] = "IL";
       next();
     }
     else if (to.fullPath[1] == 'm') {
@@ -1057,8 +1063,11 @@ router.beforeEach((to, from, next) => {
       next();
     }
     else if (to.fullPath[1] == 'r') {
+      //handle referral from customer
+      var rentalCustomer = null;
+      console.log(from.fullPath.indexOf(data.rental.customer.customerId));
       data.rental = {
-        customer: null,
+        customer: rentalCustomer,
         movies: [],
         payment: null,
         dueDate: null

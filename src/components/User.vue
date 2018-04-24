@@ -4,9 +4,15 @@
       <h1 class="uk-text-muted uk-text-large" v-if="data.isNew">Create User Account</h1>
       <h1 class="uk-text-muted uk-text-large uk-position-relative" v-else>User Account
         <ul class="uk-iconnav uk-position-top-right">
-          <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><a href="#" uk-icon="close" v-on:click="cancelEdit"></a></li>
-          <li v-bind:class="{'uk-hidden' : data.isEdit}"><a uk-icon="pencil" v-on:click="editForm($route.params.id)"></a></li>
-          <li><a href="#" uk-icon="icon: trash" v-on:click="deleteEmployee(data.employee)"></a></li>
+          <li v-bind:class="{'uk-hidden' : data.isEdit == false}">
+            <a href="#" uk-icon="close" v-on:click="cancelEdit"></a>
+          </li>
+          <li v-bind:class="{'uk-hidden' : data.isEdit}">
+            <a uk-icon="pencil" v-on:click="editForm($route.params.id)"></a>
+          </li>
+          <li>
+            <a href="#" uk-icon="icon: trash" v-on:click="deleteEmployee(data.employee)"></a>
+          </li>
         </ul>
       </h1>
       <div class="uk-alert uk-alert-success" v-if="data.successMessage">{{ data.successMessage }}</div>
@@ -87,6 +93,8 @@
     </div>
     <div v-else>
       <h1 class="uk-text-muted uk-text-large">View All Users <button class="uk-button uk-button-default uk-align-right" is="router-link" to="/users/new">Add New User <span uk-icon="plus-circle"></span></button></h1>
+      <div class="uk-alert uk-alert-success" v-if="data.successMessage">{{ data.successMessage }}</div>
+      <div class="uk-alert uk-alert-danger" v-if="data.erorMessage">{{ data.errorMessage }}</div>
       <table class="uk-table uk-table-divider">
       <caption></caption>
       <thead>

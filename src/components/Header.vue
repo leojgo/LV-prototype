@@ -22,14 +22,14 @@
         </a>
         <ul class="uk-navbar-nav uk-visible@s" v-if="data.isAuthenticated">
           <li v-if="data.isManager">
-              <a is="router-link" to="/users/search">Users</a>
+              <a is="router-link" to="/users/search" v-on:click.native="resetMessage">Users</a>
           </li>
           <li>
               <a href="#">Rentals</a>
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
                       <li><a is="router-link" to="/rentals/new" v-on:click.native="clearRental">New Rental</a></li>
-                      <li><a is="router-link" to="/rentals/return">Return Rental</a></li>
+                      <li><a is="router-link" to="/rentals/return" v-on:click.native="resetMessage">Return Rental</a></li>
                   </ul>
               </div>
           </li>
@@ -46,7 +46,7 @@
               <a href="#">Customers</a>
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
-                      <li><a is="router-link" to="/customers/search" v-on:click.native="clearCustomerSearch, resetMessage">Search Customers</a></li>
+                      <li><a is="router-link" to="/customers/search" v-on:click.native="clearCustomerSearch">Search Customers</a></li>
                       <li><a is="router-link" to="/customers/new" v-on:click.native="resetMessage">New Customer</a></li>
                   </ul>
               </div>
@@ -55,9 +55,9 @@
               <a href="#">Reports</a>
               <div class="uk-navbar-dropdown">
                   <ul class="uk-nav uk-navbar-dropdown-nav">
-                      <li><a is="router-link" to="/reports/overdue">Overdue Rentals</a></li>
-                      <li><a is="router-link" to="/reports/popular">Popular Movies</a></li>
-                      <li><a is="router-link" to="/reports/customers">Best Customers</a></li>
+                      <li><a is="router-link" to="/reports/overdue" v-on:click.native="resetMessage">Overdue Rentals</a></li>
+                      <li><a is="router-link" to="/reports/popular" v-on:click.native="resetMessage">Popular Movies</a></li>
+                      <li><a is="router-link" to="/reports/customers" v-on:click.native="resetMessage">Best Customers</a></li>
                   </ul>
               </div>
           </li>
@@ -68,15 +68,15 @@
       <div class="uk-offcanvas-bar">
         <button class="uk-offcanvas-close" type="button" uk-close></button>
         <ul class="uk-nav uk-nav-default">
-          <li v-if="data.isManager"><a is="router-link" to="/users/search">Users</a></li>
+          <li v-if="data.isManager"><a is="router-link" to="/users/search" v-on:click.native="resetMessage">Users</a></li>
           <li class="uk-nav-header">Rentals</li>
           <li><a is="router-link" to="/rentals/new" v-on:click.native="clearRental">New Rental</a></li>
-          <li><a is="router-link" to="/rentals/return" v-on:click.native="clearReturn">Return Rental</a></li>
+          <li><a is="router-link" to="/rentals/return" v-on:click.native="resetMessage">Return Rental</a></li>
           <li class="uk-nav-header">Movies</li>
           <li><a is="router-link" to="/movies/search">Search Movies</a></li>
           <li><a is="router-link" to="/movies/new">Add New Movie</a></li>
           <li class="uk-nav-header">Customers</li>
-          <li><a is="router-link" to="/customers/search" v-on:click.native="clearCustomerSearch, resetMessage">Search Movies</a></li>
+          <li><a is="router-link" to="/customers/search" v-on:click.native="clearCustomerSearch">Search Movies</a></li>
           <li><a is="router-link" to="/customers/new" v-on:click.native="resetMessage">Add Customer</a></li>
           <li class="uk-nav-header">Reports</li>
           <li><a is="router-link" to="/reports/overdue">Overdue Rentals</a></li>
