@@ -136,11 +136,11 @@ var app = new Vue({
           else {
             if (Active) {
               //success message?
-              data.successMessage = 'Employee '+employee.employeeId+', '+FirstName + ' ' + LastName + ' updated successfully!'
+              data.successMessage = 'Employee updated successfully!'
             }
             else {
               //show success message for delete on customer search
-              data.successMessage = 'Employee '+employee.employeeId+', '+FirstName + ' ' + LastName + ' deleted successfully!'
+              data.successMessage = 'Employee deleted successfully!'
             }
           }
           vm.$router.push(callbackRoute);
@@ -246,7 +246,7 @@ var app = new Vue({
             if (customer.active) {
               //success message?
               console.log('updated customer');
-              data.successMessage = 'Customer '+customer.customerId+', '+customer.firstName + ' ' + customer.lastName + ', updated successfully!'
+              data.successMessage = 'Customer updated successfully!'
             }
             else {
               //show success message for delete on custommer search
