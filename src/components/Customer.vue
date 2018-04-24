@@ -122,7 +122,7 @@
         <button class="uk-button uk-button-default" is="router-link" to="/rentals/new" v-if="data.customer.active">Start Rental</button>
         <div v-else class="uk-alert uk-alert-danger">
           <p>This customer has been <strong>deleted</strong>! Made a mistake? Simply, restore the account.</p>
-          <button class="uk-button uk-button-danger uk-button-small" v-on:click="restoreCustomer">Restore</button>
+          <button class="uk-button uk-button-danger uk-button-small" v-on:click="restoreCustomer(data.customer)">Restore</button>
         </div>
         <!-- feature tabled
         <button class="uk-button uk-button-default">View Rental History</button>

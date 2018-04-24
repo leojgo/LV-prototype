@@ -605,9 +605,10 @@ var app = new Vue({
     });
      //delete customer
     vm.$on('deleteCustomer', function(customer) {
-      console.log('call deleteCustomer');
-      //var callbackRoute = {name: 'customerSearch'};
-      this.$router.app.$emit('clearMessages');
+      console.log('call deleteCustomer '+customer.customerId);
+      if (!customer.active) {
+        this.$router.app.$emit('clearMessages');
+      }
       var callbackRoute = { name: 'customerView', params: { id: customer.customerId }};
       app.postCustomer(customer, callbackRoute);
     });
@@ -1064,7 +1065,7 @@ router.beforeEach((to, from, next) => {
     else if (to.fullPath[1] == 'r') {
       //handle referral from customer
       var rentalCustomer = null;
-      console.log(from.fullPath.indexOf(data.rental.customer.customerId));
+      //console.log(from.fullPath.indexOf(data.rental.customer.customerId));
       data.rental = {
         customer: rentalCustomer,
         movies: [],
