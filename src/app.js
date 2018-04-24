@@ -469,6 +469,7 @@ var app = new Vue({
     vm.$on('clear', function(property){
       console.log('clear ' + property);
       if (property == 'rental') {
+        data.isEdit = true;
         data.rental = {
           customer: null,
           movies: [],
@@ -1020,7 +1021,7 @@ router.beforeEach((to, from, next) => {
   console.log('to '+to.fullPath);
   if (to.fullPath.indexOf('search') > -1) {
     data.isSingle = false;
-    data.isView = false;
+    //data.isView = false;
     data.isEdit = false;
     data.isNew = false;
     if (to.fullPath[1] == 'u') {
@@ -1047,11 +1048,11 @@ router.beforeEach((to, from, next) => {
   }
   else if (to.fullPath.indexOf('new') > -1) {
     data.isSingle = true;
-    data.isView = false;
+    //data.isView = false;
     data.isEdit = true;
     data.isNew = true;
-    data.selected = {};
-    next();
+    //data.selected = {};
+    //next();
     //probably better as a switch
     if (to.fullPath[1] == 'c') {
       data.customer = {};
@@ -1088,7 +1089,7 @@ router.beforeEach((to, from, next) => {
   }
   else if (to.fullPath.indexOf('return') > -1) {
     data.isSingle = true;
-    data.isView = false;
+    //data.isView = false;
     data.isEdit = true;
     data.isNew = true;
     data.return = {
