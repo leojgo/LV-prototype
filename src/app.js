@@ -277,7 +277,13 @@ var app = new Vue({
               //new rental
               //check status
               if (movie.status == 0) {
-                vm.data.rental.movies.push(movie);
+                //see if movie is already in the list
+                if (vm.data.rental.movies.includes(movie)) {
+                  alert('Cannot add to rental -- movie already in rental list!');
+                }
+                else {
+                  vm.data.rental.movies.push(movie);
+                }
               }
               else if (movie.status == 1) {
                 //TODO error movie not in stock
@@ -293,7 +299,12 @@ var app = new Vue({
               //rental return
               //check status
               if (movie.status == 1) {
-                vm.data.return.movies.push(movie);
+                if (vm.data.return.includes(movie)) {
+                  alert('Cannot add to return -- movie already in return list!');
+                }
+                else {
+                  vm.data.return.movies.push(movie);
+                }
               }
               else if (movie.status == 0) {
                 //TODO fancier error handling
