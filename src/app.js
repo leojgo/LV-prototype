@@ -604,17 +604,17 @@ var app = new Vue({
     vm.$on('viewCustomer', function(id){
       data.isEdit = false;
       data.customer = {};
-      //GET request
+      //API request
       app.getCustomer(id, { name: 'customerView', params: { id: id }});
     });
     //load edit customer form
     vm.$on('editCustomer', function(id) {
       data.isEdit = true;
       //no get request since we're already viewing customer
-      this.$router.app.$emit('clearMessages'); 
+      this.$router.app.$emit('clearMessages');
       this.$router.push({ name: 'customerEdit', params: { id: id }});
     });
-        //add new customer
+    //add new customer
     vm.$on('createCustomer', function(customer) {
       console.log('call createCustomer');
       console.log(customer);
@@ -627,7 +627,7 @@ var app = new Vue({
       var callbackRoute = { name: 'customerView', params: { id: customer.customerId }};
       app.postCustomer(customer, callbackRoute);
     });
-     //delete customer
+    //delete customer
     vm.$on('deleteCustomer', function(customer) {
       console.log('call deleteCustomer '+customer.customerId);
       if (!customer.active) {
@@ -637,7 +637,7 @@ var app = new Vue({
       app.postCustomer(customer, callbackRoute);
     });
     //MOVIES
-    //for status 1 is checked out, 0 is in stock, -1 is on hold
+    //for status 2 is deleted 1 is checked out, 0 is in stock, -1 is on hold
     //search movie database
     vm.$on('searchMovie', function(query){
       console.log('call searchMovies');
@@ -839,7 +839,7 @@ var app = new Vue({
           else {
             //change to delete status
             copy = copies[i];
-            copy.editStatus = -1;
+            copy.editStatus = 2;
             copies.splice(i, 1, copy);
           }
         }

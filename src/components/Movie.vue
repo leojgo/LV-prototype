@@ -61,7 +61,7 @@
           <span class="uk-text-small">Release year: {{ data.movie.releaseYear }}</span>
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <ul class="uk-list uk-list-divider uk-text-small">
-            <li v-for="movie in data.movie.copies" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1' }">{{ movie.id }}<span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top" v-if="movie.status == 1">Rented</span></li>
+            <li v-for="movie in data.movie.copies" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1' }" v-if="movie.status == 0 || movie.status == 1">{{ movie.id }}<span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top" v-if="movie.status == 1">Rented</span></li>
           </ul>
         </div>
       </div>
