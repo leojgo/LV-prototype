@@ -62,8 +62,14 @@ export default {
         xhr.onreadystatechange = function () {
           if (xhr.readyState === 4) {
             if (xhr.status === 201 || xhr.status === 200) {
-              //send the response to Vue
-              vm.$router.app.$emit('login', JSON.parse(this.responseText));
+              var user = JSON.parse(this.responseText);
+              if (user.employeeId) {
+                //send the response to Vue
+                vm.$router.app.$emit('login', JSON.parse(this.responseText));
+              }
+              else {
+                vm.$router.app.$emit('loginError'); //invalid login
+              }
             }
             else {
               vm.$router.app.$emit('loginError'); // 404 or sever error -- TODO revise when API supports error handling with message return

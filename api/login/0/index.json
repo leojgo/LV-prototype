@@ -1,9 +1,1 @@
-{
-    "employeeId": 12,
-    "firstName": "TEST",
-    "lastName": "McTESTY",
-    "employeeType": 1,
-    "pwHash": "$LACKLUSTER$V1$10000$GQjJYGTuQjx7N6XQwLpCtAFJq5io7d2WGDkzgURjN3KtetLq",
-    "active": true,
-    "employeeTitle": "Manager"
-}
+[]

@@ -147,7 +147,6 @@ var app = new Vue({
     },
     getCustomer(id, callbackRoute) {
       console.log('API call get customer '+ id);
-      //send login request -- TODO use a function?
       var url = "/api/Customers/"+id;
       var xhr = new XMLHttpRequest();
       var vm = this;
