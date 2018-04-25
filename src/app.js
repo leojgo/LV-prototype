@@ -127,8 +127,7 @@ var app = new Vue({
           //TODO show modal confirmation?
           //data.isEdit = false; //routing should handle this?
           if (data.isNew) {
-            //TODO set callback to user id returned from response
-            var callbackRoute = { name: 'userView', params: { id: 2 }};
+            var callbackRoute = { name: 'userView', params: { id: JSON.parse(xhr.responseText) }};
           }
           else {
             if (Active) {
@@ -642,50 +641,53 @@ var app = new Vue({
       }
       var xhr = new XMLHttpRequest();
       var url = "/api/MovieSearch";
-      var jsonData = JSON.stringify({"Title": title, "ReleaseYear": null, "Genre": null, "Upc": upc});
+      var jsonData = JSON.stringify({"Title": title, "Upc": upc});
       var vm = this;
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function () {
         //Call a function when the state changes.
-        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
-          var copies = JSON.parse(this.responseText);
-          console.log(copies);
-          var movies = [];
-          movies.push({
-            title: copies[0].title,
-            upc: copies[0].upc,
-            releaseYear: copies[0].releaseYear,
-            inStock: copies[0].status == 0
-          });
-          console.log(movies);
-          var lastIndex = 0;
-          for (var i = 0; i < copies.length; i++) {
-            if (copies[i].upc == movies[lastIndex].upc) {
-              //same upc -- check stock
-              if (!movies[lastIndex].inStock && parseInt(copies[i].status) == 0) {
-                //update stock
-                movies[lastIndex].inStock = true;
+        if(xhr.readyState == 4) {
+          if (xhr.status == 201 || xhr.status == 200) {
+            var copies = JSON.parse(this.responseText);
+            console.log(copies);
+            var movies = [];
+            movies.push({
+              title: copies[0].title,
+              upc: copies[0].upc,
+              releaseYear: copies[0].releaseYear,
+              inStock: copies[0].status == 0
+            });
+            console.log(movies);
+            var lastIndex = 0;
+            for (var i = 0; i < copies.length; i++) {
+              if (copies[i].upc == movies[lastIndex].upc) {
+                //same upc -- check stock
+                if (!movies[lastIndex].inStock && parseInt(copies[i].status) == 0) {
+                  //update stock
+                  movies[lastIndex].inStock = true;
+                }
+              }
+              else {
+                //different upc  -- add to movies
+                var movie = {
+                    title: copies[i].title,
+                    upc: copies[i].upc,
+                    releaseYear: copies[i].releaseYear,
+                    inStock: copies[i].status == 0
+                  }
+                  console.log('new title');
+                  movies.push(movie);
+                  lastIndex++;
               }
             }
-            else {
-              //different upc  -- add to movies
-              var movie = {
-                  title: copies[i].title,
-                  upc: copies[i].upc,
-                  releaseYear: copies[i].releaseYear,
-                  inStock: copies[i].status == 0
-                }
-                console.log('new title');
-                movies.push(movie);
-                lastIndex++;
-            }
+            console.log(movies);
+            data.movies = movies;
           }
-          console.log(movies);
-          data.movies = movies;
-        }
-        else {
-          //TODO error handling
+          else {
+            //TODO fancier error handling
+            alert('No results found!');
+          }
         }
       }
       xhr.send(jsonData);
@@ -697,55 +699,57 @@ var app = new Vue({
       var title = movie.title;
       var xhr = new XMLHttpRequest();
       var url = "/api/MovieSearch";
-      var jsonData = JSON.stringify({"Title": title, "ReleaseYear": null, "Genre": null, "Upc": upc});
+      var jsonData = JSON.stringify({"Title": title,"Upc": upc});
       var vm = this;
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function () {
         //Call a function when the state changes.
-        if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
-          var stock = JSON.parse(this.responseText);
-          var copies = [];
-          console.log(copies);
-          //process result
-          var stockCount = 0;
-          for (var i=0; i<stock.length; i++) {
-            //console.log("processing "+i);
-            if (stock[i].status == 0) {
-              stockCount++;
+        if(xhr.readyState == 4) {
+          if (xhr.status == 201 || xhr.status == 200) {
+            var stock = JSON.parse(this.responseText);
+            var copies = [];
+            console.log(copies);
+            //process result
+            var stockCount = 0;
+            for (var i=0; i<stock.length; i++) {
+              //console.log("processing "+i);
+              if (stock[i].status == 0) {
+                stockCount++;
+              }
+              copies[i] = {
+                id: stock[i].movieId,
+                status: stock[i].status
+              }
             }
-            copies[i] = {
-              id: stock[i].movieId,
-              status: stock[i].status
-            }
-          }
-          if (stock.length > 0) {
-            data.movie = {
-              title: stock[0].title,
-              upc: stock[0].upc,
-              releaseYear: stock[0].releaseYear,
-              stock: stockCount,
-              copies: copies,
-              copiesEdit: [],
-              editRef: {
+            if (stock.length > 0) {
+              data.movie = {
                 title: stock[0].title,
                 upc: stock[0].upc,
                 releaseYear: stock[0].releaseYear,
-              }
-            };
-            console.log('finish processing upc search');
-            console.log(data.movie);
+                stock: stockCount,
+                copies: copies,
+                copiesEdit: [],
+                editRef: {
+                  title: stock[0].title,
+                  upc: stock[0].upc,
+                  releaseYear: stock[0].releaseYear,
+                }
+              };
+              console.log('finish processing upc search');
+              console.log(data.movie);
+            }
+            else {
+              alert('Sorry we cannot find any copies of that movie in the system!');
+            }
+            //go to view movie page
+            var callbackRoute = { name: 'movieView', params: { id: movie.upc }};
+            vm.$router.push(callbackRoute);
           }
           else {
-            alert('Sorry we cannot find any copies of that movie in the system!');
+            // TODO fancier error handling
+            alert('No results found!');
           }
-          //go to view movie page
-          var callbackRoute = { name: 'movieView', params: { id: movie.upc }};
-          vm.$router.push(callbackRoute);
-        }
-        else {
-          // TODO push an alert error (not found)
-
         }
       }
       xhr.send(jsonData);
