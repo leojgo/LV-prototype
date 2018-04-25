@@ -284,9 +284,11 @@ var app = new Vue({
             }
             else if (movie.status == 1) {
               //TODO error movie not in stock
+              alert('Cannot add to return -- this movie is listed as not in stock!');
             }
             else {
               //TODO error movie not found in system?
+              alert('Cannot add to return -- this movie is not available in the system!');
             }
             console.log(data.rental);
           }
@@ -297,16 +299,19 @@ var app = new Vue({
               vm.data.return.movies.push(movie);
             }
             else if (movie.status == 0) {
-              //TODO error movie not in stock
+              //TODO fancier error handling
+              alert('Cannot add to return -- this movie already listed as in-stock!');
             }
             else {
-              //TODO error movie not found in system?
+              //TODO fancier error handling
+              alert('Cannot add to return -- this movie is not available in the system');
             }
             console.log(data.return);
           }
         }
         else {
-          //TODO other errors?
+          //TODO fancier error handling
+          alert('Cannot process movie -- please make sure the item ID is correct!');
         }
       }; 
       xhr.send();

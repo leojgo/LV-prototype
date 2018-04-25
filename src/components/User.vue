@@ -103,7 +103,6 @@
       <caption></caption>
       <thead>
         <tr>
-          <th>Registration Date<!--<span uk-icon="icon: triangle-down"></span>--></th>
           <th>Employee</th>
           <th>Role</th>
           <th>ID</th>
@@ -112,7 +111,6 @@
       <tbody>
         <tr v-for="employee in data.employees" v-if="employee.active">
           <!--TODO make date reactive-->
-          <td>2/23/18</td>
           <td><span class="uk-text-primary" v-on:click="viewEmployee(employee.employeeId)">{{ employee.firstName }} {{ employee.lastName }}</span></td>
           <td>{{ employee.employeeTitle }}</td>
           <td>{{ employee.employeeId }}</td>
