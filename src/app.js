@@ -36,7 +36,6 @@ var data = {
   employee: null, //selected employee (view/edit)
   customers: null, //cusomters array for search
   customer: null, //selected customer (view/edit)
-  movieTitles: null, // TODO what is this for??
   movies: null, //movies array for search
   movie: null, //selected movie (view/edit)
   rental: null, //current new rental
@@ -44,10 +43,10 @@ var data = {
   //rentals: null, //list of rentals -- feature tabled
   reports: null, //reports array for search
   isSingle: false, //single item flag
-  isView: false,
+  //isView: false,
   isEdit: false, //edit state flag
   isNew: false, //add state flag
-  modal: null //modal dialog obj
+  modal: null //modal dialog container
 };
 var app = new Vue({
   el: '#app',
@@ -269,46 +268,48 @@ var app = new Vue({
       xhr.open('POST', url, true);
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
-          var newRental = app.$route.path.indexOf('rentals/new') > -1;
-          var movie = JSON.parse(xhr.responseText);
-          console.log(movie);
-          if (newRental) {
-            //new rental
-            //check status
-            if (movie.status == 0) {
-              vm.data.rental.movies.push(movie);
-            }
-            else if (movie.status == 1) {
-              //TODO error movie not in stock
-              alert('Cannot add to return -- this movie is listed as not in stock!');
+        if (xhr.readyState == 4)
+          if (xhr.status == 201 || xhr.status == 200) {
+            var newRental = app.$route.path.indexOf('rentals/new') > -1;
+            var movie = JSON.parse(xhr.responseText);
+            console.log(movie);
+            if (newRental) {
+              //new rental
+              //check status
+              if (movie.status == 0) {
+                vm.data.rental.movies.push(movie);
+              }
+              else if (movie.status == 1) {
+                //TODO error movie not in stock
+                alert('Cannot add to return -- this movie is listed as not in stock!');
+              }
+              else {
+                //TODO error movie not found in system?
+                alert('Cannot add to return -- this movie is not available in the system!');
+              }
+              console.log(data.rental);
             }
             else {
-              //TODO error movie not found in system?
-              alert('Cannot add to return -- this movie is not available in the system!');
+              //rental return
+              //check status
+              if (movie.status == 1) {
+                vm.data.return.movies.push(movie);
+              }
+              else if (movie.status == 0) {
+                //TODO fancier error handling
+                alert('Cannot add to return -- this movie already listed as in-stock!');
+              }
+              else {
+                //TODO fancier error handling
+                alert('Cannot add to return -- this movie is not available in the system');
+              }
+              console.log(data.return);
             }
-            console.log(data.rental);
           }
           else {
-            //rental return
-            //check status
-            if (movie.status == 1) {
-              vm.data.return.movies.push(movie);
-            }
-            else if (movie.status == 0) {
-              //TODO fancier error handling
-              alert('Cannot add to return -- this movie already listed as in-stock!');
-            }
-            else {
-              //TODO fancier error handling
-              alert('Cannot add to return -- this movie is not available in the system');
-            }
-            console.log(data.return);
+            //TODO fancier error handling
+            alert('Cannot process movie -- please make sure the item ID is correct!');
           }
-        }
-        else {
-          //TODO fancier error handling
-          alert('Cannot process movie -- please make sure the item ID is correct!');
         }
       }; 
       xhr.send();
