@@ -24,9 +24,6 @@
         <span class="uk-text-small">Phone Number: {{ data.employee.phoneNumber }}</span>
         <hr />
         <div v-if="!editPassword">
-          <div class="uk-alert uk-alert-success" v-if="data.resetSuccess">
-            <p><strong>Success!</strong> Password reset confirmed.</p>
-          </div>
           <button class="uk-button uk-button-default" v-on:click="resetLogin" v-if="data.employee.active">Reset Login</button>
           <div v-else class="uk-alert uk-alert-danger">
           <p>This employee has been <strong>deleted</strong>! Made a mistake? Simply, restore the account.</p>
@@ -58,7 +55,7 @@
           </div>
         </div>
       </div>
-      <div v-else uk-grid>
+      <form v-else uk-grid @submit.prevent="handleSubmit(data)">
         <div class="uk-width-1-2@s">
           <input class="uk-input" type="text" name="userFirstName" placeholder="John" v-bind:class="{ 'uk-form-danger' : errors.userFirstName }" v-on:focus="clearError('userFirstName')" v-model="data.employee.firstName">
           <span class="uk-text-small uk-text-danger" v-if="errors.userFirstName">First name isn't long enough!</span>
@@ -90,10 +87,10 @@
         </div>
         <div class="uk-width-1-1">
           <hr />
-          <button class="uk-button uk-button-primary" v-on:click="handleSubmit(data)">Save</button> <!--TODO replace with form handler-->
+          <button class="uk-button uk-button-primary">Save</button> <!--TODO replace with form handler-->
           <span class="uk-button uk-button-default uk-margin-left" v-on:click="cancelEdit" v-if="data.isNew == false">Cancel</span>
         </div>
-      </div>
+      </form>
     </div>
     <div v-else>
       <h1 class="uk-text-muted uk-text-large">View All Users <button class="uk-button uk-button-default uk-align-right" is="router-link" to="/users/new">Add New User <span uk-icon="plus-circle"></span></button></h1>
@@ -159,6 +156,7 @@
       editForm(id) {
         //TODO should be done with routes instead ??
         //this.cancelEdit();
+        this.$router.app.$emit('clearMessages'); //clean slate
         this.userToEdit = id;
         this.$router.app.$emit('editEmployee',id);
       },
@@ -176,10 +174,12 @@
         this.$router.app.$emit('viewEmployee', this.userToEdit);
       },
       deleteEmployee(employee) {
+        this.$router.app.$emit('clearMessages'); //clean slate
         employee.active = false;
         this.$router.app.$emit('deleteEmployee', employee);
       },
       restoreEmployee(employee) {
+        this.$router.app.$emit('clearMessages'); //clean slate
         employee.active = true;
         this.$router.app.$emit('deleteEmployee', employee);
       },
@@ -282,8 +282,8 @@
         }
       },
       resetLogin() {
+        this.$router.app.$emit('clearMessages'); //clean slate
         this.editPassword = true;
-        this.$router.app.data.resetSuccess = false;
       },
       cancelReset() {
         this.editPassword = false;

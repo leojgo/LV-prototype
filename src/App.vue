@@ -11,9 +11,9 @@
         <div class="uk-margin">
           <input class="uk-input" type="password" name="password" placeholder="********" v-on:keyup.enter="login" v-on:focus="clearLoginError">
         </div>
-        <div v-if="data.loginError" class="uk-alert-danger uk-text-small" uk-alert>
+        <div v-if="data.errorMessage" class="uk-alert-danger uk-text-small" uk-alert>
             <!--<a class="uk-alert-close" uk-close></a>-->
-            <p>User id/password combination incorrect!</p>
+            {{ data.errorMessage }}
         </div>
         <!--change link to button or submit input on final build-->
         <a class="uk-button uk-button-default" v-on:click="login(data)">Login</a>
@@ -60,13 +60,14 @@ export default {
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.onreadystatechange = function () {
-          //TODO 200 used for local testing, remove for prod
-          if (xhr.readyState === 4 && (xhr.status === 201 || xhr.status === 200)) {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 201 || xhr.status === 200) {
               //send the response to Vue
               vm.$router.app.$emit('login', JSON.parse(this.responseText));
-          }
-          else {
-            vm.$router.app.$emit('loginError'); // 404 or sever error -- TODO revise when API supports error handling with message return
+            }
+            else {
+              vm.$router.app.$emit('loginError'); // 404 or sever error -- TODO revise when API supports error handling with message return
+            }
           }
         };
         var jsonDdata = JSON.stringify({"username": user, "password": pass});

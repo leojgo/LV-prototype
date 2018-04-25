@@ -27,8 +27,6 @@ import router from './routes.js';
 // UIkit.notification('Hello world.');
 var data = {
   company: 'Lackluster Video', //company name
-  loginError: false, //flag for whether login error occurred
-  resetSuccess: false, //flag for whether reset password occurred
   isAuthenticated: false, //auth flag
   isManager: false, //manager flag
   user: null, //user obj -- current user
@@ -317,7 +315,7 @@ var app = new Vue({
       xhr.send();
     },
     /*
-    //TODO remove?
+    //UNUSED METHOD -- can be used for future features
     postMovie(movie, callbackRoute) {
       //TODO Is callback needed? Does this ever go anywhere except to the customer's profile?
       var xhr = new XMLHttpRequest();
@@ -408,6 +406,7 @@ var app = new Vue({
     }); 
     vm.$on('loginError', function(){
       data.loginError = true;
+      data.errorMessage = 'Login failed -- check your login credentials and try again!';
     });
     vm.$on('clearLoginError', function(){
       data.loginError = false;
@@ -459,10 +458,11 @@ var app = new Vue({
         if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           //TODO success message
           data.resetSuccess = true;
+          data.successMessage = 'Password has been reset successfully!';
           console.log(data);
         }
         else {
-          //TODO error handling
+          data.errorMessage = 'An error occurred -- please try again later!';
         }
       }
       xhr.send(jsonData);
