@@ -55,7 +55,7 @@
               <div uk-grid>
                 <div class="uk-width-1-2@">
                   Rental Fee: ${{ rentalFee }}<br />
-                  Outstanding Late Fee: ${{ lateFee }}<br />
+                  <!--Outstanding Late Fee: ${{ lateFee }}<br />-->
                   Total Fee: ${{ totalFee }}
                 </div>
                 <div class="uk-width-1-2@s uk-form-controls">
