@@ -282,7 +282,7 @@ var app = new Vue({
                 console.log(movie);
                 console.log(vm.data.rental.movies.includes(movie));
                 var duplicate = false;
-                for (var i = 0; i < vm.data.rental.movies; i++) {
+                for (var i = 0; i < vm.data.rental.movies.length; i++) {
                   console.log(vm.data.rental.movies[i].movieId);
                   console.log(movie.movieId);
                   if (vm.data.rental.movies[i].movieId == movie.movieId) {
