@@ -279,8 +279,6 @@ var app = new Vue({
               if (movie.status == 0) {
                 //see if movie is already in the list
                 console.log('checking for duplicate');
-                console.log(movie);
-                console.log(vm.data.rental.movies.includes(movie));
                 var duplicate = false;
                 for (var i = 0; i < vm.data.rental.movies.length; i++) {
                   console.log(vm.data.rental.movies[i].movieId);
@@ -311,7 +309,18 @@ var app = new Vue({
               //rental return
               //check status
               if (movie.status == 1) {
-                if (vm.data.return.includes(movie)) {
+                //see if movie is already in the list
+                console.log('checking for duplicate');
+                var duplicate = false;
+                for (var i = 0; i < vm.data.return.movies.length; i++) {
+                  console.log(vm.data.return.movies[i].movieId);
+                  console.log(movie.movieId);
+                  if (vm.data.return.movies[i].movieId == movie.movieId) {
+                    duplicate = true;
+                    break;
+                  }
+                }
+                if (duplicate) {
                   alert('Cannot add to return -- movie already in return list!');
                 }
                 else {
