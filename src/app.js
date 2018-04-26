@@ -281,7 +281,14 @@ var app = new Vue({
                 console.log('checking for duplicate');
                 console.log(movie);
                 console.log(vm.data.rental.movies.includes(movie));
-                if (vm.data.rental.movies.includes(movie)) {
+                var duplicate = false;
+                for (var i = 0; i < vm.data.rental.movies; i++) {
+                  if (vm.data.rental.movies[i].movieId == movie.movieId) {
+                    duplicate = true;
+                    break;
+                  }
+                }
+                if (duplicate) {
                   alert('Cannot add to rental -- movie already in rental list!');
                 }
                 else {
