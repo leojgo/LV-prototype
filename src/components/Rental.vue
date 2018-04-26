@@ -166,7 +166,7 @@
         UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
       },
       clearItem(){
-
+        this.$router.app.$emit('clearRentalItem');
       },
       addToRental() {
         //TODO refactor

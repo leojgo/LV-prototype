@@ -278,6 +278,9 @@ var app = new Vue({
               //check status
               if (movie.status == 0) {
                 //see if movie is already in the list
+                console.log('checking for duplicate');
+                console.log(movie);
+                console.log(vm.data.rental.movies.includes(movie));
                 if (vm.data.rental.movies.includes(movie)) {
                   alert('Cannot add to rental -- movie already in rental list!');
                 }
