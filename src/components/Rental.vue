@@ -41,7 +41,7 @@
             <a class="uk-accordion-title" href="#" v-bind:class="{'uk-disabled' : !hasCustomer }"><span class="uk-label" v-bind:class="{'uk-label-success' : hasMovies}">2</span> Movies</a>
             <div class="uk-accordion-content uk-padding uk-margin-small-left" style="border-left:1px solid">
               <ul class="uk-list uk-list-divider" v-if="data.rental.movies.length > 0">
-                <li v-for="movie in data.rental.movies" class="uk-position-relative">{{ movie.movieId }} <strong>{{ movie.title }}</strong><span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span></li>
+                <li v-for="movie in data.rental.movies" class="uk-position-relative">{{ movie.movieId }} <strong>{{ movie.title }}</strong><span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem(movie.movieId)"></span></li>
               </ul>
               <div class="uk-inline uk-margin uk-width-1-1">
                 <input class="uk-input" type="text" name="addCopy" placeholder="Add movie item ID" v-bind:class="{ 'uk-form-danger' : errors.addCopy }" v-on:focus="clearError('addCopy')" v-on:keyup.enter="addToRental"><span class="uk-form-icon uk-form-icon-flip"  uk-icon="icon: plus-circle" v-on:click="addToRental"></span>
@@ -102,7 +102,7 @@
         <ul v-if="data.return.movies.length > 0" class="uk-list uk-list-divider">
           <li v-for="movie in data.return.movies" class="uk-position-relative">
               {{ movie.movieId }} <strong>{{ movie.title }}</strong>
-              <span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem"></span>
+              <span uk-icon="trash" class="uk-position-top-right uk-margin-small-top" v-on:click="clearItem(movie.movieId)"></span>
           </li>
         </ul>
         <div class="uk-inline uk-margin uk-width-1-1">
@@ -165,8 +165,9 @@
         //this.$router.app.$emit('searchCustomer', this.customerQuery); //restore previous search
         UIkit.accordion(document.getElementById('newRental')).toggle(1, true);
       },
-      clearItem(){
-        this.$router.app.$emit('clearRentalItem');
+      clearItem(id){
+        console.log('emit clearItem '+id);
+        this.$router.app.$emit('clearItem', id);
       },
       addToRental() {
         //TODO refactor

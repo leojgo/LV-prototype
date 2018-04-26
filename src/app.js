@@ -1063,6 +1063,25 @@ var app = new Vue({
       }
       xhr.send(jsonData);
     });
+    //RENTAL or RETURN
+    vm.$on('clearItem', function(id){
+      console.log('remove item '+id);
+      var newRental = app.$route.path.indexOf('rentals/new') > -1;
+      if (newRental) {
+        for (var i = 0; i < data.rental.movies.length; i++) {
+          if (data.rental.movies[i].movieId == id) {
+            data.rental.movies.splice(i, 1);
+          }
+        }
+      }
+      else {
+        for (var i = 0; i < data.return.movies.length; i++) {
+          if (data.return.movies[i].movieId == id) {
+            data.return.movies.splice(i, 1);
+          }
+        }
+      }
+    });
   }
 });
 //nav guards
