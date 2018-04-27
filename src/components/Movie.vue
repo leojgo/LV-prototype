@@ -30,15 +30,15 @@
         <div class="uk-width-1-1"  v-if="!data.isNew">
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <ul class="uk-list uk-list-divider uk-text-small">
-            <li v-for="movie in data.movie.copiesEdit" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1'}" v-if="movie.editStatus < 2">
-              {{ movie.id }} <span class="uk-hidden">{{ movie.status }}</span>
+            <li v-for="movie in data.movie.copiesEdit" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1', 'uk-hidden' : movie.status == 2}" v-if="movie.editStatus != 3">
+              {{ movie.id }}
               <div class="uk-align-right" v-bind:class="{ 'deleted' : movie.deleted }">
                 <span class="uk-label uk-label-danger uk-text-small uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
                 <span uk-icon="minus-circle" class="uk-icon" v-on:click="deleteCopy(movie.id)"></span>
               </div>
             </li>
-            <li v-else class="uk-position-relative" v-bind:class="{ 'uk-hidden' : movie.status == 2}">
-              <del>{{ movie.id }} <span class="uk-hidden">{{ movie.status }} {{ movie.editStatus }}</span></del>
+            <li v-else class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '2'}">
+              <del>{{ movie.id }}</del>
               <div class="uk-align-right" v-bind:class="{ 'deleted' : movie.deleted }">
                 <span class="uk-label uk-label-danger uk-text-small uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
                 <span uk-icon="plus-circle" class="uk-icon" v-on:click="undeleteCopy(movie.id)"></span>
