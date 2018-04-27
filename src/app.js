@@ -910,7 +910,7 @@ var app = new Vue({
       }
       else {
         console.log('only stock has changed');
-        if (deleteAll) {
+        if (params.deleteAll) {
           //send entire list
           MovieList = data.movie.copies.slice();
           //iterate and change all status to 2 (deleted)

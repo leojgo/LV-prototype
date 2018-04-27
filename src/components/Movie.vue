@@ -128,9 +128,9 @@
         console.log('emit edit movie '+id);
         this.$router.app.$emit('editMovie',id);
       },
-      deleteAll() {
+      deleteAll(movie) {
         var params = {
-          upc: data.movie.upc,
+          upc: movie.upc,
           hasEdits: false,
           delete: null,
           deleteAll: true
