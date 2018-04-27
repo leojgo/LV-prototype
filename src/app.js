@@ -822,7 +822,7 @@ var app = new Vue({
           }
           console.log(data.movie);
           //vm.$router.push({name:'movieView', params: {id: data.movie.upc}});  //make sure to issue another get request
-          vm.$router.$emit('viewMovie', Upc);
+          vm.$router.app.$emit('viewMovie', Upc);
         }
         else {
           //TODO error handling
