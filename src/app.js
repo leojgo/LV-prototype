@@ -860,7 +860,7 @@ var app = new Vue({
           else {
             //change to delete status
             copy = copies[i];
-            copy.editStatus = 2;
+            copy.editStatus = 3; //use a different status and change before sending on to the server
             copies.splice(i, 1, copy);
           }
         }
@@ -890,7 +890,6 @@ var app = new Vue({
         MovieList = data.movie.copies.slice();
         //iterate
         for (var i=0; i<params.delete.length; i++) {
-          console.log(i);
           //delete items
           for (var j=0; j<MovieList.length; j++) {
             console.log('compare '+MovieList[j].id+' to delete list item '+params.delete[i]);
