@@ -901,16 +901,25 @@ var app = new Vue({
         }
       }
       else {
-        console.log('only stock has changed')
-        //process deletes
-        for (var i=0; i<params.delete.length; i++) {
-          var movie = {
-            id: params.delete[i],
-            status: 2
-          };
-          MovieList.push(movie);
+        console.log('only stock has changed');
+        if (deleteAll) {
+          //send entire list
+          MovieList = data.movie.copies.slice();
+          //iterate and change all status to 2 (deleted)
+          for (var j=0; j<MovieList.length; j++) {
+            MovieList[j].status = 2;
+          }
         }
-
+        else {
+          //process deletes
+          for (var i=0; i<params.delete.length; i++) {
+            var movie = {
+              id: params.delete[i],
+              status: 2
+            };
+            MovieList.push(movie);
+          }
+        }
       }
       var vm = this;
       if (MovieList.length == 0) {

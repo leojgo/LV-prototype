@@ -7,7 +7,7 @@
         <ul class="uk-iconnav uk-position-top-right">
           <li v-bind:class="{'uk-hidden' : data.isEdit == false}"><span uk-icon="close" v-on:click="cancelEdit(data.movie)"></span></li>
           <li v-bind:class="{'uk-hidden' : data.isEdit}"><span  uk-icon="pencil" v-on:click="editForm(data.movie.upc)"></span></li>
-          <li v-if="data.isManager"><span uk-icon="icon: trash"></span></li>
+          <li v-if="data.isManager"><span uk-icon="icon: trash" v-on:click="deleteAll(data.movie)"></span></li>
         </ul>
       </h1> 
       <!--maybe can combine-->
@@ -31,14 +31,14 @@
           <h2 class="uk-heading-divider uk-text-small uk-text-bold">Stock</h2>
           <ul class="uk-list uk-list-divider uk-text-small">
             <li v-for="movie in data.movie.copiesEdit" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1'}" v-if="movie.editStatus < 2">
-              {{ movie.id }} 
+              {{ movie.id }} <!--{{ movie.status }}-->
               <div class="uk-align-right" v-bind:class="{ 'deleted' : movie.deleted }">
                 <span class="uk-label uk-label-danger uk-text-small uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
                 <span uk-icon="minus-circle" class="uk-icon" v-on:click="deleteCopy(movie.id)"></span>
               </div>
             </li>
             <li v-else-if="movie.editStatus == 3" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1'}">
-              <del>{{ movie.id }}</del>
+              <del>{{ movie.id }} <!--{{ movie.status }}--></del>
               <div class="uk-align-right" v-bind:class="{ 'deleted' : movie.deleted }">
                 <span class="uk-label uk-label-danger uk-text-small uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
                 <span uk-icon="plus-circle" class="uk-icon" v-on:click="undeleteCopy(movie.id)"></span>
@@ -63,6 +63,7 @@
           <ul class="uk-list uk-list-divider uk-text-small">
             <li v-for="movie in data.movie.copies" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1' }" v-if="movie.status == 0 || movie.status == 1">{{ movie.id }}<span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top" v-if="movie.status == 1">Rented</span></li>
           </ul>
+          <div class="uk-alert uk-alert-danger" v-if="data.movie.copies.length < 1">This movie has been deleted! No copies exist in the sytem!</div>
         </div>
       </div>
     </div>
@@ -125,6 +126,15 @@
         console.log('emit edit movie '+id);
         this.$router.app.$emit('editMovie',id);
       },
+      deleteAll() {
+        var params = {
+          upc: data.movie.upc,
+          hasEdits: false,
+          delete: null,
+          deleteAll: true;
+        }
+        this.$router.app.$emit('updateMovie', params);
+      }
       clearError(input) {
         this.errors[input] = false;
       },
@@ -222,6 +232,7 @@
               upc: data.movie.upc,
               hasEdits: hasEdits,
               delete: this.copiesToDelete,
+              deleteAll: false
             }
             console.log('emit updateMovie');
             this.$router.app.$emit('updateMovie', params);
