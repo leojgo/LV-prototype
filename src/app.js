@@ -271,7 +271,6 @@ var app = new Vue({
         if (xhr.readyState == 4) {
           if (xhr.status == 201 || xhr.status == 200) {
             var newRental = app.$route.path.indexOf('rentals/new') > -1;
-            var returnRental = app.$route.path.indexOf('rentals/return') > -1;
             var movie = JSON.parse(xhr.responseText);
             console.log(movie);
             if (newRental) {
@@ -306,7 +305,7 @@ var app = new Vue({
               }
               console.log(data.rental);
             }
-            else if (returnRental) {
+            else {
               //rental return
               //check status
               if (movie.status == 1) {
