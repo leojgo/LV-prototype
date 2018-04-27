@@ -884,12 +884,13 @@ var app = new Vue({
       console.log(params);
       //generate list for post
       var MovieList = [];
-      if (params.hasEdit) {
+      if (params.hasEdits) {
         console.log('edits to shared movie fields');
         //send entire list
         MovieList = data.movie.copies.slice();
         //iterate
         for (var i=0; i<params.delete.length; i++) {
+          console.log(i);
           //delete items
           for (var j=0; j<MovieList.length; j++) {
             console.log('compare '+MovieList[j].id+' to delete list item '+params.delete[i]);
@@ -901,6 +902,7 @@ var app = new Vue({
         }
       }
       else {
+        console.log('only stock has changed')
         //process deletes
         for (var i=0; i<params.delete.length; i++) {
           var movie = {

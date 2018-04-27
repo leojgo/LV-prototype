@@ -228,8 +228,8 @@
           }
         }
         else {
-          for (i in erorrs) {
-            console.log(errors[i])
+          for (i in this.erorrs) {
+            console.log(this.errors[i])
           }
         }
       },
