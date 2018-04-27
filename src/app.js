@@ -885,12 +885,14 @@ var app = new Vue({
       //generate list for post
       var MovieList = [];
       if (params.hasEdit) {
+        console.log('edits to shared movie fields');
         //send entire list
         MovieList = data.movie.copies.slice();
         //iterate
         for (var i=0; i<params.delete.length; i++) {
           //delete items
           for (var j=0; j<MovieList.length; j++) {
+            console.log('compare '+MovieList[j].id+' to delete list item '+params.delete[i]);
             if (MovieList[j].id == params.delete[i]) {
               MovieList[j].status = 2;
               break;
@@ -915,6 +917,7 @@ var app = new Vue({
         var qty = data.movie.copiesEdit.length - data.movie.copies.length;
         if (qty > 0) {
           data.movie.qty = qty;
+          console.log('emit createmovie');
           vm.$router.app.$emit('createMovie');
         }
       }
@@ -933,6 +936,8 @@ var app = new Vue({
           "Genre": "","Upc": Upc,
           "MovieList": MovieList
         });
+        console.log('POST to '+url);
+        console.log(jsonData);
         xhr.open("POST", url, true);
         xhr.setRequestHeader("Content-type", "application/json");
         xhr.onreadystatechange = function () {
@@ -953,8 +958,6 @@ var app = new Vue({
             //TODO error handling
           }
         }
-        console.log('POST to '+url);
-        console.log(jsonData);
         xhr.send(jsonData);
       }
     });
