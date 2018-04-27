@@ -126,6 +126,9 @@
     </table>
     </div>
   </div>
+  <div v-else>
+    <div class="uk-alert uk-alert-danger">Sorry! Only managers can view employee profiles.</div>
+  </div>
 </template>
 
 <script>

@@ -271,6 +271,7 @@ var app = new Vue({
         if (xhr.readyState == 4) {
           if (xhr.status == 201 || xhr.status == 200) {
             var newRental = app.$route.path.indexOf('rentals/new') > -1;
+            var returnRental = app.$route.path.indexOf('rentals/return') > -1;
             var movie = JSON.parse(xhr.responseText);
             console.log(movie);
             if (newRental) {
@@ -305,7 +306,7 @@ var app = new Vue({
               }
               console.log(data.rental);
             }
-            else {
+            else if (returnRental) {
               //rental return
               //check status
               if (movie.status == 1) {
@@ -336,6 +337,10 @@ var app = new Vue({
                 alert('Cannot add to return -- this movie is not available in the system');
               }
               console.log(data.return);
+            }
+            else {
+              //called as a check for duplicates before create movie
+              
             }
           }
           else {
