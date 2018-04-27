@@ -63,7 +63,9 @@
           <ul class="uk-list uk-list-divider uk-text-small">
             <li v-for="movie in data.movie.copies" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1' }" v-if="movie.status == 0 || movie.status == 1">{{ movie.id }}<span class="uk-label uk-label-danger uk-text-small uk-position-top-right uk-margin-small-top" v-if="movie.status == 1">Rented</span></li>
           </ul>
-          <div class="uk-alert uk-alert-danger" v-if="data.movie.copies.length < 1">This movie has been deleted! No copies exist in the sytem!</div>
+          <div class="uk-alert uk-alert-danger" v-if="data.movie.copies.length < 1 && data.movie.editCopies">
+            <p>This movie has been deleted! No copies exist in the sytem!</p>
+          </div>
         </div>
       </div>
     </div>
@@ -213,7 +215,7 @@
         if (!this.hasError) {
           console.log(data.movie);
           if (data.isNew) {
-            data.movie.qty = 1;//hardcode movie qtq
+            data.movie.qty = 1;//hardcode movie qt
             this.$router.app.$emit('createMovie');
           }
           else {

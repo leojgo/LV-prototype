@@ -340,7 +340,7 @@ var app = new Vue({
             }
             else {
               //called as a check for duplicates before create movie
-              
+
             }
           }
           else {
@@ -732,13 +732,21 @@ var app = new Vue({
     });
     //view movie title
     vm.$on('viewMovie', function(movie){
-      console.log('call viewMovie '+movie.upc);
-      var upc = (""+movie.upc).replace(/\D/g,'');
-      var title = movie.title;
+      if (movie) {
+        var upc = (""+movie.upc).replace(/\D/g,'');
+        var title = movie.title;
+      }
+      else {
+        //use the data store
+        var upc = (""+data.movie.upc).replace(/\D/g,'');;
+        var title = data.movie.title;
+      }
       var xhr = new XMLHttpRequest();
       var url = "/api/MovieSearch";
       var jsonData = JSON.stringify({"Title": title,"Upc": upc});
       var vm = this;
+
+      console.log('call viewMovie '+upc);
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
       xhr.onreadystatechange = function () {
@@ -781,7 +789,7 @@ var app = new Vue({
               alert('Sorry we cannot find any copies of that movie in the system!');
             }
             //go to view movie page
-            var callbackRoute = { name: 'movieView', params: { id: movie.upc }};
+            var callbackRoute = { name: 'movieView', params: { id: upc }};
             vm.$router.push(callbackRoute);
           }
           else {
@@ -810,10 +818,11 @@ var app = new Vue({
         "Upc": Upc, 
         "Qty": Qty
       });
+
       var vm = this;
       xhr.open("POST", url, true);
       xhr.setRequestHeader("Content-type", "application/json");
-      xhr.onreadystatechange = function () {
+      xhr.onreadystatechange = function (jsonData) {
         //Call a function when the state changes.
         if(xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           var stock = JSON.parse(this.responseText);
@@ -825,9 +834,7 @@ var app = new Vue({
               status: 0
             }
           }
-          console.log(data.movie);
-          //vm.$router.push({name:'movieView', params: {id: data.movie.upc}});  //make sure to issue another get request
-          vm.$router.app.$emit('viewMovie', Upc);
+          vm.$router.app.$emit('viewMovie');
         }
         else {
           //TODO error handling
