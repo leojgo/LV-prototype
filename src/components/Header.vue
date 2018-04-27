@@ -2,7 +2,7 @@
   <header>
     <div class="uk-background-primary uk-light uk-padding-small uk-text-meta uk-text-right"  v-if="data.isAuthenticated" v-bind:class="{ 'uk-background-secondary' : !data.isManager }">
       <div class="uk-container">
-        <span uk-icon="icon: user"></span>{{ data.user.firstName }} | <span v-on:click="logout" >log out</span>
+        <button class="uk-button uk-button-link" v-on:click="viewEmployee(data.user.employeeId)"><span uk-icon="icon: user"></span>{{ data.user.firstName }}</button> <button class="uk-margin-small-left uk-button uk-button-link uk-button uk-button-link" v-on:click="logout" ><span uk-icon="icon: sign-out"></span>logout</button>
       </div>
     </div>
     <nav class="uk-navbar-container uk-container" uk-navbar>
@@ -92,6 +92,10 @@
   export default {
     props: ['data'],
     methods: {
+      viewEmployee(employee) {
+        console.log('emit viewEmployee '+employee);
+        this.$router.app.$emit('viewEmployee',employee);
+      },
       logout() {
         console.log('emit logout event');
         this.$router.app.$emit('clearMessages');

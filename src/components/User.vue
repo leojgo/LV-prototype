@@ -24,11 +24,14 @@
         <span class="uk-text-small">Phone Number: {{ data.employee.phoneNumber }}</span>
         <hr />
         <div v-if="!editPassword">
-          <button class="uk-button uk-button-default" v-on:click="resetLogin" v-if="data.employee.active">Reset Login</button>
+          <div v-if="data.employee.active">
+            <button class="uk-button uk-button-default" v-on:click="resetLogin">Reset Login</button>
+            <a is="router-link" to="/users/search" v-on:click.native="resetMessage" class="uk-button uk-button-default uk-align-right">View All Employees</a>
+          </div>
           <div v-else class="uk-alert uk-alert-danger">
-          <p>This employee has been <strong>deleted</strong>! Made a mistake? Simply, restore the account.</p>
-          <button class="uk-button uk-button-danger uk-button-small" v-on:click="restoreEmployee(data.employee)">Restore</button>
-        </div>
+            <p>This employee has been <strong>deleted</strong>! Made a mistake? Simply, restore the account.</p>
+            <button class="uk-button uk-button-danger uk-button-small" v-on:click="restoreEmployee(data.employee)">Restore</button>
+          </div>
         </div>
         <div v-else uk-grid>
           <div class="uk-width-1-2@s">
@@ -149,6 +152,9 @@
       }
     },
     methods: {
+      resetMessage() {
+        this.$router.app.$emit('clearMessages');
+      },
       viewEmployee(employee) {
         console.log('emit viewEmployee '+employee);
         this.$router.app.$emit('viewEmployee',employee);
@@ -247,13 +253,13 @@
             //^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])$
             */
             //no password
-            if (employee.RawPw.length < 6 || employee.RawPw.length > 20) {
+            if (employee.RawPw.length < 6 || employee.RawPw.length > 25) {
               //password too long!
               if (!this.hasErrors) {
                 this.errorMessage = "";
                 this.hasErrors = true;
               }
-              this.errorMessage = this.errorMessage + "Your password needs to be between 6 and 20 characters long! ";
+              this.errorMessage = this.errorMessage + "Your password needs to be between 6 and 25 characters long! ";
               this.errors.userPass = true;
             }
             else {
@@ -295,13 +301,13 @@
         var userPass = document.querySelector("input[name=passwordReset]").value;
         var userPassConfirm = document.querySelector("input[name=passwordResetConfirm]").value
         var managerPass = document.querySelector("input[name=managerPassword]").value
-        if (userPass.length < 6 || userPass.length > 20) {
+        if (userPass.length < 6 || userPass.length > 25) {
           //password too short or too long!
           if (!this.hasErrors) {
             this.errorMessage = "";
             this.hasErrors = true;
           }
-          this.errorMessage = this.errorMessage + "New password needs to be between 6 and 20 characters long! ";
+          this.errorMessage = this.errorMessage + "New password needs to be between 6 and 25 characters long! ";
           this.resetErrors.userPass = true;
         }
         else {
@@ -316,9 +322,9 @@
               this.resetErrors.userPass = true;
             }
             //manager password too short or too long
-            if (managerPass.length < 6 || managerPass.length > 20) {
+            if (managerPass.length < 6 || managerPass.length > 25) {
               this.hasErrors = true;
-              this.errorMessage = this.errorMessage + "Manager password needs to be between 6 and 20 characters long! ";
+              this.errorMessage = this.errorMessage + "Manager password needs to be between 6 and 25 characters long! ";
               this.resetErrors.managerPass = true;
             }
             else {

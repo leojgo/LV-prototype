@@ -4,7 +4,8 @@
       <!--DASHBOARD-->
       <h1 class="uk-h2 uk-align-center uk-margin-remove-bottom">Hi {{ data.user.firstName }}</h1>
       <p class="uk-text-meta uk-margin-remove-top">You're logged in as a <strong>{{ data.user.employeeTitle }}</strong></p>
-      <p>Welcome message lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+      <p v-if="data.isManager">European badgers also tend to travel on well-worn trails, some of which have been in use for hundreds of years.</p>
+      <p v-else>Badgers are small mammals in the family Mustelidae, which also includes the otters, polecats, weasels and wolverines.</p>
       <div v-if="data.isManager" class="uk-margin">
         <button is="router-link" to="/customers/search" class="uk-button uk-button-default uk-width-1-1 uk-margin-small-bottom" >Find a Customer</button>
         <button is="router-link" to="/users/search" class="uk-button uk-button-default uk-width-1-1 uk-margin-small-bottom">Manage Users</button>

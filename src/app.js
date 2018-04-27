@@ -1039,7 +1039,7 @@ var app = new Vue({
         //Call a function when the state changes.
       if (xhr.readyState == 4 && (xhr.status == 201 || xhr.status == 200)) {
           data.rental.confirmation = this.responseText;
-          data.rental.payment.date = new Date();
+          data.rental.payment.date = today.getDate() + " / " + today.getMonth() + " / " + today.getFullYear();
           data.isEdit = false;
         }
         else {
@@ -1107,7 +1107,7 @@ router.beforeEach((to, from, next) => {
     data.isNew = false;
     if (to.fullPath[1] == 'u') {
       //TODO refactor/rename -- it's not really a search
-      //send login request -- TODO use a function?
+      //send login request -- TODO use a function? 
       var url = "/api/employees";
       var xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function() {
@@ -1137,7 +1137,7 @@ router.beforeEach((to, from, next) => {
     //probably better as a switch
     if (to.fullPath[1] == 'c') {
       data.customer = {};
-      data.customer[addState] = "IL";
+      data.customer["addState"] = "IL";
       next();
     }
     else if (to.fullPath[1] == 'm') {
