@@ -131,10 +131,10 @@
           upc: data.movie.upc,
           hasEdits: false,
           delete: null,
-          deleteAll: true;
+          deleteAll: true
         }
         this.$router.app.$emit('updateMovie', params);
-      }
+      },
       clearError(input) {
         this.errors[input] = false;
       },
