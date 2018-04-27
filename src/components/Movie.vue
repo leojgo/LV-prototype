@@ -37,8 +37,8 @@
                 <span uk-icon="minus-circle" class="uk-icon" v-on:click="deleteCopy(movie.id)"></span>
               </div>
             </li>
-            <li v-else-if="movie.editStatus == 3" class="uk-position-relative" v-bind:class="{ 'uk-text-muted' : movie.status == '1'}">
-              <del>{{ movie.id }} <span class="uk-hidden">{{ movie.status }}</span></del>
+            <li v-else class="uk-position-relative" v-bind:class="{ 'uk-hidden' : movie.status == '2'}">
+              <del>{{ movie.id }} <span class="uk-hidden">{{ movie.status }} {{ movie.editStatus }}</span></del>
               <div class="uk-align-right" v-bind:class="{ 'deleted' : movie.deleted }">
                 <span class="uk-label uk-label-danger uk-text-small uk-margin-small-right" v-if="movie.status == 1">Rented</span> 
                 <span uk-icon="plus-circle" class="uk-icon" v-on:click="undeleteCopy(movie.id)"></span>
