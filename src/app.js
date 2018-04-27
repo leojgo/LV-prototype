@@ -952,7 +952,7 @@ var app = new Vue({
               vm.$router.app.$emit('createMovie');
             }
             else {
-              console.log('emit viewmovie '+movie.title);
+              console.log('emit viewmovie '+data.movie.title);
               vm.$router.app.$emit('viewMovie', data.movie);
             }
           }
