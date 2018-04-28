@@ -24,7 +24,7 @@
         <span class="uk-text-small">Phone Number: {{ data.employee.phoneNumber }}</span>
         <hr />
         <div v-if="!editPassword">
-          <div v-if="data.employee.active">
+          <div v-if="data.employee.active != false">
             <button class="uk-button uk-button-default" v-on:click="resetLogin">Reset Login</button>
             <a is="router-link" to="/users/search" v-on:click.native="resetMessage" class="uk-button uk-button-default uk-align-right">View All Employees</a>
           </div>
