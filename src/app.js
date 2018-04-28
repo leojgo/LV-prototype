@@ -861,7 +861,8 @@ var app = new Vue({
           delete: [],
           deleteAll: false
         }
-        this.$router.app.$emit('updateMovie', params);
+        data.movie.qty = 1;
+        this.$router.app.$emit('createMovie');
       }
     });
     vm.$on('deleteCopy', function(id){
