@@ -853,6 +853,16 @@ var app = new Vue({
     vm.$on('addCopy', function(copy){
       //add to local copies
       data.movie.copiesEdit.push(copy);
+      if (!data.isEdit) {
+        //restore
+        var params = {
+          upc: data.movie.upc,
+          hasEdits: false,
+          delete: null,
+          deleteAll: false
+        }
+        this.$router.app.emit('updateMovie', params);
+      }
     });
     vm.$on('deleteCopy', function(id){
       //change status on local copies
