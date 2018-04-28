@@ -128,7 +128,7 @@ var app = new Vue({
           //data.isEdit = false; //routing should handle this?
           if (data.isNew) {
             data.employee.active = true; //set to active since we're not doing a get before going to employee profile
-            var callbackRoute = { name: 'userView', params: { id: xhr.responseText }};
+            var callbackRoute = { name: 'userView', params: { id: JSON.parse(xhr.responseText) }};
             vm.$router.push(callbackRoute);
           }
           else {
@@ -208,9 +208,9 @@ var app = new Vue({
         var active = customer.active;
         var accountBalance = customer.accountBalance;
         jsonData = JSON.stringify({
-          "nameFirst": customer.nameFirst,
+          "nameFirst": customer.firstName,
           "nameMiddleIn": "",
-          "nameLast": customer.nameLast,
+          "nameLast": customer.lastName,
           "addLine1": customer.addLine1,
           "addLine2": "",
           "addCity": customer.addCity,
