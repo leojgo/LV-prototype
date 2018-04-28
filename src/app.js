@@ -128,7 +128,7 @@ var app = new Vue({
           //data.isEdit = false; //routing should handle this?
           if (data.isNew) {
             data.employee.active = true; //set to active since we're not doing a get before going to employee profile
-            var callbackRoute = { name: 'userView', params: { id: JSON.parse(xhr.responseText) }};
+            var callbackRoute = { name: 'userView', params: { id: xhr.responseText }};
             vm.$router.push(callbackRoute);
           }
           else {
