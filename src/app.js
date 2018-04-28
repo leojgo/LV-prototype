@@ -203,14 +203,22 @@ var app = new Vue({
         });
       }
       else {
+        var firstName = customer.firstName;
+        var lastName = customer.lastName;
+        if (!firstName) {
+          firstName = customer.nameFirst;
+        }
+        if (!lastName) {
+          lastName = customer.nameLast;
+        }
         //update customer info
         var url = "/api/Customers/"+customer.customerId;
         var active = customer.active;
         var accountBalance = customer.accountBalance;
         jsonData = JSON.stringify({
-          "nameFirst": customer.firstName,
+          "nameFirst": firstName,
           "nameMiddleIn": "",
-          "nameLast": customer.lastName,
+          "nameLast": lastName,
           "addLine1": customer.addLine1,
           "addLine2": "",
           "addCity": customer.addCity,
@@ -221,12 +229,6 @@ var app = new Vue({
           "newsletter": customer.newsletter,
           "active": customer.active
         });
-        if (!jsonData.nameFirst) {
-          jsonData.nameFirst = customer.nameFirst;
-        }
-        if (!jsonData.nameLast) {
-          jsonData.nameFirst = customer.nameLast;
-        }
       }
 
       xhr.open("POST", url, true);
