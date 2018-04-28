@@ -129,14 +129,15 @@ var app = new Vue({
           if (data.isNew) {
             data.employee.active = true; //set to active since we're not doing a get before going to employee profile
             var callbackRoute = { name: 'userView', params: { id: JSON.parse(xhr.responseText) }};
+            vm.$router.push(callbackRoute);
           }
           else {
             if (Active) {
               //success message?
               data.successMessage = 'Employee updated successfully!'
+              vm.$router.app.$emit('viewEmployee', employee.employeeId);
             }
           }
-          vm.$router.push(callbackRoute);
         }
         else {
           //TODO error handling
