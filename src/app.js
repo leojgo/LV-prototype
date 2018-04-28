@@ -208,9 +208,9 @@ var app = new Vue({
         var active = customer.active;
         var accountBalance = customer.accountBalance;
         jsonData = JSON.stringify({
-          "nameFirst": customer.firstName,
+          "nameFirst": customer.nameFirst,
           "nameMiddleIn": "",
-          "nameLast": customer.lastName,
+          "nameLast": customer.nameLast,
           "addLine1": customer.addLine1,
           "addLine2": "",
           "addCity": customer.addCity,
