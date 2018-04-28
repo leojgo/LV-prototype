@@ -133,7 +133,7 @@
         var params = {
           upc: movie.upc,
           hasEdits: false,
-          delete: null,
+          delete: [],
           deleteAll: true
         }
         this.$router.app.$emit('updateMovie', params);

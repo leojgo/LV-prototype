@@ -858,7 +858,7 @@ var app = new Vue({
         var params = {
           upc: data.movie.upc,
           hasEdits: false,
-          delete: null,
+          delete: [],
           deleteAll: false
         }
         this.$router.app.$emit('updateMovie', params);
