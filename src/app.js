@@ -221,6 +221,12 @@ var app = new Vue({
           "newsletter": customer.newsletter,
           "active": customer.active
         });
+        if (!jsonData.nameFirst) {
+          jsonData.nameFirst = customer.nameFirst;
+        }
+        if (!jsonData.nameLast) {
+          jsonData.nameFirst = customer.nameLast;
+        }
       }
 
       xhr.open("POST", url, true);
